@@ -129,6 +129,7 @@ echo "User/Role bundle Root dir: ${user_role_dir}"
 function add_all_bundles {
     # === Source ===
     add_topology_component_bundle /streams/componentbundles/SOURCE ${component_dir}/sources/kafka-source-topology-component.json
+    add_topology_component_bundle /streams/componentbundles/SOURCE ${component_dir}/sources/beam-kafka-source-topology-component.json
     add_topology_component_bundle /streams/componentbundles/SOURCE ${component_dir}/sources/hdfs-source-topology-component.json
     add_topology_component_bundle /streams/componentbundles/SOURCE ${component_dir}/sources/eventhubs-source-topology-component.json
     # === Processor ===
@@ -148,6 +149,7 @@ function add_all_bundles {
     add_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/druid-sink-topology-component.json
     add_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/solr-sink-topology-component.json
     add_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/kafka-sink-topology-component.json
+    add_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/beam-kafka-sink-topology-component.json
     add_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/hive-sink-topology-component.json
     # === Topology ===
     add_topology_component_bundle /streams/componentbundles/TOPOLOGY ${component_dir}/topology/storm-topology-component.json
@@ -170,6 +172,7 @@ function add_all_bundles {
     post /servicebundles ${service_dir}/hbase-bundle.json
     post /servicebundles ${service_dir}/hive-bundle.json
     post /servicebundles ${service_dir}/email-bundle.json
+    post /servicebundles ${service_dir}/beam-bundle.json
 }
 
 function add_roles_and_users {

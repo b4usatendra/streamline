@@ -1,0 +1,163 @@
+{
+  "type": "SOURCE",
+  "name": "Kafka",
+  "subType": "KAFKA",
+  "streamingEngine": "BEAM",
+  "builtin": true,
+  "fieldHintProviderClass": "com.hortonworks.streamline.streams.cluster.bundle.impl.KafkaBundleHintProvider",
+  "transformationClass": "com.hortonworks.streamline.streams.layout.beam.BeamKafkaSourceComponent",
+  "mavenDeps": "org.apache.kafka:kafka-clients:0.10.2.1,^org.slf4j:slf4j-log4j12^log4j:log4j,org.apache.beam:beam-sdks-java-io-kafka:2.6.0",
+  "topologyComponentUISpecification": {
+    "fields": [
+
+      {
+        "uiName": "Bootstrap servers",
+        "fieldName": "bootstrapServers",
+        "isOptional": false,
+        "tooltip": "A comma separated string of host:port for Kafka brokers",
+        "type": "string",
+        "hint": "dependsOn-securityProtocol"
+      },
+      {
+        "uiName": "Kafka Topic",
+        "fieldName": "topic",
+        "isOptional": false,
+        "tooltip": "Kafka topic to read data from",
+        "type": "enumstring",
+        "options": [],
+        "hint": "schema,override"
+      },
+      {
+        "uiName": "Reader Schema Version",
+        "fieldName": "readerSchemaVersion",
+        "isOptional": false,
+        "tooltip": "Version of schema for topic to use for deserializing the message. Default is version used by kafka producer to write the message",
+        "type": "enumstring",
+        "options": [],
+        "hint": "dependsOn-schemaBranch,schemaVersion"
+      },
+      {
+        "uiName": "Consumer Group Id",
+        "fieldName": "consumerGroupId",
+        "isOptional": false,
+        "tooltip": "A unique string that identifies the consumer group this source belongs to. It is used to keep track of consumer offset",
+        "type": "string"
+      },
+      {
+        "uiName": "Fetch minimum bytes",
+        "fieldName": "fetchMinimumBytes",
+        "isOptional": true,
+        "tooltip": "The minimum number of bytes the broker should return for a fetch request",
+        "type": "string",
+        "defaultValue": "1"
+      },
+      {
+        "uiName": "Maximum fetch bytes per partition",
+        "fieldName": "fetchMaximumBytesPerPartition",
+        "isOptional": true,
+        "tooltip": "The maximum amount of data per-partition the broker will return",
+        "type": "string",
+        "defaultValue": "1048576"
+      },
+      {
+        "uiName": "Maximum records per poll",
+        "fieldName": "maxRecordsPerPoll",
+        "isOptional": true,
+        "tooltip": "The maximum number of records a poll will return",
+        "type": "string",
+        "defaultValue": "500"
+      },
+      {
+        "uiName": "Poll timeout(ms)",
+        "fieldName": "pollTimeoutMs",
+        "isOptional": true,
+        "tooltip": "Time in milliseconds spent waiting in poll if data is not available",
+        "type": "number",
+        "defaultValue": 200
+      },
+      {
+        "uiName": "Offset commit period(ms)",
+        "fieldName": "offsetCommitPeriodMs",
+        "isOptional": true,
+        "tooltip": "Period in milliseconds at which offsets are committed",
+        "type": "number",
+        "defaultValue": 30000
+      },
+      {
+        "uiName": "Maximum uncommitted offsets",
+        "fieldName": "maximumUncommittedOffsets",
+        "isOptional": true,
+        "tooltip": "Defines the max number of polled records that can be pending commit, before another poll can take place",
+        "type": "number",
+        "defaultValue": 10000000
+      },
+      {
+        "uiName": "First poll offset strategy",
+        "fieldName": "firstPollOffsetStrategy",
+        "isOptional": true,
+        "tooltip": "Offset used by the Kafka spout in the first poll to Kafka broker",
+        "type": "enumstring",
+        "options": ["EARLIEST", "LATEST", "UNCOMMITTED_EARLIEST", "UNCOMMITTED_LATEST"],
+        "defaultValue": "UNCOMMITTED_EARLIEST"
+      },
+      {
+        "uiName": "Partition refresh period(ms)",
+        "fieldName": "partitionRefreshPeriodMs",
+        "isOptional": true,
+        "tooltip": "Period in milliseconds at which Kafka will be polled for new topics and/or partitions",
+        "type": "number",
+        "defaultValue": 2000
+      },
+      {
+        "uiName": "Emit null tuples?",
+        "fieldName": "emitNullTuples",
+        "isOptional": true,
+        "tooltip": "A flag to indicate if null tuples should be emitted to downstream components or not",
+        "type": "boolean",
+        "defaultValue": false
+      },
+      {
+        "uiName": "First retry delay(ms)",
+        "fieldName": "retryInitialDelayMs",
+        "isOptional": true,
+        "tooltip": "Interval delay in milliseconds for first retry for a failed Kafka spout message",
+        "type": "number",
+        "defaultValue": 0
+      },
+      {
+        "uiName": "Retry delay period(ms)",
+        "fieldName": "retryDelayPeriodMs",
+        "isOptional": true,
+        "tooltip": "Retry delay period(geometric progression) in milliseconds for second and subsequent retries for a failed Kafka spout message",
+        "type": "number",
+        "defaultValue": 2
+      },
+      {
+        "uiName": "Maximum retries",
+        "fieldName": "maximumRetries",
+        "isOptional": true,
+        "tooltip": "Maximum number of times a failed message is retried before it is acked and committed",
+        "type": "number",
+        "defaultValue": 2147483647
+      },
+      {
+        "uiName": "Maximum retry delay(ms)",
+        "fieldName": "retryDelayMaximumMs",
+        "isOptional": true,
+        "tooltip": "Maximum interval in milliseconds to wait before successive retries for a failed Kafka spout message",
+        "type": "number",
+        "defaultValue": 10000
+      },
+      {
+        "uiName": "Parallelism",
+        "fieldName": "parallelism",
+        "isOptional": true,
+        "tooltip": "Parallelism hint for Kafka spout",
+        "type": "number",
+        "defaultValue": 1,
+        "min": 1,
+        "hint": "hidden"
+      }
+    ]
+  }
+}

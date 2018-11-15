@@ -101,6 +101,8 @@ public class KafkaMetadataService implements AutoCloseable {
 
         final KafkaZkConnection kafkaZkConnection = KafkaZkConnection.newInstance(
                 getZkStringRaw(environmentService, clusterId, AMBARI_JSON_CONFIG_KAFKA_BROKER));
+
+
         final ZookeeperClient zkCli = ZookeeperClient.newInstance(kafkaZkConnection);
         zkCli.start();
 
@@ -261,6 +263,7 @@ public class KafkaMetadataService implements AutoCloseable {
             } else {
                 chRoot = "/";
             }
+
             return new KafkaZkConnection(zkString, chRoot);
         }
 

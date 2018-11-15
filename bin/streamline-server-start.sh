@@ -108,7 +108,6 @@ if [ -z "$JAVA_HOME" ]; then
 else
   JAVA="$JAVA_HOME/bin/java"
 fi
-
 # add streamline base directory
 STREAMLINE_OPTS="-Dstreamline.home=${base_dir} "
 
@@ -117,9 +116,10 @@ if [ -z "$STREAMLINE_JVM_PERFORMANCE_OPTS" ]; then
   STREAMLINE_JVM_PERFORMANCE_OPTS="-server -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:+CMSScavengeBeforeRemark -XX:+DisableExplicitGC -Djava.awt.headless=true"
 fi
 
+echo $STREAMLINE_OPTS
 # Launch mode
 if [ "x$DAEMON_MODE" = "xtrue" ]; then
   nohup $JAVA $STREAMLINE_HEAP_OPTS $STREAMLINE_JVM_PERFORMANCE_OPTS $STREAMLINE_KERBEROS_PARAMS $STREAMLINE_VERSION_FILE -cp $CLASSPATH $STREAMLINE_OPTS "com.hortonworks.streamline.webservice.StreamlineApplication" "server" "$@" > "$CONSOLE_OUTPUT_FILE" 2>&1 < /dev/null &
 else
-  exec $JAVA $STREAMLINE_HEAP_OPTS $STREAMLINE_JVM_PERFORMANCE_OPTS $STREAMLINE_KERBEROS_PARAMS $STREAMLINE_VERSION_FILE -cp $CLASSPATH $STREAMLINE_OPTS "com.hortonworks.streamline.webservice.StreamlineApplication" "server" "$@"
+  exec  $JAVA $STREAMLINE_HEAP_OPTS $STREAMLINE_JVM_PERFORMANCE_OPTS $STREAMLINE_KERBEROS_PARAMS $STREAMLINE_VERSION_FILE -cp $CLASSPATH $STREAMLINE_OPTS "com.hortonworks.streamline.webservice.StreamlineApplication" "server" "$@"
 fi

@@ -16,184 +16,207 @@
 
 package com.hortonworks.streamline.webservice.configurations;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.hortonworks.registries.common.ServletFilterConfiguration;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.*;
+import com.hortonworks.registries.common.*;
+import com.hortonworks.streamline.webservice.util.*;
+import io.dropwizard.*;
+import javax.validation.constraints.*;
+import org.hibernate.validator.constraints.*;
 
-import com.hortonworks.streamline.webservice.util.StreamlineConfigurationSerializer;
-import org.hibernate.validator.constraints.NotEmpty;
-
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-
-import io.dropwizard.Configuration;
+import java.util.*;
 
 @JsonSerialize(using = StreamlineConfigurationSerializer.class)
 
-public class StreamlineConfiguration extends Configuration {
+public class StreamlineConfiguration extends Configuration
+{
 
-    @NotEmpty
-    private List<ModuleConfiguration> modules;
+   @NotEmpty
+   private List<ModuleConfiguration> modules;
 
-    @NotEmpty
-    private String catalogRootUrl;
+   @NotEmpty
+   private String catalogRootUrl;
 
-    @NotNull
-    private FileStorageConfiguration fileStorageConfiguration;
+   @NotNull
+   private FileStorageConfiguration fileStorageConfiguration;
 
-    @NotNull
-    private StorageProviderConfiguration storageProviderConfiguration;
+   @NotNull
+   private StorageProviderConfiguration storageProviderConfiguration;
 
-    @NotNull
-    private DashboardConfiguration dashboardConfiguration;
+   @NotNull
+   private DashboardConfiguration dashboardConfiguration;
 
-    private AuthorizerConfiguration authorizerConfiguration;
+   private AuthorizerConfiguration authorizerConfiguration;
 
+   @JsonProperty
+   private boolean enableCors;
 
-    @JsonProperty
-    private boolean enableCors;
+   @JsonProperty
+   private List<String> corsUrlPatterns;
 
-    @JsonProperty
-    private List<String> corsUrlPatterns;
+   @JsonProperty
+   private String trustStorePath;
 
-    @JsonProperty
-    private String trustStorePath;
+   @JsonProperty
+   private String trustStorePassword;
 
-    @JsonProperty
-    private String trustStorePassword;
+   private List<ServletFilterConfiguration> servletFilters;
 
-    private List<ServletFilterConfiguration> servletFilters;
+   private LoginConfiguration loginConfiguration;
 
-    private LoginConfiguration loginConfiguration;
+   private String httpProxyUrl;
+   private String httpProxyUsername;
+   private String httpProxyPassword;
 
-    private String httpProxyUrl;
-    private String httpProxyUsername;
-    private String httpProxyPassword;
+   @JsonProperty
+   public StorageProviderConfiguration getStorageProviderConfiguration()
+   {
+	  return storageProviderConfiguration;
+   }
 
-    @JsonProperty
-    public StorageProviderConfiguration getStorageProviderConfiguration() {
-        return storageProviderConfiguration;
-    }
+   @JsonProperty
+   public void setStorageProviderConfiguration(StorageProviderConfiguration storageProviderConfiguration)
+   {
+	  this.storageProviderConfiguration = storageProviderConfiguration;
+   }
 
-    @JsonProperty
-    public void setStorageProviderConfiguration(StorageProviderConfiguration storageProviderConfiguration) {
-        this.storageProviderConfiguration = storageProviderConfiguration;
-    }
+   public String getCatalogRootUrl()
+   {
+	  return catalogRootUrl;
+   }
 
-   public String getCatalogRootUrl() {
-        return catalogRootUrl;
-    }
+   public void setCatalogRootUrl(String catalogRootUrl)
+   {
+	  this.catalogRootUrl = catalogRootUrl;
+   }
 
-    public void setCatalogRootUrl(String catalogRootUrl) {
-        this.catalogRootUrl = catalogRootUrl;
-    }
+   public FileStorageConfiguration getFileStorageConfiguration()
+   {
+	  return this.fileStorageConfiguration;
+   }
 
-    public FileStorageConfiguration getFileStorageConfiguration() {
-        return this.fileStorageConfiguration;
-    }
+   public void setFileStorageConfiguration(FileStorageConfiguration configuration)
+   {
+	  this.fileStorageConfiguration = configuration;
+   }
 
-    public void setFileStorageConfiguration(FileStorageConfiguration configuration) {
-        this.fileStorageConfiguration = configuration;
-    }
+   public List<ModuleConfiguration> getModules()
+   {
+	  return modules;
+   }
 
-    public List<ModuleConfiguration> getModules() {
-        return modules;
-    }
+   public void setModules(List<ModuleConfiguration> modules)
+   {
+	  this.modules = modules;
+   }
 
-    public void setModules(List<ModuleConfiguration> modules) {
-        this.modules = modules;
-    }
+   public boolean isEnableCors()
+   {
+	  return enableCors;
+   }
 
-    public boolean isEnableCors() {
-        return enableCors;
-    }
+   public void setEnableCors(boolean enableCors)
+   {
+	  this.enableCors = enableCors;
+   }
 
-    public void setEnableCors(boolean enableCors) {
-        this.enableCors = enableCors;
-    }
+   public List<String> getCorsUrlPatterns()
+   {
+	  return corsUrlPatterns;
+   }
 
-    public List<String> getCorsUrlPatterns() {
-        return corsUrlPatterns;
-    }
+   public void setCorsUrlPatterns(List<String> corsUrlPatterns)
+   {
+	  this.corsUrlPatterns = corsUrlPatterns;
+   }
 
-    public void setCorsUrlPatterns(List<String> corsUrlPatterns) {
-        this.corsUrlPatterns = corsUrlPatterns;
-    }
+   public String getTrustStorePath()
+   {
+	  return trustStorePath;
+   }
 
-    public String getTrustStorePath() {
-        return trustStorePath;
-    }
+   public void setTrustStorePath(String trustStorePath)
+   {
+	  this.trustStorePath = trustStorePath;
+   }
 
-    public void setTrustStorePath(String trustStorePath) {
-        this.trustStorePath = trustStorePath;
-    }
+   public String getTrustStorePassword()
+   {
+	  return trustStorePassword;
+   }
 
-    public String getTrustStorePassword() {
-        return trustStorePassword;
-    }
+   public void setTrustStorePassword(String trustStorePassword)
+   {
+	  this.trustStorePassword = trustStorePassword;
+   }
 
-    public void setTrustStorePassword(String trustStorePassword) {
-        this.trustStorePassword = trustStorePassword;
-    }
+   public DashboardConfiguration getDashboardConfiguration()
+   {
+	  return dashboardConfiguration;
+   }
 
-    public DashboardConfiguration getDashboardConfiguration() {
-        return dashboardConfiguration;
-    }
+   public void setDashboardConfiguration(DashboardConfiguration dashboardConfiguration)
+   {
+	  this.dashboardConfiguration = dashboardConfiguration;
+   }
 
-    public void setDashboardConfiguration(DashboardConfiguration dashboardConfiguration) {
-        this.dashboardConfiguration = dashboardConfiguration;
-    }
+   public AuthorizerConfiguration getAuthorizerConfiguration()
+   {
+	  return authorizerConfiguration;
+   }
 
+   public void setAuthorizerConfiguration(AuthorizerConfiguration authorizerConfiguration)
+   {
+	  this.authorizerConfiguration = authorizerConfiguration;
+   }
 
-    public AuthorizerConfiguration getAuthorizerConfiguration() {
-        return authorizerConfiguration;
-    }
+   public List<ServletFilterConfiguration> getServletFilters()
+   {
+	  return servletFilters;
+   }
 
-    public void setAuthorizerConfiguration(AuthorizerConfiguration authorizerConfiguration) {
-        this.authorizerConfiguration = authorizerConfiguration;
-    }
+   public void setServletFilters(List<ServletFilterConfiguration> servletFilters)
+   {
+	  this.servletFilters = servletFilters;
+   }
 
-    public List<ServletFilterConfiguration> getServletFilters() {
-        return servletFilters;
-    }
+   public LoginConfiguration getLoginConfiguration()
+   {
+	  return loginConfiguration;
+   }
 
-    public void setServletFilters(List<ServletFilterConfiguration> servletFilters) {
-        this.servletFilters = servletFilters;
-    }
+   public void setLoginConfiguration(LoginConfiguration loginConfiguration)
+   {
+	  this.loginConfiguration = loginConfiguration;
+   }
 
-    public LoginConfiguration getLoginConfiguration() {
-        return loginConfiguration;
-    }
+   public String getHttpProxyUrl()
+   {
+	  return httpProxyUrl;
+   }
 
-    public void setLoginConfiguration(LoginConfiguration loginConfiguration) {
-        this.loginConfiguration = loginConfiguration;
-    }
+   public void setHttpProxyUrl(String httpProxyUrl)
+   {
+	  this.httpProxyUrl = httpProxyUrl;
+   }
 
-    public String getHttpProxyUrl() {
-        return httpProxyUrl;
-    }
+   public String getHttpProxyUsername()
+   {
+	  return httpProxyUsername;
+   }
 
-    public void setHttpProxyUrl(String httpProxyUrl) {
-        this.httpProxyUrl = httpProxyUrl;
-    }
+   public void setHttpProxyUsername(String httpProxyUsername)
+   {
+	  this.httpProxyUsername = httpProxyUsername;
+   }
 
-    public String getHttpProxyUsername() {
-        return httpProxyUsername;
-    }
+   public String getHttpProxyPassword()
+   {
+	  return httpProxyPassword;
+   }
 
-    public void setHttpProxyUsername(String httpProxyUsername) {
-        this.httpProxyUsername = httpProxyUsername;
-    }
-
-    public String getHttpProxyPassword() {
-        return httpProxyPassword;
-    }
-
-    public void setHttpProxyPassword(String httpProxyPassword) {
-        this.httpProxyPassword = httpProxyPassword;
-    }
-
-
-
+   public void setHttpProxyPassword(String httpProxyPassword)
+   {
+	  this.httpProxyPassword = httpProxyPassword;
+   }
 }

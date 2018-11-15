@@ -118,10 +118,12 @@ public class SchemaResource {
         return doGetAllSchemaVersionForBranch(schemaName, null);
     }
 
+    //TODO fix schema registry constraints
     private Response doGetAllSchemaVersionForBranch(String schemaName, String branchName) {
         try {
             LOG.info("Get all versions for schema : {}", schemaName);
             Collection<SchemaVersionInfo> schemaVersionInfos = schemaRegistryClient.getAllVersions(effectiveBranchName(branchName), schemaName);
+	   //Collection<SchemaVersionInfo> schemaVersionInfos = Lists.newArrayList(  new SchemaVersionInfo(1l, schemaName, 1, "test beam schema", 1l, "test "));
             LOG.debug("Received schema versions [{}] from schema registry for schema: {}", schemaVersionInfos, schemaName);
 
             if (schemaVersionInfos != null && !schemaVersionInfos.isEmpty()) {
@@ -152,6 +154,7 @@ public class SchemaResource {
         return doGetAllSchemaVersionForBranch(schemaName, branchName);
     }
 
+    //TODO make serialization configurable
     @GET
     @Path("/{schemaName}/versions/{version}")
     @Timed
@@ -160,11 +163,14 @@ public class SchemaResource {
                                         @Context SecurityContext securityContext) {
         try {
             LOG.info("Get schema:version [{}:{}]", schemaName, version);
+            //SchemaVersionInfo schemaVersionInfo = new SchemaVersionInfo(1l, schemaName, 1, "test beam schema", 1l, "test ");
+
             SchemaVersionInfo schemaVersionInfo = schemaRegistryClient.getSchemaVersionInfo(new SchemaVersionKey(schemaName, Integer.parseInt(version)));
 
             if (schemaVersionInfo != null) {
                 LOG.debug("Received schema version from schema registry: [{}]", schemaVersionInfo);
                 String schema = schemaVersionInfo.getSchemaText();
+                //TODO schemaRegistry: commented
                 if (schema != null && !schema.isEmpty()) {
                     schema = AvroStreamlineSchemaConverter.convertAvroSchemaToStreamlineSchema(schema);
                 }
@@ -181,6 +187,7 @@ public class SchemaResource {
         }
     }
 
+    //TODO schemaRegistry: schema branch modification
     @GET
     @Path("/{schemaName}/branches")
     @Timed
@@ -189,6 +196,7 @@ public class SchemaResource {
                                       @Context SecurityContext securityContext) {
         try {
             Collection<SchemaBranch> schemaBranches = schemaRegistryClient.getSchemaBranches(schemaName);
+            //Collection<SchemaBranch> schemaBranches =  Lists.newArrayList(new SchemaBranch(SchemaBranch.MASTER_BRANCH, "hard coded branch"));
             LOG.info("Schema branches for schema [{}] : {}", schemaName, schemaBranches);
             List<String> schemaBranchNames = Collections.emptyList();
             if (schemaBranches != null && !schemaBranches.isEmpty()) {

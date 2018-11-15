@@ -6,7 +6,7 @@
   "builtin": true,
   "transformationClass": "com.hortonworks.streamline.streams.layout.storm.EventHubSpoutFluxComponent",
   "fieldHintProviderClass": "com.hortonworks.streamline.streams.cluster.bundle.impl.EventHubsSourceHintProvider",
-  "mavenDeps": "org.apache.storm:storm-eventhubs:STORM_VERSION^org.slf4j:slf4j-log4j12",
+  "mavenDeps": "org.apache.storm:storm-eventhubs:1.1.0.3.0.0.0-453^org.slf4j:slf4j-log4j12",
   "topologyComponentUISpecification": {
     "fields": [
       {

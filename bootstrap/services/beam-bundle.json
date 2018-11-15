@@ -1,0 +1,15 @@
+{
+  "name": "BEAM",
+  "registerClass": "com.hortonworks.streamline.streams.cluster.register.impl.BeamServiceRegistrar",
+  "serviceUISpecification": {
+    "fields": [
+      {
+        "uiName": "Connection Endpoint",
+        "fieldName": "connection.endpoint",
+        "isOptional": true,
+        "tooltip": "Beam cluster URI",
+        "type": "string"
+      }
+    ]
+  }
+}

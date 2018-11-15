@@ -15,194 +15,229 @@
  **/
 package com.hortonworks.streamline.streams.service;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.google.common.base.Stopwatch;
-import com.hortonworks.streamline.streams.actions.topology.service.TopologyActionsService;
-import com.hortonworks.streamline.streams.actions.topology.state.TopologyStateFactory;
-import com.hortonworks.streamline.streams.actions.topology.state.TopologyStates;
-import com.hortonworks.streamline.streams.cluster.catalog.Namespace;
-import com.hortonworks.streamline.streams.cluster.catalog.NamespaceServiceClusterMap;
-import com.hortonworks.streamline.streams.catalog.Topology;
-import com.hortonworks.streamline.streams.catalog.service.StreamCatalogService;
-import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
-import com.hortonworks.streamline.streams.exception.TopologyNotAliveException;
-import com.hortonworks.streamline.streams.metrics.topology.TopologyMetrics;
-import com.hortonworks.streamline.streams.metrics.topology.service.TopologyMetricsService;
-import com.hortonworks.streamline.streams.storm.common.StormNotReachableException;
-import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.annotation.*;
+import com.google.common.base.*;
+import com.hortonworks.streamline.streams.actions.topology.service.*;
+import com.hortonworks.streamline.streams.actions.topology.state.*;
+import com.hortonworks.streamline.streams.catalog.*;
+import com.hortonworks.streamline.streams.catalog.service.*;
+import com.hortonworks.streamline.streams.cluster.catalog.*;
+import com.hortonworks.streamline.streams.cluster.service.*;
+import com.hortonworks.streamline.streams.exception.*;
+import com.hortonworks.streamline.streams.metrics.topology.*;
+import com.hortonworks.streamline.streams.metrics.topology.service.*;
+import com.hortonworks.streamline.streams.storm.common.*;
+import org.apache.commons.lang3.tuple.*;
+import org.slf4j.*;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.*;
 
-public final class CatalogResourceUtil {
-    private static final Logger LOG = LoggerFactory.getLogger(CatalogResourceUtil.class);
-    private static final Integer DEFAULT_N_OF_TOP_N_LATENCY = 3;
+public final class CatalogResourceUtil
+{
+   private static final Logger LOG = LoggerFactory.getLogger(CatalogResourceUtil.class);
+   private static final Integer DEFAULT_N_OF_TOP_N_LATENCY = 3;
 
-    private CatalogResourceUtil() {
-    }
+   private CatalogResourceUtil()
+   {
+   }
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    static class TopologyDashboardResponse {
-        private final Topology topology;
-        private final TopologyRunningStatus running;
-        private final String namespaceName;
-        private TopologyRuntimeResponse runtime;
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   static class TopologyDashboardResponse
+   {
+	  private final Topology topology;
+	  private final TopologyRunningStatus running;
+	  private final String namespaceName;
+	  private TopologyRuntimeResponse runtime;
 
-        public TopologyDashboardResponse(Topology topology, TopologyRunningStatus running, String namespaceName) {
-            this.topology = topology;
-            this.running = running;
-            this.namespaceName = namespaceName;
-        }
+	  public TopologyDashboardResponse(Topology topology, TopologyRunningStatus running, String namespaceName)
+	  {
+		 this.topology = topology;
+		 this.running = running;
+		 this.namespaceName = namespaceName;
+	  }
 
-        public void setRuntime(TopologyRuntimeResponse runtime) {
-            this.runtime = runtime;
-        }
+	  public void setRuntime(TopologyRuntimeResponse runtime)
+	  {
+		 this.runtime = runtime;
+	  }
 
-        public Topology getTopology() {
-            return topology;
-        }
+	  public Topology getTopology()
+	  {
+		 return topology;
+	  }
 
-        public TopologyRunningStatus getRunning() {
-            return running;
-        }
+	  public TopologyRunningStatus getRunning()
+	  {
+		 return running;
+	  }
 
-        public String getNamespaceName() {
-            return namespaceName;
-        }
+	  public String getNamespaceName()
+	  {
+		 return namespaceName;
+	  }
 
-        public TopologyRuntimeResponse getRuntime() {
-            return runtime;
-        }
-    }
+	  public TopologyRuntimeResponse getRuntime()
+	  {
+		 return runtime;
+	  }
+   }
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    static class TopologyRuntimeResponse {
-        private final String runtimeTopologyId;
-        private final TopologyMetrics.TopologyMetric metric;
-        private final List<Pair<String, Double>> latencyTopN;
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   static class TopologyRuntimeResponse
+   {
+	  private final String runtimeTopologyId;
+	  private final TopologyMetrics.TopologyMetric metric;
+	  private final List<Pair<String, Double>> latencyTopN;
 
-        public TopologyRuntimeResponse(String runtimeTopologyId, TopologyMetrics.TopologyMetric metric, List<Pair<String, Double>> latencyTopN) {
-            this.runtimeTopologyId = runtimeTopologyId;
-            this.metric = metric;
-            this.latencyTopN = latencyTopN;
-        }
+	  public TopologyRuntimeResponse(String runtimeTopologyId, TopologyMetrics.TopologyMetric metric, List<Pair<String, Double>> latencyTopN)
+	  {
+		 this.runtimeTopologyId = runtimeTopologyId;
+		 this.metric = metric;
+		 this.latencyTopN = latencyTopN;
+	  }
 
-        public String getRuntimeTopologyId() {
-            return runtimeTopologyId;
-        }
+	  public String getRuntimeTopologyId()
+	  {
+		 return runtimeTopologyId;
+	  }
 
-        public TopologyMetrics.TopologyMetric getMetric() {
-            return metric;
-        }
+	  public TopologyMetrics.TopologyMetric getMetric()
+	  {
+		 return metric;
+	  }
 
-        public List<Pair<String, Double>> getLatencyTopN() {
-            return latencyTopN;
-        }
-    }
+	  public List<Pair<String, Double>> getLatencyTopN()
+	  {
+		 return latencyTopN;
+	  }
+   }
 
-    enum TopologyRunningStatus {
-        RUNNING, NOT_RUNNING, UNKNOWN
-    }
+   enum TopologyRunningStatus
+   {
+	  RUNNING, NOT_RUNNING, UNKNOWN
+   }
 
-    static TopologyDashboardResponse enrichTopology(Topology topology,
-                                                    String asUser,
-                                                    Integer latencyTopN,
-                                                    EnvironmentService environmentService,
-                                                    TopologyActionsService actionsService,
-                                                    TopologyMetricsService metricsService,
-                                                    StreamCatalogService catalogService) {
-        LOG.debug("[START] enrichTopology - topology id: {}", topology.getId());
-        Stopwatch stopwatch = Stopwatch.createStarted();
+   static TopologyDashboardResponse enrichTopology(Topology topology,
+		   String asUser,
+		   Integer latencyTopN,
+		   EnvironmentService environmentService,
+		   TopologyActionsService actionsService,
+		   TopologyMetricsService metricsService,
+		   StreamCatalogService catalogService)
+   {
+	  LOG.debug("[START] enrichTopology - topology id: {}", topology.getId());
+	  Stopwatch stopwatch = Stopwatch.createStarted();
 
-        try {
-            if (latencyTopN == null) {
-                latencyTopN = DEFAULT_N_OF_TOP_N_LATENCY;
-            }
+	  try
+	  {
+		 if (latencyTopN == null)
+		 {
+			latencyTopN = DEFAULT_N_OF_TOP_N_LATENCY;
+		 }
 
-            TopologyDashboardResponse detailedResponse;
+		 TopologyDashboardResponse detailedResponse;
 
-            String namespaceName = null;
-            Namespace namespace = environmentService.getNamespace(topology.getNamespaceId());
-            if (namespace != null) {
-                namespaceName = namespace.getName();
-            }
+		 String namespaceName = null;
+		 Namespace namespace = environmentService.getNamespace(topology.getNamespaceId());
+		 if (namespace != null)
+		 {
+			namespaceName = namespace.getName();
+		 }
 
-            try {
-                String runtimeTopologyId = actionsService.getRuntimeTopologyId(topology, asUser);
-                TopologyMetrics.TopologyMetric topologyMetric = metricsService.getTopologyMetric(topology, asUser);
-                List<Pair<String, Double>> latenciesTopN = metricsService.getTopNAndOtherComponentsLatency(topology, asUser, latencyTopN);
+		 try
+		 {
+			String runtimeTopologyId = actionsService.getRuntimeTopologyId(topology, asUser);
+			TopologyMetrics.TopologyMetric topologyMetric = metricsService.getTopologyMetric(topology, asUser);
 
-                detailedResponse = new TopologyDashboardResponse(topology, TopologyRunningStatus.RUNNING, namespaceName);
-                detailedResponse.setRuntime(new TopologyRuntimeResponse(runtimeTopologyId, topologyMetric, latenciesTopN));
-            } catch (TopologyNotAliveException e) {
-                LOG.debug("Topology {} is not alive", topology.getId());
-                detailedResponse = new TopologyDashboardResponse(topology, TopologyRunningStatus.NOT_RUNNING, namespaceName);
-                catalogService.getTopologyState(topology.getId())
-                        .ifPresent(state -> {
-                            if (TopologyStateFactory.getInstance().getTopologyState(state.getName()) == TopologyStates.TOPOLOGY_STATE_DEPLOYED) {
-                                try {
-                                    LOG.info("Force killing streamline topology since its not alive in the cluster");
-                                    actionsService.killTopology(topology, asUser);
-                                } catch (Exception ex) {
-                                    LOG.error("Error trying to kill topology", ex);
-                                }
+			//TODO make topology state configurable
+			detailedResponse = new TopologyDashboardResponse(topology, TopologyRunningStatus.NOT_RUNNING, namespaceName);
 
-                            }
-                        });
-            } catch (StormNotReachableException | IOException e) {
-                LOG.error("Storm is not reachable or fail to operate", e);
-                detailedResponse = new TopologyDashboardResponse(topology, TopologyRunningStatus.UNKNOWN, namespaceName);
-            } catch (Exception e) {
-                LOG.error("Unhandled exception occurs while operate with Storm", e);
-                detailedResponse = new TopologyDashboardResponse(topology, TopologyRunningStatus.UNKNOWN, namespaceName);
-            }
+			if (!namespace.getStreamingEngine().equalsIgnoreCase("beam")) {
+			   List<Pair<String, Double>> latenciesTopN = metricsService.getTopNAndOtherComponentsLatency(topology, asUser, latencyTopN);
+			   detailedResponse.setRuntime(new TopologyRuntimeResponse(runtimeTopologyId, topologyMetric, latenciesTopN));
+			}
 
-            LOG.debug("[END] enrichTopology - topology id: {}, elapsed: {} ms", topology.getId(),
-                    stopwatch.elapsed(TimeUnit.MILLISECONDS));
+		 }
+		 catch (TopologyNotAliveException e)
+		 {
+			LOG.debug("Topology {} is not alive", topology.getId());
+			detailedResponse = new TopologyDashboardResponse(topology, TopologyRunningStatus.NOT_RUNNING, namespaceName);
+			catalogService.getTopologyState(topology.getId())
+					.ifPresent(state -> {
+					   if (TopologyStateFactory.getInstance().getTopologyState(state.getName()) == TopologyStates.TOPOLOGY_STATE_DEPLOYED)
+					   {
+						  try
+						  {
+							 LOG.info("Force killing streamline topology since its not alive in the cluster");
+							 actionsService.killTopology(topology, asUser);
+						  }
+						  catch (Exception ex)
+						  {
+							 LOG.error("Error trying to kill topology", ex);
+						  }
+					   }
+					});
+		 }
+		 catch (StormNotReachableException | IOException e)
+		 {
+			LOG.error("Storm is not reachable or fail to operate", e);
+			detailedResponse = new TopologyDashboardResponse(topology, TopologyRunningStatus.UNKNOWN, namespaceName);
+		 }
+		 catch (Exception e)
+		 {
+			LOG.error("Unhandled exception occurs while operate with Storm", e);
+			detailedResponse = new TopologyDashboardResponse(topology, TopologyRunningStatus.UNKNOWN, namespaceName);
+		 }
 
-            return detailedResponse;
-        } finally {
-            stopwatch.stop();
-        }
-    }
+		 LOG.debug("[END] enrichTopology - topology id: {}, elapsed: {} ms", topology.getId(),
+				 stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
-    static class NamespaceWithMapping {
-        private Namespace namespace;
-        private Collection<NamespaceServiceClusterMap> mappings = new ArrayList<>();
+		 return detailedResponse;
+	  }
+	  finally
+	  {
+		 stopwatch.stop();
+	  }
+   }
 
-        public NamespaceWithMapping(Namespace namespace) {
-            this.namespace = namespace;
-        }
+   static class NamespaceWithMapping
+   {
+	  private Namespace namespace;
+	  private Collection<NamespaceServiceClusterMap> mappings = new ArrayList<>();
 
-        public Namespace getNamespace() {
-            return namespace;
-        }
+	  public NamespaceWithMapping(Namespace namespace)
+	  {
+		 this.namespace = namespace;
+	  }
 
-        public Collection<NamespaceServiceClusterMap> getMappings() {
-            return mappings;
-        }
+	  public Namespace getNamespace()
+	  {
+		 return namespace;
+	  }
 
-        public void setServiceClusterMappings(Collection<NamespaceServiceClusterMap> mappings) {
-            this.mappings = mappings;
-        }
+	  public Collection<NamespaceServiceClusterMap> getMappings()
+	  {
+		 return mappings;
+	  }
 
-        public void addServiceClusterMapping(NamespaceServiceClusterMap mapping) {
-            mappings.add(mapping);
-        }
-    }
+	  public void setServiceClusterMappings(Collection<NamespaceServiceClusterMap> mappings)
+	  {
+		 this.mappings = mappings;
+	  }
 
-    static NamespaceWithMapping enrichNamespace(Namespace namespace,
-                                                EnvironmentService environmentService) {
-        NamespaceWithMapping nm = new NamespaceWithMapping(namespace);
-        nm.setServiceClusterMappings(environmentService.listServiceClusterMapping(namespace.getId()));
-        return nm;
-    }
+	  public void addServiceClusterMapping(NamespaceServiceClusterMap mapping)
+	  {
+		 mappings.add(mapping);
+	  }
+   }
 
-
-
+   static NamespaceWithMapping enrichNamespace(Namespace namespace,
+		   EnvironmentService environmentService)
+   {
+	  NamespaceWithMapping nm = new NamespaceWithMapping(namespace);
+	  nm.setServiceClusterMappings(environmentService.listServiceClusterMapping(namespace.getId()));
+	  return nm;
+   }
 }

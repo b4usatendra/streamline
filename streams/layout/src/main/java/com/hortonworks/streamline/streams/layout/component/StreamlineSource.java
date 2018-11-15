@@ -27,6 +27,7 @@ public class StreamlineSource extends StreamlineComponent implements Source {
     private final Set<Stream> outputStreams = new HashSet<>();
 
     public StreamlineSource() {
+
         this(Collections.EMPTY_SET);
     }
 

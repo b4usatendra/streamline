@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Component represents an indivial component of Service. For example, NIMBUS, BROKER, etc.
+ * Component represents an individual component of Service. For example, NIMBUS, BROKER, etc.
  */
 @StorableEntity
 public class Component extends AbstractStorable {

@@ -383,7 +383,7 @@ class EnvironmentContainer extends Component {
               }, () => {
                 let errorMsg = mapping.responseMessage;
                 errorMsg = mapping.responseMessage.indexOf('Trying to modify mapping of streaming engine') !== -1
-                  ? "Cannot change the stream engine while a topology is deployed in the same environment"
+                  ? "Cannot change the while a topology is deployed in the same environment"
                   : mapping.responseMessage;
                 FSReactToastr.error(
                   <CommonNotification flag="error" content={errorMsg}/>, '', toastOpt);

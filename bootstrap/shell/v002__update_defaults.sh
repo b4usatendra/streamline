@@ -169,6 +169,7 @@ function update_bundles {
     put_service_bundle /servicebundles/KAFKA ${service_dir}/kafka-bundle.json
     put_service_bundle /servicebundles/STORM ${service_dir}/storm-bundle.json
     put_service_bundle /servicebundles/ZOOKEEPER ${service_dir}/zookeeper-bundle.json
+    put_service_bundle /servicebundles/BEAM ${service_dir}/beam-bundle.json
     post /servicebundles ${service_dir}/druid-bundle.json
 }
 

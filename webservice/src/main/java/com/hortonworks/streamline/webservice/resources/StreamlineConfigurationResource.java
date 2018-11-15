@@ -54,5 +54,4 @@ public class StreamlineConfigurationResource {
         // StreamlineConfiguration object here is serialized with StreamlineConfigurationSerializer
         return WSUtils.respondEntity(this.streamlineConfiguration, OK);
     }
-
 }

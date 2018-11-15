@@ -6,13 +6,13 @@ modules:
   - name: model-registry
     className: com.hortonworks.streamline.registries.model.service.MLModelRegistryModule
   - name: streams
-    className: com.hortonworks.streamline.streams.service.StreamsModule
+    className: com.hortonworks.streamline.streams.service.streamsmodule
     config:
       stormHomeDir: /usr/local/Cellar/storm/0.10.0/
       # directory to store the results of topology test run
       topologyTestRunResultDir: /tmp
       # schema registry configuration
-      schemaRegistryUrl: "http://localhost:9090/api/v1"
+      schemaRegistryUrl: "http://sandbox-hdf.hortonworks.com:7788/api/v1"
       #Custom processor upload configuration
       #customProcessorWatchPath: "/tmp"
       #customProcessorUploadFailPath: "/tmp/failed"
@@ -22,7 +22,7 @@ modules:
       # in practice it should not under "/tmp" and the account which runs 'streamline' should have read/write permission
       # mavenLocalRepositoryDirectory: "/tmp/local-repo"
 
-catalogRootUrl: "http://localhost:8080/api/v1/catalog"
+catalogRootUrl: "http://localhost:6060/api/v1/catalog"
 
 enableCors: true
 corsUrlPatterns:
@@ -32,10 +32,10 @@ server:
   rootPath: '/api/*'
   applicationConnectors:
     - type: http
-      port: 8080
+      port: 6060
   adminConnectors:
     - type: http
-      port: 8081
+      port: 6061
 
 # ------------------------------------------------
 # File storage configuration
@@ -82,8 +82,8 @@ storageProviderConfiguration:
   db.properties:
     dataSourceClassName: "com.mysql.jdbc.jdbc2.optional.MysqlDataSource"
     dataSource.url: "jdbc:mysql://localhost/streamline_db"
-    dataSource.user: "streamline_user"
-    dataSource.password: "streamline_password"
+    dataSource.user: "root"
+    dataSource.password: ""
 
 # --
 # PostgreSQL based storage provider configuration
@@ -132,20 +132,26 @@ dashboardConfiguration:
 # Logging settings.
 logging:
   # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
-  level: INFO
+  level: DEBUG
   # Logger-specific levels.
   loggers:
     # Sets the level for 'com.example.app' to DEBUG.
     com.hortonworks.streamline: INFO
   appenders:
     - type: file
-      threshold: DEBUG
+      threshold: INFO
       logFormat: "%-6level [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg %n"
       currentLogFilename: ./logs/streamline.log
       archivedLogFilenamePattern: ./logs/streamline-%d{yyyy-MM-dd}-%i.log.gz
       archivedFileCount: 7
       timeZone: UTC
       maxFileSize: 50MB
+    - type: console
+      threshold: ALL
+      logFormat: "%-6level [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg %n"
+      timeZone: UTC
+
+
 
 #Set below 3 properties if server needs a proxy to connect. Useful to download mysql jar/maven artifacts for storm topology submission
 #httpProxyUrl: "http://proxyHost:port"
@@ -194,9 +200,3 @@ logging:
 #     token.validity: "36000"
 #     cookie.path: "/"
 #     allowed.resources: "401.html,back-default.png,favicon.ico"
-# - className: "com.hortonworks.streamline.webservice.filters.StreamlineResponseHeaderFilter"
-#   params:
-#     cache-control: "private, max-age=0"
-#     expires: "-1"
-#     age: "0"
-#

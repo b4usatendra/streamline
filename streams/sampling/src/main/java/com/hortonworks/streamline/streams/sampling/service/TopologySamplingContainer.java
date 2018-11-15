@@ -41,8 +41,15 @@ public class TopologySamplingContainer extends NamespaceAwareContainer<TopologyS
 
     private Map<String, Object> buildConfig(Namespace namespace, String streamingEngine) {
         Map<String, Object> conf = new HashMap<>();
-        conf.put(TopologyLayoutConstants.STORM_API_ROOT_URL_KEY, buildStormRestApiRootUrl(namespace, streamingEngine));
-        conf.put(TopologyLayoutConstants.SUBJECT_OBJECT, subject);
+        if(streamingEngine.equalsIgnoreCase("storm")){
+            conf.put(TopologyLayoutConstants.STORM_API_ROOT_URL_KEY, buildStormRestApiRootUrl(namespace, streamingEngine));
+            conf.put(TopologyLayoutConstants.SUBJECT_OBJECT, subject);
+
+        }else if(streamingEngine.equalsIgnoreCase("beam")){
+            return conf;
+        }else{
+            throw new RuntimeException("Unsupported streamingEngine: " + streamingEngine);
+        }
         return conf;
     }
 

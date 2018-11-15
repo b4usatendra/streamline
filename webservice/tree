@@ -1,0 +1,465 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Building webservice 0.6.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/common/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/common/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/common/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/common/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/tag-registry/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/tag-registry/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/tag-registry/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/tag-registry/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/registries/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/registries/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/registries/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/registries/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/dashboard-registry/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/dashboard-registry/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/dashboard-registry/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/dashboard-registry/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-service/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-service/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-service/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-service/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streams/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streams/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streams/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streams/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-catalog/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-catalog/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-catalog/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-catalog/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-layout/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-layout/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-layout/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-layout/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-sdk/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-sdk/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-sdk/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-sdk/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/model-registry/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/model-registry/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/model-registry/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/model-registry/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-cluster/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-cluster/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-cluster/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-cluster/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-authorizer/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-authorizer/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-authorizer/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-authorizer/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-common/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-common/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-common/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-common/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-actions/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-actions/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-actions/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-actions/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-actions-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-actions-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-actions-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-actions-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-runners-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-runners-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-runners-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-runners-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-runners/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-runners/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-runners/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-runners/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-layout-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-layout-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-layout-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-layout-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-common-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-common-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-common-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-common-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-metrics-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-metrics-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-metrics-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-metrics-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-metrics/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-metrics/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-metrics/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-metrics/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-logsearch-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-logsearch-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-logsearch-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-logsearch-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-logsearch/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-logsearch/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-logsearch/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-logsearch/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-notification/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-notification/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-notification/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-notification/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-sampling/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-sampling/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-sampling/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-sampling/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-sampling-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-sampling-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-sampling-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-sampling-storm/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-examples-processors/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-examples-processors/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-examples-processors/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-examples-processors/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-runtime/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-runtime/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-runtime/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-runtime/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-sql/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-sql/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-sql/0.6.0-SNAPSHOT/maven-metadata.xml
+Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-sql/0.6.0-SNAPSHOT/maven-metadata.xml
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ webservice ---
+[INFO] Deleting /Users/satendra.sahu/code/github/streamline/webservice/target
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ webservice ---
+[INFO] com.hortonworks.streamline:webservice:jar:0.6.0-SNAPSHOT
+[INFO] +- com.hortonworks.streamline:common:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  +- joda-time:joda-time:jar:2.9.4:compile
+[INFO] |  +- com.google.guava:guava:jar:18.0:compile
+[INFO] |  +- org.slf4j:slf4j-api:jar:1.7.12:compile
+[INFO] |  +- org.apache.commons:commons-lang3:jar:3.4:compile
+[INFO] |  +- com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:jar:2.7.3:compile
+[INFO] |  |  \- org.yaml:snakeyaml:jar:1.15:compile
+[INFO] |  +- com.fasterxml.jackson.dataformat:jackson-dataformat-xml:jar:2.7.3:compile
+[INFO] |  |  +- com.fasterxml.jackson.module:jackson-module-jaxb-annotations:jar:2.7.3:compile
+[INFO] |  |  \- org.codehaus.woodstox:stax2-api:jar:3.1.4:compile
+[INFO] |  +- com.fasterxml.jackson.dataformat:jackson-dataformat-properties:jar:2.7.3:compile
+[INFO] |  +- org.apache.hadoop:hadoop-client:jar:2.7.1:compile
+[INFO] |  |  +- org.apache.hadoop:hadoop-common:jar:2.7.1:compile
+[INFO] |  |  |  +- commons-cli:commons-cli:jar:1.3.1:compile
+[INFO] |  |  |  +- org.apache.commons:commons-math3:jar:3.1.1:compile
+[INFO] |  |  |  +- xmlenc:xmlenc:jar:0.52:compile
+[INFO] |  |  |  +- commons-httpclient:commons-httpclient:jar:3.1:compile
+[INFO] |  |  |  +- commons-codec:commons-codec:jar:1.4:compile
+[INFO] |  |  |  +- commons-net:commons-net:jar:3.1:compile
+[INFO] |  |  |  +- commons-collections:commons-collections:jar:3.2.1:compile
+[INFO] |  |  |  +- commons-logging:commons-logging:jar:1.1.3:compile
+[INFO] |  |  |  +- commons-configuration:commons-configuration:jar:1.6:compile
+[INFO] |  |  |  |  +- commons-digester:commons-digester:jar:1.8:compile
+[INFO] |  |  |  |  |  \- commons-beanutils:commons-beanutils:jar:1.7.0:compile
+[INFO] |  |  |  |  \- commons-beanutils:commons-beanutils-core:jar:1.8.0:compile
+[INFO] |  |  |  +- org.codehaus.jackson:jackson-core-asl:jar:1.9.13:compile
+[INFO] |  |  |  +- org.codehaus.jackson:jackson-mapper-asl:jar:1.9.13:compile
+[INFO] |  |  |  +- org.apache.avro:avro:jar:1.7.4:compile
+[INFO] |  |  |  |  +- com.thoughtworks.paranamer:paranamer:jar:2.3:compile
+[INFO] |  |  |  |  \- org.xerial.snappy:snappy-java:jar:1.0.4.1:compile
+[INFO] |  |  |  +- com.google.protobuf:protobuf-java:jar:2.5.0:compile
+[INFO] |  |  |  +- com.google.code.gson:gson:jar:2.2.4:compile
+[INFO] |  |  |  +- org.apache.hadoop:hadoop-auth:jar:2.7.1:compile
+[INFO] |  |  |  +- org.apache.curator:curator-recipes:jar:2.7.1:compile
+[INFO] |  |  |  +- org.apache.htrace:htrace-core:jar:3.1.0-incubating:compile
+[INFO] |  |  |  +- org.apache.zookeeper:zookeeper:jar:3.4.6:compile
+[INFO] |  |  |  |  \- io.netty:netty:jar:3.7.0.Final:compile
+[INFO] |  |  |  \- org.apache.commons:commons-compress:jar:1.4.1:compile
+[INFO] |  |  |     \- org.tukaani:xz:jar:1.0:compile
+[INFO] |  |  +- org.apache.hadoop:hadoop-hdfs:jar:2.7.1:compile
+[INFO] |  |  |  +- org.mortbay.jetty:jetty-util:jar:6.1.26:compile
+[INFO] |  |  |  +- io.netty:netty-all:jar:4.0.23.Final:compile
+[INFO] |  |  |  +- xerces:xercesImpl:jar:2.9.1:compile
+[INFO] |  |  |  \- org.fusesource.leveldbjni:leveldbjni-all:jar:1.8:compile
+[INFO] |  |  +- org.apache.hadoop:hadoop-mapreduce-client-app:jar:2.7.1:compile
+[INFO] |  |  |  +- org.apache.hadoop:hadoop-mapreduce-client-common:jar:2.7.1:compile
+[INFO] |  |  |  |  +- org.apache.hadoop:hadoop-yarn-client:jar:2.7.1:compile
+[INFO] |  |  |  |  \- org.apache.hadoop:hadoop-yarn-server-common:jar:2.7.1:compile
+[INFO] |  |  |  \- org.apache.hadoop:hadoop-mapreduce-client-shuffle:jar:2.7.1:compile
+[INFO] |  |  +- org.apache.hadoop:hadoop-yarn-api:jar:2.7.1:compile
+[INFO] |  |  +- org.apache.hadoop:hadoop-mapreduce-client-core:jar:2.7.1:compile
+[INFO] |  |  |  \- org.apache.hadoop:hadoop-yarn-common:jar:2.7.1:compile
+[INFO] |  |  |     +- javax.xml.bind:jaxb-api:jar:2.2.2:compile
+[INFO] |  |  |     |  \- javax.activation:activation:jar:1.1:compile
+[INFO] |  |  |     +- org.codehaus.jackson:jackson-jaxrs:jar:1.9.13:compile
+[INFO] |  |  |     \- org.codehaus.jackson:jackson-xc:jar:1.9.13:compile
+[INFO] |  |  +- org.apache.hadoop:hadoop-mapreduce-client-jobclient:jar:2.7.1:compile
+[INFO] |  |  \- org.apache.hadoop:hadoop-annotations:jar:2.7.1:compile
+[INFO] |  +- com.hortonworks.registries:registry-common:jar:0.5.3:compile
+[INFO] |  |  +- com.hortonworks.registries:registry-common-client:jar:0.5.3:compile
+[INFO] |  |  +- com.github.fge:json-schema-validator:jar:2.2.6:compile
+[INFO] |  |  |  +- com.googlecode.libphonenumber:libphonenumber:jar:6.2:compile
+[INFO] |  |  |  +- com.github.fge:json-schema-core:jar:1.2.5:compile
+[INFO] |  |  |  |  +- com.github.fge:uri-template:jar:0.9:compile
+[INFO] |  |  |  |  |  \- com.github.fge:msg-simple:jar:1.1:compile
+[INFO] |  |  |  |  |     \- com.github.fge:btf:jar:1.2:compile
+[INFO] |  |  |  |  \- com.github.fge:jackson-coreutils:jar:1.8:compile
+[INFO] |  |  |  \- net.sf.jopt-simple:jopt-simple:jar:4.6:compile
+[INFO] |  |  \- org.hibernate:hibernate-validator:jar:5.4.2.Final:compile
+[INFO] |  |     +- org.jboss.logging:jboss-logging:jar:3.3.0.Final:compile
+[INFO] |  |     \- com.fasterxml:classmate:jar:1.3.1:compile
+[INFO] |  \- org.springframework:spring-context:jar:4.3.6.RELEASE:compile
+[INFO] |     +- org.springframework:spring-aop:jar:4.3.6.RELEASE:compile
+[INFO] |     +- org.springframework:spring-beans:jar:4.3.6.RELEASE:compile
+[INFO] |     +- org.springframework:spring-core:jar:4.3.6.RELEASE:compile
+[INFO] |     \- org.springframework:spring-expression:jar:4.3.6.RELEASE:compile
+[INFO] +- com.hortonworks.streamline:tag-registry:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  \- com.hortonworks.registries:cache:jar:0.5.3:compile
+[INFO] |     \- biz.paluch.redis:lettuce:jar:3.4.2.Final:compile
+[INFO] |        +- io.reactivex:rxjava:jar:1.0.14:compile
+[INFO] |        +- io.netty:netty-common:jar:4.0.34.Final:compile
+[INFO] |        +- io.netty:netty-transport:jar:4.0.34.Final:compile
+[INFO] |        |  \- io.netty:netty-buffer:jar:4.0.34.Final:compile
+[INFO] |        +- io.netty:netty-handler:jar:4.0.34.Final:compile
+[INFO] |        |  \- io.netty:netty-codec:jar:4.0.34.Final:compile
+[INFO] |        +- org.apache.commons:commons-pool2:jar:2.2:compile
+[INFO] |        \- org.latencyutils:LatencyUtils:jar:2.0.2:compile
+[INFO] |           \- org.hdrhistogram:HdrHistogram:jar:2.1.0:compile
+[INFO] +- com.hortonworks.registries:storage-core:jar:0.5.3:compile
+[INFO] |  +- org.slf4j:log4j-over-slf4j:jar:1.7.12:compile
+[INFO] |  +- org.postgresql:postgresql:jar:9.4.1212:compile
+[INFO] |  +- com.zaxxer:HikariCP-java6:jar:2.2.5:compile
+[INFO] |  |  \- org.javassist:javassist:jar:3.18.1-GA:compile
+[INFO] |  +- commons-lang:commons-lang:jar:2.6:compile
+[INFO] |  \- org.glassfish.jersey.core:jersey-server:jar:2.22.1:compile
+[INFO] |     +- org.glassfish.jersey.media:jersey-media-jaxb:jar:2.22.1:compile
+[INFO] |     +- javax.annotation:javax.annotation-api:jar:1.2:compile
+[INFO] |     \- javax.validation:validation-api:jar:1.1.0.Final:compile
+[INFO] +- com.hortonworks.streamline:dashboard-registry:jar:0.6.0-SNAPSHOT:compile
+[INFO] +- com.hortonworks.streamline:streamline-service:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  +- com.hortonworks.streamline:streamline-catalog:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  |  +- com.hortonworks.streamline:model-registry:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  |  |  +- org.jpmml:pmml-schema:jar:1.0.22:compile
+[INFO] |  |  |  \- org.jpmml:pmml-evaluator:jar:1.0.22:compile
+[INFO] |  |  |     +- org.jpmml:pmml-manager:jar:1.0.22:compile
+[INFO] |  |  |     \- org.jpmml:pmml-model:jar:1.0.22:compile
+[INFO] |  |  |        \- com.sun.xml.bind:jaxb-impl:jar:2.2.6:compile
+[INFO] |  |  +- commons-io:commons-io:jar:2.5:compile
+[INFO] |  |  +- org.codehaus.woodstox:woodstox-core-asl:jar:4.4.1:compile
+[INFO] |  |  |  \- javax.xml.stream:stax-api:jar:1.0-2:compile
+[INFO] |  |  +- org.apache.hive:hive-metastore:jar:2.1.0:compile
+[INFO] |  |  |  +- org.apache.hive:hive-serde:jar:2.1.0:compile
+[INFO] |  |  |  |  +- org.apache.hive:hive-common:jar:2.1.0:compile
+[INFO] |  |  |  |  |  +- org.apache.hive:hive-storage-api:jar:2.1.0:compile
+[INFO] |  |  |  |  |  +- org.apache.hive:hive-orc:jar:2.1.0:compile
+[INFO] |  |  |  |  |  |  \- org.iq80.snappy:snappy:jar:0.2:compile
+[INFO] |  |  |  |  |  +- org.eclipse.jetty.orbit:javax.servlet:jar:3.0.0.v201112011016:compile
+[INFO] |  |  |  |  |  +- org.apache.logging.log4j:log4j-web:jar:2.4.1:compile
+[INFO] |  |  |  |  |  +- org.json:json:jar:20090211:compile
+[INFO] |  |  |  |  |  \- com.github.joshelser:dropwizard-metrics-hadoop-metrics2-reporter:jar:0.1.0:compile
+[INFO] |  |  |  |  +- org.apache.hive:hive-service-rpc:jar:2.1.0:compile
+[INFO] |  |  |  |  |  +- tomcat:jasper-compiler:jar:5.5.23:compile
+[INFO] |  |  |  |  |  |  \- ant:ant:jar:1.6.5:compile
+[INFO] |  |  |  |  |  \- tomcat:jasper-runtime:jar:5.5.23:compile
+[INFO] |  |  |  |  |     \- commons-el:commons-el:jar:1.0:compile
+[INFO] |  |  |  |  +- net.sf.opencsv:opencsv:jar:2.3:compile
+[INFO] |  |  |  |  \- org.apache.parquet:parquet-hadoop-bundle:jar:1.8.1:compile
+[INFO] |  |  |  +- org.apache.hive:hive-shims:jar:2.1.0:compile
+[INFO] |  |  |  |  +- org.apache.hive.shims:hive-shims-common:jar:2.1.0:compile
+[INFO] |  |  |  |  +- org.apache.hive.shims:hive-shims-0.23:jar:2.1.0:runtime
+[INFO] |  |  |  |  |  \- org.apache.hadoop:hadoop-yarn-server-resourcemanager:jar:2.6.0:runtime
+[INFO] |  |  |  |  |     +- com.google.inject.extensions:guice-servlet:jar:3.0:runtime
+[INFO] |  |  |  |  |     +- org.codehaus.jettison:jettison:jar:1.1:runtime
+[INFO] |  |  |  |  |     +- org.apache.hadoop:hadoop-yarn-server-applicationhistoryservice:jar:2.6.0:runtime
+[INFO] |  |  |  |  |     \- org.apache.hadoop:hadoop-yarn-server-web-proxy:jar:2.6.0:runtime
+[INFO] |  |  |  |  |        \- org.mortbay.jetty:jetty:jar:6.1.26:runtime
+[INFO] |  |  |  |  \- org.apache.hive.shims:hive-shims-scheduler:jar:2.1.0:runtime
+[INFO] |  |  |  +- javolution:javolution:jar:5.5.1:compile
+[INFO] |  |  |  +- com.jolbox:bonecp:jar:0.8.0.RELEASE:compile
+[INFO] |  |  |  +- org.apache.derby:derby:jar:10.10.2.0:compile
+[INFO] |  |  |  +- org.datanucleus:datanucleus-api-jdo:jar:4.2.1:compile
+[INFO] |  |  |  +- org.datanucleus:datanucleus-core:jar:4.1.6:compile
+[INFO] |  |  |  +- org.datanucleus:datanucleus-rdbms:jar:4.1.7:compile
+[INFO] |  |  |  +- commons-pool:commons-pool:jar:1.5.4:compile
+[INFO] |  |  |  +- commons-dbcp:commons-dbcp:jar:1.4:compile
+[INFO] |  |  |  +- javax.jdo:jdo-api:jar:3.0.1:compile
+[INFO] |  |  |  |  \- javax.transaction:jta:jar:1.1:compile
+[INFO] |  |  |  +- org.datanucleus:javax.jdo:jar:3.2.0-m3:compile
+[INFO] |  |  |  |  \- javax.transaction:transaction-api:jar:1.1:compile
+[INFO] |  |  |  +- org.antlr:antlr-runtime:jar:3.4:compile
+[INFO] |  |  |  |  +- org.antlr:stringtemplate:jar:3.2.1:compile
+[INFO] |  |  |  |  \- antlr:antlr:jar:2.7.7:compile
+[INFO] |  |  |  +- org.apache.thrift:libfb303:jar:0.9.3:compile
+[INFO] |  |  |  +- org.apache.thrift:libthrift:jar:0.9.3:compile
+[INFO] |  |  |  +- co.cask.tephra:tephra-api:jar:0.6.0:compile
+[INFO] |  |  |  +- co.cask.tephra:tephra-core:jar:0.6.0:compile
+[INFO] |  |  |  |  +- com.google.inject:guice:jar:3.0:compile
+[INFO] |  |  |  |  |  +- javax.inject:javax.inject:jar:1:compile
+[INFO] |  |  |  |  |  \- aopalliance:aopalliance:jar:1.0:compile
+[INFO] |  |  |  |  +- com.google.inject.extensions:guice-assistedinject:jar:3.0:compile
+[INFO] |  |  |  |  +- it.unimi.dsi:fastutil:jar:6.5.6:compile
+[INFO] |  |  |  |  +- org.apache.twill:twill-common:jar:0.6.0-incubating:compile
+[INFO] |  |  |  |  +- org.apache.twill:twill-core:jar:0.6.0-incubating:compile
+[INFO] |  |  |  |  |  \- org.apache.twill:twill-api:jar:0.6.0-incubating:compile
+[INFO] |  |  |  |  +- org.apache.twill:twill-discovery-api:jar:0.6.0-incubating:compile
+[INFO] |  |  |  |  +- org.apache.twill:twill-discovery-core:jar:0.6.0-incubating:compile
+[INFO] |  |  |  |  \- org.apache.twill:twill-zookeeper:jar:0.6.0-incubating:compile
+[INFO] |  |  |  \- co.cask.tephra:tephra-hbase-compat-1.0:jar:0.6.0:compile
+[INFO] |  |  +- org.apache.hive:hive-exec:jar:2.1.0:compile
+[INFO] |  |  |  +- org.apache.hive:hive-ant:jar:2.1.0:compile
+[INFO] |  |  |  |  \- org.apache.velocity:velocity:jar:1.5:compile
+[INFO] |  |  |  |     \- oro:oro:jar:2.0.8:compile
+[INFO] |  |  |  +- org.apache.hive:hive-llap-tez:jar:2.1.0:compile
+[INFO] |  |  |  |  \- org.apache.hive:hive-llap-client:jar:2.1.0:compile
+[INFO] |  |  |  |     \- org.apache.hive:hive-llap-common:jar:2.1.0:compile
+[INFO] |  |  |  +- org.apache.logging.log4j:log4j-1.2-api:jar:2.4.1:compile
+[INFO] |  |  |  |  +- org.apache.logging.log4j:log4j-api:jar:2.4.1:compile
+[INFO] |  |  |  |  \- org.apache.logging.log4j:log4j-core:jar:2.4.1:compile
+[INFO] |  |  |  +- org.antlr:ST4:jar:4.0.4:compile
+[INFO] |  |  |  +- org.apache.ant:ant:jar:1.9.1:compile
+[INFO] |  |  |  |  \- org.apache.ant:ant-launcher:jar:1.9.1:compile
+[INFO] |  |  |  +- org.apache.ivy:ivy:jar:2.4.0:compile
+[INFO] |  |  |  +- org.apache.curator:apache-curator:pom:2.6.0:compile
+[INFO] |  |  |  +- stax:stax-api:jar:1.0.1:compile
+[INFO] |  |  |  \- jline:jline:jar:2.12:compile
+[INFO] |  |  +- org.apache.curator:curator-framework:jar:2.11.0:compile
+[INFO] |  |  \- org.apache.curator:curator-client:jar:2.11.0:compile
+[INFO] |  +- com.hortonworks.streamline:streamline-cluster:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  +- com.hortonworks.streamline:streamline-actions:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  +- com.hortonworks.streamline:streamline-actions-storm:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  +- com.hortonworks.streamline:streamline-layout-storm:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  |  \- com.hortonworks.streamline:streamline-common-storm:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  +- com.hortonworks.streamline:streamline-metrics-storm:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  |  +- com.hortonworks.streamline:streamline-metrics:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  |  +- org.glassfish.jersey.media:jersey-media-json-jackson:jar:2.22.1:compile
+[INFO] |  |  |  \- org.glassfish.jersey.ext:jersey-entity-filtering:jar:2.22.1:compile
+[INFO] |  |  \- com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:jar:2.7.3:compile
+[INFO] |  +- com.hortonworks.streamline:streamline-logsearch-storm:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  |  \- org.apache.solr:solr-solrj:jar:6.4.0:compile
+[INFO] |  |     +- org.apache.httpcomponents:httpclient:jar:4.4.1:compile
+[INFO] |  |     +- org.apache.httpcomponents:httpcore:jar:4.4.1:compile
+[INFO] |  |     +- org.apache.httpcomponents:httpmime:jar:4.4.1:compile
+[INFO] |  |     +- org.noggit:noggit:jar:0.6:compile
+[INFO] |  |     \- org.slf4j:jcl-over-slf4j:jar:1.7.12:compile
+[INFO] |  +- com.hortonworks.streamline:streamline-notification:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.hbase:hbase-client:jar:1.1.2.2.5.0.0-1245:compile
+[INFO] |  |  |  +- org.apache.hbase:hbase-annotations:jar:1.1.2.2.5.0.0-1245:compile
+[INFO] |  |  |  |  \- jdk.tools:jdk.tools:jar:1.7:system
+[INFO] |  |  |  +- org.apache.hbase:hbase-common:jar:1.1.2.2.5.0.0-1245:compile
+[INFO] |  |  |  +- org.apache.hbase:hbase-protocol:jar:1.1.2.2.5.0.0-1245:compile
+[INFO] |  |  |  +- org.jruby.jcodings:jcodings:jar:1.0.8:compile
+[INFO] |  |  |  +- org.jruby.joni:joni:jar:2.1.2:compile
+[INFO] |  |  |  \- com.github.stephenc.findbugs:findbugs-annotations:jar:1.3.9-1:compile
+[INFO] |  |  \- com.esotericsoftware.kryo:kryo:jar:2.21:compile
+[INFO] |  |     +- com.esotericsoftware.reflectasm:reflectasm:jar:shaded:1.07:compile
+[INFO] |  |     |  \- org.ow2.asm:asm:jar:4.0:compile
+[INFO] |  |     \- com.esotericsoftware.minlog:minlog:jar:1.2:compile
+[INFO] |  +- com.hortonworks.registries:schema-registry-client:jar:0.5.3:compile
+[INFO] |  |  \- com.hortonworks.registries:schema-registry-common:jar:0.5.3:compile
+[INFO] |  +- org.jooq:jool:jar:0.9.12:compile
+[INFO] |  +- com.hortonworks.streamline:streamline-sampling:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  +- com.hortonworks.streamline:streamline-sampling-storm:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  \- com.hortonworks.streamline:streamline-logsearch:jar:0.6.0-SNAPSHOT:compile
+[INFO] +- com.hortonworks.registries:common-auth:jar:0.5.3:compile
+[INFO] |  +- org.apache.directory.server:apacheds-kerberos-codec:jar:2.0.0-M15:compile
+[INFO] |  |  +- org.apache.directory.server:apacheds-i18n:jar:2.0.0-M15:compile
+[INFO] |  |  +- org.apache.directory.api:api-asn1-api:jar:1.0.0-M20:compile
+[INFO] |  |  \- org.apache.directory.api:api-util:jar:1.0.0-M20:compile
+[INFO] |  \- com.nimbusds:nimbus-jose-jwt:jar:4.41.1:compile
+[INFO] |     +- com.github.stephenc.jcip:jcip-annotations:jar:1.0-1:compile
+[INFO] |     \- net.minidev:json-smart:jar:2.3:compile (version selected from constraint [1.3.1,2.3])
+[INFO] |        \- net.minidev:accessors-smart:jar:1.2:compile
+[INFO] +- io.dropwizard:dropwizard-core:jar:1.0.5:compile
+[INFO] |  +- io.dropwizard:dropwizard-util:jar:1.0.5:compile
+[INFO] |  |  \- com.google.code.findbugs:jsr305:jar:3.0.1:compile
+[INFO] |  +- io.dropwizard:dropwizard-jackson:jar:1.0.5:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-guava:jar:2.7.8:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jsr310:jar:2.7.8:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-jdk8:jar:2.7.8:compile
+[INFO] |  |  +- com.fasterxml.jackson.module:jackson-module-afterburner:jar:2.7.8:compile
+[INFO] |  |  +- com.fasterxml.jackson.datatype:jackson-datatype-joda:jar:2.7.8:compile
+[INFO] |  |  \- ch.qos.logback:logback-classic:jar:1.1.7:runtime
+[INFO] |  +- io.dropwizard:dropwizard-validation:jar:1.0.5:compile
+[INFO] |  |  \- org.glassfish:javax.el:jar:3.0.0:compile
+[INFO] |  +- io.dropwizard:dropwizard-configuration:jar:1.0.5:compile
+[INFO] |  +- io.dropwizard:dropwizard-logging:jar:1.0.5:compile
+[INFO] |  |  +- io.dropwizard.metrics:metrics-logback:jar:3.1.2:compile
+[INFO] |  |  +- org.slf4j:jul-to-slf4j:jar:1.7.21:compile
+[INFO] |  |  +- ch.qos.logback:logback-core:jar:1.1.7:compile
+[INFO] |  |  \- org.eclipse.jetty:jetty-util:jar:9.3.9.v20160517:compile
+[INFO] |  +- io.dropwizard:dropwizard-metrics:jar:1.0.5:compile
+[INFO] |  +- io.dropwizard:dropwizard-jersey:jar:1.0.5:compile
+[INFO] |  |  +- org.glassfish.jersey.ext:jersey-metainf-services:jar:2.23.2:compile
+[INFO] |  |  +- org.glassfish.jersey.ext:jersey-bean-validation:jar:2.23.2:compile
+[INFO] |  |  +- io.dropwizard.metrics:metrics-jersey2:jar:3.1.2:compile
+[INFO] |  |  +- com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:jar:2.7.8:compile
+[INFO] |  |  +- org.glassfish.jersey.containers:jersey-container-servlet:jar:2.23.2:compile
+[INFO] |  |  |  \- org.glassfish.jersey.containers:jersey-container-servlet-core:jar:2.23.2:compile
+[INFO] |  |  +- org.eclipse.jetty:jetty-server:jar:9.3.9.v20160517:compile
+[INFO] |  |  |  +- javax.servlet:javax.servlet-api:jar:3.1.0:compile
+[INFO] |  |  |  \- org.eclipse.jetty:jetty-io:jar:9.3.9.v20160517:compile
+[INFO] |  |  +- org.eclipse.jetty:jetty-webapp:jar:9.3.9.v20160517:compile
+[INFO] |  |  |  \- org.eclipse.jetty:jetty-xml:jar:9.3.9.v20160517:compile
+[INFO] |  |  \- org.eclipse.jetty:jetty-continuation:jar:9.3.9.v20160517:compile
+[INFO] |  +- io.dropwizard:dropwizard-servlets:jar:1.0.5:compile
+[INFO] |  |  \- io.dropwizard.metrics:metrics-annotation:jar:3.1.2:compile
+[INFO] |  +- io.dropwizard:dropwizard-jetty:jar:1.0.5:compile
+[INFO] |  |  +- io.dropwizard.metrics:metrics-jetty9:jar:3.1.2:compile
+[INFO] |  |  +- org.eclipse.jetty:jetty-servlet:jar:9.3.9.v20160517:compile
+[INFO] |  |  |  \- org.eclipse.jetty:jetty-security:jar:9.3.9.v20160517:compile
+[INFO] |  |  +- org.eclipse.jetty:jetty-servlets:jar:9.3.9.v20160517:compile
+[INFO] |  |  \- org.eclipse.jetty:jetty-http:jar:9.3.9.v20160517:compile
+[INFO] |  +- io.dropwizard:dropwizard-lifecycle:jar:1.0.5:compile
+[INFO] |  +- io.dropwizard.metrics:metrics-core:jar:3.1.2:compile
+[INFO] |  +- io.dropwizard.metrics:metrics-jvm:jar:3.1.2:compile
+[INFO] |  +- io.dropwizard.metrics:metrics-servlets:jar:3.1.2:compile
+[INFO] |  |  \- io.dropwizard.metrics:metrics-json:jar:3.1.2:compile
+[INFO] |  +- io.dropwizard.metrics:metrics-healthchecks:jar:3.1.2:compile
+[INFO] |  +- io.dropwizard:dropwizard-request-logging:jar:1.0.5:compile
+[INFO] |  |  \- ch.qos.logback:logback-access:jar:1.1.7:compile
+[INFO] |  +- net.sourceforge.argparse4j:argparse4j:jar:0.7.0:compile
+[INFO] |  \- org.eclipse.jetty.toolchain.setuid:jetty-setuid-java:jar:1.0.3:compile
+[INFO] +- io.dropwizard:dropwizard-assets:jar:1.0.5:compile
+[INFO] +- org.glassfish.jersey.media:jersey-media-multipart:jar:2.22.1:compile
+[INFO] |  +- org.glassfish.jersey.core:jersey-common:jar:2.22.1:compile
+[INFO] |  |  +- org.glassfish.jersey.bundles.repackaged:jersey-guava:jar:2.22.1:compile
+[INFO] |  |  \- org.glassfish.hk2:osgi-resource-locator:jar:1.0.1:compile
+[INFO] |  \- org.jvnet.mimepull:mimepull:jar:1.9.6:compile
+[INFO] +- org.jmockit:jmockit:jar:1.19:test
+[INFO] +- org.glassfish.jersey.core:jersey-client:jar:2.22.1:compile
+[INFO] |  +- javax.ws.rs:javax.ws.rs-api:jar:2.0.1:compile
+[INFO] |  +- org.glassfish.hk2:hk2-api:jar:2.4.0-b31:compile
+[INFO] |  |  +- org.glassfish.hk2:hk2-utils:jar:2.4.0-b31:compile
+[INFO] |  |  \- org.glassfish.hk2.external:aopalliance-repackaged:jar:2.4.0-b31:compile
+[INFO] |  +- org.glassfish.hk2.external:javax.inject:jar:2.4.0-b31:compile
+[INFO] |  \- org.glassfish.hk2:hk2-locator:jar:2.4.0-b31:compile
+[INFO] +- com.fasterxml.jackson.core:jackson-core:jar:2.7.3:compile
+[INFO] +- com.fasterxml.jackson.core:jackson-databind:jar:2.7.3:compile
+[INFO] +- com.fasterxml.jackson.core:jackson-annotations:jar:2.7.3:compile
+[INFO] +- com.fasterxml.jackson.dataformat:jackson-dataformat-protobuf:jar:2.7.3:compile
+[INFO] |  \- com.squareup:protoparser:jar:4.0.0:compile
+[INFO] +- com.hortonworks.streamline:streamline-sdk:jar:0.6.0-SNAPSHOT:compile
+[INFO] +- com.hortonworks.streamline:streamline-examples-processors:jar:0.6.0-SNAPSHOT:test
+[INFO] +- com.hortonworks.streamline:streamline-authorizer:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  \- com.hortonworks.streamline:streamline-common:jar:0.6.0-SNAPSHOT:compile
+[INFO] +- io.dropwizard:dropwizard-testing:jar:1.0.5:test
+[INFO] |  +- org.mockito:mockito-core:jar:2.0.54-beta:test
+[INFO] |  |  \- net.bytebuddy:byte-buddy:jar:1.3.16:test
+[INFO] |  +- org.objenesis:objenesis:jar:2.3:compile
+[INFO] |  +- org.assertj:assertj-core:jar:3.4.1:test
+[INFO] |  \- org.glassfish.jersey.test-framework.providers:jersey-test-framework-provider-inmemory:jar:2.23.2:test
+[INFO] |     +- org.glassfish.jersey.test-framework:jersey-test-framework-core:jar:2.23.2:test
+[INFO] |     \- org.ow2.asm:asm-debug-all:jar:5.0.4:test
+[INFO] +- com.hortonworks.streamline:streamline-runtime:jar:0.6.0-SNAPSHOT:test
+[INFO] |  +- com.hortonworks.streamline:streamline-layout:jar:0.6.0-SNAPSHOT:compile
+[INFO] |  |  +- org.apache.calcite:calcite-core:jar:1.11.0:compile
+[INFO] |  |  |  +- org.apache.calcite:calcite-linq4j:jar:1.11.0:compile
+[INFO] |  |  |  +- net.hydromatic:aggdesigner-algorithm:jar:6.0:compile
+[INFO] |  |  |  +- org.codehaus.janino:janino:jar:2.7.6:compile
+[INFO] |  |  |  \- org.codehaus.janino:commons-compiler:jar:2.7.6:compile
+[INFO] |  |  \- org.apache.calcite.avatica:avatica:jar:1.9.0:compile
+[INFO] |  |     \- org.apache.calcite.avatica:avatica-core:jar:1.9.0:compile
+[INFO] |  |        \- org.apache.calcite.avatica:avatica-metrics:jar:1.9.0:compile
+[INFO] |  +- com.hortonworks.streamline:streamline-sql:jar:0.6.0-SNAPSHOT:test
+[INFO] |  \- org.codehaus.groovy:groovy-all:jar:2.4.5:compile
+[INFO] \- junit:junit:jar:4.11:test
+[INFO]    \- org.hamcrest:hamcrest-core:jar:1.3:test
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 59.777 s
+[INFO] Finished at: 2018-11-15T14:15:55+05:30
+[INFO] Final Memory: 36M/363M
+[INFO] ------------------------------------------------------------------------

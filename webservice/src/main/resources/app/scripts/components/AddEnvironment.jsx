@@ -177,6 +177,8 @@ class AddEnvironment extends Component {
       this.selectionList[key].map((o) => {
         if (o.serviceName.toLowerCase() === 'storm') {
           missingStorm = false;
+        }else if (o.serviceName.toLowerCase() === 'beam') {
+             missingStorm = false;
         }
       });
     });
@@ -361,7 +363,7 @@ class AddEnvironment extends Component {
           <h4 className="environment-modal-title" data-stest="selectServicesLabel">Select Services</h4>
           {entities.length !== 0
             ? <small ref="missingStorm">
-                (Atleast one streaming engine (eg: STORM) must be selected.)</small>
+                (Atleast one streaming engine (eg: STORM, BEAM) must be selected.)</small>
             : ''
 }
           {

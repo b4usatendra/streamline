@@ -28,6 +28,12 @@ public final class Constants {
         public static final String PROPERTY_KEY_ZOOKEEPER_CONNECT = "zookeeper.connect";
     }
 
+    public static class Beam {
+        public static final String SERVICE_NAME = "BEAM";
+        public static final String PROPERTY_CONNECTION_ENDPOINT = "connection.endpoint";
+    }
+
+
     public static class HDFS {
         public static final String SERVICE_NAME = "HDFS";
         public static final String PROPERTY_KEY_DEFAULT_FS = "fs.defaultFS";
