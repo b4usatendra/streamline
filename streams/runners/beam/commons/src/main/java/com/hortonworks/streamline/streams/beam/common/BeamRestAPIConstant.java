@@ -13,11 +13,11 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
  **/
-package com.hortonworks.streamline.streams.storm.common;
+package com.hortonworks.streamline.streams.beam.common;
 
-public class StormRestAPIConstant
+public class BeamRestAPIConstant
 {
-    private StormRestAPIConstant() {
+    private BeamRestAPIConstant() {
     }
 
     public static final String TOPOLOGY_JSON_UPTIME_SECS = "uptimeSeconds";

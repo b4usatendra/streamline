@@ -1,7 +1,7 @@
 {
   "type": "SOURCE",
-  "name": "Kafka",
-  "subType": "KAFKA",
+  "name": "BEAM-KAFKA",
+  "subType": "BEAM-KAFKA",
   "streamingEngine": "BEAM",
   "builtin": true,
   "fieldHintProviderClass": "com.hortonworks.streamline.streams.cluster.bundle.impl.KafkaBundleHintProvider",

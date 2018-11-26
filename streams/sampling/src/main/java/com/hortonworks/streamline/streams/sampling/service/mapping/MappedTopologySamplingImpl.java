@@ -2,7 +2,7 @@ package com.hortonworks.streamline.streams.sampling.service.mapping;
 
 public enum MappedTopologySamplingImpl {
     STORM("com.hortonworks.streamline.streams.sampling.service.storm.StormTopologySamplingService"),
-    BEAM("com.hortonworks.streamline.streams.sampling.service.storm.BeamTopologySamplingService");
+    BEAM("com.hortonworks.streamline.streams.sampling.service.beam.BeamTopologySamplingService");
 
 
     private final String className;

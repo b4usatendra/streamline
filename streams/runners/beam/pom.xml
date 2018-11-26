@@ -17,6 +17,7 @@
         <module>actions</module>
         <module>commons</module>
         <module>sampling</module>
+        <module>metrics</module>
     </modules>
 
 </project>

@@ -12,6 +12,7 @@
     <artifactId>streamline-service</artifactId>
 
     <dependencies>
+
         <dependency>
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>common</artifactId>
@@ -20,18 +21,37 @@
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-catalog</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-cluster</artifactId>
         </dependency>
+
         <dependency>
+            <groupId>com.hortonworks.streamline</groupId>
+            <artifactId>streamline-notification</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hortonworks.streamline</groupId>
+            <artifactId>streamline-authorizer</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hortonworks.streamline</groupId>
+            <artifactId>streamline-sampling</artifactId>
+        </dependency>
+
+        <!--<dependency>
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-actions</artifactId>
         </dependency>
+        -->
         <dependency>
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-actions-storm</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-layout-storm</artifactId>
@@ -44,10 +64,33 @@
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-logsearch-storm</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.hortonworks.streamline</groupId>
-            <artifactId>streamline-notification</artifactId>
+            <artifactId>streamline-sampling-storm</artifactId>
         </dependency>
+
+        <!-- Beam dependencies-->
+        <dependency>
+            <groupId>com.hortonworks.streamline</groupId>
+            <artifactId>streamline-actions-beam</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hortonworks.streamline</groupId>
+            <artifactId>streamline-common-beam</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hortonworks.streamline</groupId>
+            <artifactId>streamline-layout-beam</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hortonworks.streamline</groupId>
+            <artifactId>streamline-sampling-beam</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
@@ -56,22 +99,12 @@
             <groupId>com.hortonworks.registries</groupId>
             <artifactId>schema-registry-client</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.hortonworks.streamline</groupId>
-            <artifactId>streamline-authorizer</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>jool</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.hortonworks.streamline</groupId>
-            <artifactId>streamline-sampling</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hortonworks.streamline</groupId>
-            <artifactId>streamline-sampling-storm</artifactId>
-        </dependency>
+
         <!-- test dependency -->
         <dependency>
             <groupId>org.jmockit</groupId>

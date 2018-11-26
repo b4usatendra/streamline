@@ -747,6 +747,33 @@
             </dependency>
             <dependency>
                 <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-layout-beam</artifactId>
+                <version>${project.version}</version>
+                <!-- dropwizard and phoenix have conflicts in jersey related dependencies  -->
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.phoenix</groupId>
+                        <artifactId>phoenix-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                    <!-- Storm will load its underlying framework for slf4j,
+                    so exclude underlying logging framework for Streamline -->
+                    <exclusion>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-classic</artifactId>
+                    </exclusion>
+                    <!-- This is needed to avoid conflict with email notifier -->
+                    <exclusion>
+                        <groupId>javax.mail</groupId>
+                        <artifactId>mailapi</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
                 <artifactId>streamline-authorizer</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -762,6 +789,11 @@
             </dependency>
             <dependency>
                 <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-actions-beam</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
                 <artifactId>streamline-metrics</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -772,7 +804,17 @@
             </dependency>
             <dependency>
                 <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-metrics-beam</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
                 <artifactId>streamline-common-storm</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-common-beam</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -798,6 +840,11 @@
             </dependency>
             <dependency>
                 <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-sampling-beam</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
                 <artifactId>streamline-notifier</artifactId>
                 <version>${project.version}</version>
                 <exclusions>
@@ -815,6 +862,11 @@
             <dependency>
                 <groupId>com.hortonworks.streamline</groupId>
                 <artifactId>streamline-runners-storm</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-runners-beam</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -3,129 +3,9 @@
 [INFO] ------------------------------------------------------------------------
 [INFO] Building webservice 0.6.0-SNAPSHOT
 [INFO] ------------------------------------------------------------------------
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/common/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/common/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/common/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/common/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/tag-registry/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/tag-registry/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/tag-registry/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/tag-registry/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/registries/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/registries/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/registries/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/registries/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/dashboard-registry/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/dashboard-registry/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/dashboard-registry/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/dashboard-registry/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-service/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-service/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-service/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-service/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streams/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streams/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streams/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streams/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-catalog/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-catalog/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-catalog/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-catalog/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-layout/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-layout/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-layout/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-layout/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-sdk/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-sdk/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-sdk/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-sdk/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/model-registry/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/model-registry/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/model-registry/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/model-registry/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-cluster/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-cluster/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-cluster/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-cluster/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-authorizer/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-authorizer/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-authorizer/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-authorizer/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-common/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-common/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-common/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-common/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-actions/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-actions/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-actions/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-actions/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-actions-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-actions-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-actions-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-actions-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-runners-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-runners-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-runners-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-runners-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-runners/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-runners/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-runners/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-runners/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-layout-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-layout-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-layout-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-layout-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-common-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-common-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-common-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-common-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-metrics-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-metrics-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-metrics-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-metrics-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-metrics/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-metrics/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-metrics/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-metrics/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-logsearch-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-logsearch-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-logsearch-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-logsearch-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-logsearch/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-logsearch/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-logsearch/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-logsearch/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-notification/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-notification/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-notification/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-notification/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-sampling/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-sampling/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-sampling/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-sampling/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-sampling-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-sampling-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-sampling-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-sampling-storm/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-examples-processors/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-examples-processors/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-examples-processors/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-examples-processors/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-runtime/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-runtime/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-runtime/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-runtime/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central3: http://artifactory.corp.olacabs.com:8080/artifactory/libs-snapshot/com/hortonworks/streamline/streamline-sql/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from clojars: https://repository.apache.org/content/repositories/snapshots/com/hortonworks/streamline/streamline-sql/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from hortonworks.repo: http://nexus-private.hortonworks.com/nexus/content/groups/public/com/hortonworks/streamline/streamline-sql/0.6.0-SNAPSHOT/maven-metadata.xml
-Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/stage-local/com/hortonworks/streamline/streamline-sql/0.6.0-SNAPSHOT/maven-metadata.xml
 [INFO] 
 [INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ webservice ---
-[INFO] Deleting /Users/satendra.sahu/code/github/streamline/webservice/target
+[INFO] Deleting /Users/satendra.sahu/code/streamline/webservice/target
 [INFO] 
 [INFO] --- maven-dependency-plugin:2.8:tree (default-cli) @ webservice ---
 [INFO] com.hortonworks.streamline:webservice:jar:0.6.0-SNAPSHOT
@@ -459,7 +339,7 @@ Downloading from central2: http://artifactory.corp.olacabs.com:8080/artifactory/
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 59.777 s
-[INFO] Finished at: 2018-11-15T14:15:55+05:30
-[INFO] Final Memory: 36M/363M
+[INFO] Total time: 2.167 s
+[INFO] Finished at: 2018-11-15T17:25:55+05:30
+[INFO] Final Memory: 33M/437M
 [INFO] ------------------------------------------------------------------------

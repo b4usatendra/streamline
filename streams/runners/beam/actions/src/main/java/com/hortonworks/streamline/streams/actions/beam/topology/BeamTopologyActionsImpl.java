@@ -15,6 +15,8 @@
  **/
 package com.hortonworks.streamline.streams.actions.beam.topology;
 
+import com.esotericsoftware.kryo.*;
+import com.esotericsoftware.kryo.io.*;
 import com.hortonworks.streamline.common.*;
 import com.hortonworks.streamline.streams.actions.*;
 import com.hortonworks.streamline.streams.beam.common.*;
@@ -37,7 +39,7 @@ import java.util.concurrent.*;
 import java.util.stream.*;
 
 /**
- * Storm implementation of the TopologyActions interface
+ * Beam implementation of the TopologyActions interface
  */
 public class BeamTopologyActionsImpl implements TopologyActions
 {
@@ -45,60 +47,13 @@ public class BeamTopologyActionsImpl implements TopologyActions
    public static final int DEFAULT_WAIT_TIME_SEC = 30;
    public static final int TEST_RUN_TOPOLOGY_DEFAULT_WAIT_MILLIS_FOR_SHUTDOWN = 30_000;
    public static final String ROOT_LOGGER_NAME = "ROOT";
-
-   private static final String DEFAULT_THRIFT_TRANSPORT_PLUGIN = "org.apache.storm.security.auth.SimpleTransportPlugin";
-   private static final String DEFAULT_PRINCIPAL_TO_LOCAL = "org.apache.storm.security.auth.DefaultPrincipalToLocal";
-
-   private static final String NON_SECURED_THRIFT_TRANSPORT_PLUGIN = "org.apache.storm.security.auth.SimpleTransportPlugin";
-   private static final String NON_SECURED_PRINCIPAL_TO_LOCAL = "org.apache.storm.security.auth.DefaultPrincipalToLocal";
-   private static final String NON_SECURED_NIMBUS_AUTHORIZER = "org.apache.storm.security.auth.authorizer.NoopAuthorizer";
-   private static final String NON_SECURED_NIMBUS_IMPERSONATION_AUTHORIZER = "org.apache.storm.security.auth.authorizer.NoopAuthorizer";
-
-   private static final String NIMBUS_SEEDS = "nimbus.seeds";
-   private static final String NIMBUS_PORT = "nimbus.port";
-
-   public static final String STREAMLINE_TOPOLOGY_CONFIG_CLUSTER_SECURITY_CONFIG = "clustersSecurityConfig";
-   public static final String STREAMLINE_TOPOLOGY_CONFIG_CLUSTER_ID = "clusterId";
-   public static final String STREAMLINE_TOPOLOGY_CONFIG_PRINCIPAL = "principal";
-   public static final String STREAMLINE_TOPOLOGY_CONFIG_KEYTAB_PATH = "keytabPath";
-
-   public static final String STORM_TOPOLOGY_CONFIG_AUTO_CREDENTIALS = "topology.auto-credentials";
-   public static final String TOPOLOGY_CONFIG_KEY_CLUSTER_KEY_PREFIX_HDFS = "hdfs_";
-   public static final String TOPOLOGY_CONFIG_KEY_CLUSTER_KEY_PREFIX_HBASE = "hbase_";
-   public static final String TOPOLOGY_CONFIG_KEY_CLUSTER_KEY_PREFIX_HIVE = "hive_";
-   public static final String TOPOLOGY_CONFIG_KEY_HDFS_KEYTAB_FILE = "hdfs.keytab.file";
-   public static final String TOPOLOGY_CONFIG_KEY_HBASE_KEYTAB_FILE = "hbase.keytab.file";
-   public static final String TOPOLOGY_CONFIG_KEY_HIVE_KEYTAB_FILE = "hive.keytab.file";
-   public static final String TOPOLOGY_CONFIG_KEY_HDFS_KERBEROS_PRINCIPAL = "hdfs.kerberos.principal";
-   public static final String TOPOLOGY_CONFIG_KEY_HBASE_KERBEROS_PRINCIPAL = "hbase.kerberos.principal";
-   public static final String TOPOLOGY_CONFIG_KEY_HIVE_KERBEROS_PRINCIPAL = "hive.kerberos.principal";
-   public static final String TOPOLOGY_CONFIG_KEY_HDFS_CREDENTIALS_CONFIG_KEYS = "hdfsCredentialsConfigKeys";
-   public static final String TOPOLOGY_CONFIG_KEY_HBASE_CREDENTIALS_CONFIG_KEYS = "hbaseCredentialsConfigKeys";
-   public static final String TOPOLOGY_CONFIG_KEY_HIVE_CREDENTIALS_CONFIG_KEYS = "hiveCredentialsConfigKeys";
-   public static final String TOPOLOGY_CONFIG_KEY_NOTIFIER_PLUGIN = "storm.topology.submission.notifier.plugin.class";
-   public static final String TOPOLOGY_AUTO_CREDENTIAL_CLASSNAME_HDFS = "org.apache.storm.hdfs.security.AutoHDFS";
-   public static final String TOPOLOGY_AUTO_CREDENTIAL_CLASSNAME_HBASE = "org.apache.storm.hbase.security.AutoHBase";
-   public static final String TOPOLOGY_AUTO_CREDENTIAL_CLASSNAME_HIVE = "org.apache.storm.hive.security.AutoHive";
-   public static final String TOPOLOGY_NOTIFIER_PLUGIN_CLASSNAME_ATLAS = "org.apache.atlas.storm.hook.StormAtlasHook";
-
-   private static final Long DEFAULT_NIMBUS_THRIFT_MAX_BUFFER_SIZE = 1048576L;
-
+   private Kryo kryo = new Kryo();
    public static final String TOPOLOGY_EVENTLOGGER_REGISTER = "topology.event.logger.register";
    public static final String TOPOLOGY_EVENTLOGGER_CLASSNAME_STREAMLINE = "com.hortonworks.streamline.streams.runtime.storm.event.sample.StreamlineEventLogger";
 
    private String stormArtifactsLocation = "/tmp/storm-artifacts/";
-   private String stormCliPath = "storm";
-   private String stormJarLocation;
    private String catalogRootUrl;
-   private String javaJarCommand;
-   private String nimbusSeeds;
-   private Integer nimbusPort;
    private Map<String, Object> conf;
-
-   private String thriftTransport;
-   private Optional<String> jaasFilePath;
-   private String principalToLocal;
-   private long nimbusThriftMaxBufferSize;
 
    private final ConcurrentHashMap<Long, Boolean> forceKillRequests = new ConcurrentHashMap<>();
    private Set<String> environmentServiceNames;
@@ -130,7 +85,7 @@ public class BeamTopologyActionsImpl implements TopologyActions
 */
 		 catalogRootUrl = (String) conf.get(BeamTopologyLayoutConstants.YAML_KEY_CATALOG_ROOT_URL);
 
-		 Map<String, String> env = System.getenv();
+		/* Map<String, String> env = System.getenv();
 		 String javaHomeStr = env.get("JAVA_HOME");
 		 if (StringUtils.isNotEmpty(javaHomeStr))
 		 {
@@ -142,7 +97,7 @@ public class BeamTopologyActionsImpl implements TopologyActions
 		 } else
 		 {
 			javaJarCommand = "jar";
-		 }
+		 }*/
 
 		/* String stormApiRootUrl = (String) conf.get(TopologyLayoutConstants.STORM_API_ROOT_URL_KEY);
 		 Subject subject = (Subject) conf.get(TopologyLayoutConstants.SUBJECT_OBJECT);
@@ -161,7 +116,6 @@ public class BeamTopologyActionsImpl implements TopologyActions
 			nimbusThriftMaxBufferSize = DEFAULT_NIMBUS_THRIFT_MAX_BUFFER_SIZE;
 		 }
 */
-		 setupSecuredStormCluster(conf);
 
 		 EnvironmentService environmentService = (EnvironmentService) conf.get(TopologyLayoutConstants.ENVIRONMENT_SERVICE_OBJECT);
 		 Number namespaceId = (Number) conf.get(TopologyLayoutConstants.NAMESPACE_ID);
@@ -179,45 +133,19 @@ public class BeamTopologyActionsImpl implements TopologyActions
 	  }
    }
 
-   private void setupSecuredStormCluster(Map<String, Object> conf)
-   {
-	  thriftTransport = (String) conf.get(TopologyLayoutConstants.STORM_THRIFT_TRANSPORT);
-
-	  if (conf.containsKey(TopologyLayoutConstants.STORM_NIMBUS_PRINCIPAL_NAME))
-	  {
-		 String nimbusPrincipal = (String) conf.get(TopologyLayoutConstants.STORM_NIMBUS_PRINCIPAL_NAME);
-		 String kerberizedNimbusServiceName = nimbusPrincipal.split("/")[0];
-		 jaasFilePath = Optional.of(createJaasFile(kerberizedNimbusServiceName));
-	  } else
-	  {
-		 jaasFilePath = Optional.empty();
-	  }
-
-	  principalToLocal = (String) conf.getOrDefault(TopologyLayoutConstants.STORM_PRINCIPAL_TO_LOCAL, DEFAULT_PRINCIPAL_TO_LOCAL);
-
-	  if (thriftTransport == null)
-	  {
-		 if (jaasFilePath.isPresent())
-		 {
-			thriftTransport = (String) conf.get(TopologyLayoutConstants.STORM_SECURED_THRIFT_TRANSPORT);
-		 } else
-		 {
-			thriftTransport = (String) conf.get(TopologyLayoutConstants.STORM_NONSECURED_THRIFT_TRANSPORT);
-		 }
-	  }
-
-	  // if it's still null, set to default
-	  if (thriftTransport == null)
-	  {
-		 thriftTransport = DEFAULT_THRIFT_TRANSPORT_PLUGIN;
-	  }
-   }
-
    @Override
    public void deploy(TopologyLayout topology, String mavenArtifacts, TopologyActionContext ctx, String asUser)
 		   throws Exception
    {
-
+	  String xyz = null;
+	  ClassIterator cI = new ClassIterator();
+	  Class[] classes = cI.getClassesInPackage("com.hortonworks.streamline.streams");
+	  for (Class c : classes)
+	  {
+		 System.out.println("Found: " + c.getCanonicalName());
+	  }
+	  createYamlFile(topology, true);
+	  System.out.println("");
    }
 
    @Override
@@ -252,14 +180,16 @@ public class BeamTopologyActionsImpl implements TopologyActions
    public void kill(TopologyLayout topology, String asUser)
 		   throws Exception
    {
-
+	  String xyz = null;
+	  System.out.println("");
    }
 
    @Override
    public void validate(TopologyLayout topology)
 		   throws Exception
    {
-
+	  String xyz = null;
+	  System.out.println("");
    }
 
    @Override
@@ -273,14 +203,18 @@ public class BeamTopologyActionsImpl implements TopologyActions
    public void resume(TopologyLayout topology, String asUser)
 		   throws Exception
    {
-
+	  String xyz = null;
+	  createYamlFile(topology, true);
+	  System.out.println("");
    }
 
    @Override
    public Status status(TopologyLayout topology, String asUser)
 		   throws Exception
    {
-	  return null;
+	  StatusImpl status = new StatusImpl();
+	  status.setStatus(Status.STATUS_UNKNOWN);
+	  return status;
    }
 
    @Override
@@ -315,8 +249,8 @@ public class BeamTopologyActionsImpl implements TopologyActions
    @Override
    public String getRuntimeTopologyId(TopologyLayout topology, String asUser)
    {
-      //TODO get the runtime topology id(calls cluster apis)
-      return null;
+	  //TODO get the runtime topology id(calls cluster apis)
+	  return null;
    }
 
    private TopologyLayout copyTopologyLayout(TopologyLayout topology, TopologyDag replacedTopologyDag)
@@ -341,14 +275,14 @@ public class BeamTopologyActionsImpl implements TopologyActions
 			args.add(mavenLocalReposDir);
 		 }
 
-		 String proxyUrl = (String) conf.get(com.hortonworks.streamline.common.Constants.CONFIG_HTTP_PROXY_URL);
+		 String proxyUrl = (String) conf.get(Constants.CONFIG_HTTP_PROXY_URL);
 		 if (StringUtils.isNotEmpty(proxyUrl))
 		 {
 			args.add("--proxyUrl");
 			args.add(proxyUrl);
 
-			String proxyUsername = (String) conf.get(com.hortonworks.streamline.common.Constants.CONFIG_HTTP_PROXY_USERNAME);
-			String proxyPassword = (String) conf.get(com.hortonworks.streamline.common.Constants.CONFIG_HTTP_PROXY_PASSWORD);
+			String proxyUsername = (String) conf.get(Constants.CONFIG_HTTP_PROXY_USERNAME);
+			String proxyPassword = (String) conf.get(Constants.CONFIG_HTTP_PROXY_PASSWORD);
 			if (proxyUsername != null && proxyPassword != null)
 			{
 			   // allow empty string but not null
@@ -408,12 +342,6 @@ public class BeamTopologyActionsImpl implements TopologyActions
 	  createYamlFile(topology, true);
    }
 
-   private void createYamlFileForTest(TopologyLayout topology)
-		   throws Exception
-   {
-	  createYamlFile(topology, false);
-   }
-
    private void createYamlFile(TopologyLayout topology, boolean deploy)
 		   throws Exception
    {
@@ -431,6 +359,7 @@ public class BeamTopologyActionsImpl implements TopologyActions
 					   "artifact for topology id " + topology.getId());
 			}
 		 }
+
 		 yamlMap = new LinkedHashMap<>();
 		 yamlMap.put(BeamTopologyLayoutConstants.YAML_KEY_NAME, generateStormTopologyName(topology));
 		 TopologyDag topologyDag = topology.getTopologyDag();
@@ -438,9 +367,12 @@ public class BeamTopologyActionsImpl implements TopologyActions
 		 BeamTopologyFluxGenerator fluxGenerator = new BeamTopologyFluxGenerator(topology, conf,
 				 getExtraJarsLocation(topology));
 		 topologyDag.traverse(fluxGenerator);
-		 Pipeline pipeline = fluxGenerator.getPipeline();
-		 pipeline.run();
-		/* for (Map.Entry<String, Map<String, Object>> entry : fluxGenerator.getYamlKeysAndComponents())
+		 PipelineMapper pipelineMapper = new PipelineMapper(fluxGenerator.getPipeline());
+		 serializePipeline(fluxGenerator.getPipeline());
+		 Pipeline obj = deSerializePipeline(null);
+		 obj.run();
+
+		 /*for (Map.Entry<String, Map<String, Object>> entry : fluxGenerator.getYamlKeysAndComponents())
 		 {
 			addComponentToCollection(yamlMap, entry.getValue(), entry.getKey());
 		 }
@@ -473,6 +405,41 @@ public class BeamTopologyActionsImpl implements TopologyActions
 			fileWriter.close();
 		 }
 	  }
+   }
+
+   private void serializePipeline(Pipeline pipelineMapper)
+   {
+// Serialization
+	  try
+	  {
+		 Output output = new Output(new FileOutputStream("/tmp/serialized_object"));
+		 kryo.writeObject(output, pipelineMapper);
+		 output.close();
+
+		 System.out.println("Object has been serialized");
+	  }
+
+	  catch (IOException ex)
+	  {
+		 System.out.println("IOException is caught");
+	  }
+   }
+
+   private Pipeline deSerializePipeline(String filePath)
+   {
+	  Pipeline theObject = null;
+	  try
+	  {
+		 Input input = new Input(new FileInputStream("/tmp/serialized_object"));
+		 theObject = (Pipeline) kryo.readClassAndObject(input);
+		 input.close();
+	  }
+	  catch (FileNotFoundException e)
+	  {
+		 e.printStackTrace();
+	  }
+
+	  return theObject;
    }
 
    private void maybeAddNotifierPlugin(Config topologyConfig)
@@ -512,7 +479,7 @@ public class BeamTopologyActionsImpl implements TopologyActions
 	  yamlMap.put(BeamTopologyLayoutConstants.YAML_KEY_CONFIG, config);
    }
 
-   private void addComponentToCollection(Map<String, Object> yamlMap, Map<String, Object> yamlComponent, String collectionKey)
+  /* private void addComponentToCollection(Map<String, Object> yamlMap,Component> yamlComponent, String collectionKey)
    {
 	  if (yamlComponent == null)
 	  {
@@ -526,5 +493,5 @@ public class BeamTopologyActionsImpl implements TopologyActions
 		 yamlMap.put(collectionKey, components);
 	  }
 	  components.add(yamlComponent);
-   }
+   }*/
 }

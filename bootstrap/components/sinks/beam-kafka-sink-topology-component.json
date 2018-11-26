@@ -1,7 +1,7 @@
 {
   "type": "SINK",
-  "name": "Beam Kafka",
-  "subType": "BEAM KAFKA",
+  "name": "BEAM-KAFKA",
+  "subType": "BEAM-KAFKA",
   "streamingEngine": "BEAM",
   "builtin": true,
   "fieldHintProviderClass": "com.hortonworks.streamline.streams.cluster.bundle.impl.KafkaSinkBundleHintProvider",
