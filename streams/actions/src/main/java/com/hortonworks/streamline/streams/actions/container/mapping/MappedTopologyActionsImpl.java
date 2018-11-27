@@ -15,20 +15,18 @@
  **/
 package com.hortonworks.streamline.streams.actions.container.mapping;
 
-public enum MappedTopologyActionsImpl
-{
-   STORM("com.hortonworks.streamline.streams.actions.storm.topology.StormTopologyActionsImpl"),
-   BEAM("com.hortonworks.streamline.streams.actions.storm.topology.BeamTopologyActionsImpl");
 
-   private final String className;
+public enum MappedTopologyActionsImpl {
+    STORM("com.hortonworks.streamline.streams.actions.storm.topology.StormTopologyActionsImpl"),
+    BEAM("com.hortonworks.streamline.streams.actions.beam.topology.BeamTopologyActionsImpl");
 
-   MappedTopologyActionsImpl(String className)
-   {
-	  this.className = className;
-   }
+    private final String className;
 
-   public String getClassName()
-   {
-	  return className;
-   }
+    MappedTopologyActionsImpl(String className) {
+        this.className = className;
+    }
+
+    public String getClassName() {
+        return className;
+    }
 }
