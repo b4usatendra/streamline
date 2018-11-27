@@ -33,13 +33,6 @@
             <groupId>org.jmockit</groupId>
             <artifactId>jmockit</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>com.hortonworks.streamline</groupId>
-            <artifactId>streamline-layout-beam</artifactId>
-            <version>${project.version}</version>
-            
-        </dependency>
     </dependencies>
 
 </project>

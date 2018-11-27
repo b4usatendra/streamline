@@ -21,30 +21,4 @@
         <module>logsearch</module>
         <module>sampling</module>
     </modules>
-
-    <dependencies>
-        <!-- Beam related dependencies-->
-        <!-- https://mvnrepository.com/artifact/org.apache.beam/beam-sdks-java-io-kafka -->
-        <dependency>
-            <groupId>org.apache.beam</groupId>
-            <artifactId>beam-sdks-java-io-kafka</artifactId>
-            <version>${beam.version}</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.beam/beam-runners-direct-java -->
-        <dependency>
-            <groupId>org.apache.beam</groupId>
-            <artifactId>beam-runners-direct-java</artifactId>
-            <version>${beam.version}</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.beam/beam-sdks-java-core -->
-        <dependency>
-            <groupId>org.apache.beam</groupId>
-            <artifactId>beam-sdks-java-core</artifactId>
-            <version>${beam.version}</version>
-        </dependency>
-        
-    </dependencies>
-
 </project>

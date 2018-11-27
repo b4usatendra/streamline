@@ -15,70 +15,59 @@
  **/
 package com.hortonworks.streamline.streams.beam.common;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
-public class BeamTopologyUtil
-{
-   private BeamTopologyUtil()
-   {
-   }
+public class BeamTopologyUtil {
+    private BeamTopologyUtil() {
+    }
 
-   public static String generateStormTopologyName(Long topologyId, String topologyName)
-   {
-	  return "streamline-" + topologyId + "-" + topologyName;
-   }
+    public static String generateStormTopologyName(Long topologyId, String topologyName) {
+        return "streamline-" + topologyId + "-" + topologyName;
+    }
 
-   public static String generateStormComponentId(Long componentId, String componentName)
-   {
-	  return String.format("%s-%s", componentId, componentName);
-   }
+    public static String generateStormComponentId(Long componentId, String componentName) {
+        return String.format("%s-%s", componentId, componentName);
+    }
 
-   public static String generateUniqueStormTopologyNamePrefix(Long topologyId)
-   {
-	  return "streamline-" + topologyId + "-";
-   }
+    public static String generateUniqueStormTopologyNamePrefix(Long topologyId) {
+        return "streamline-" + topologyId + "-";
+    }
 
-   //TODO add beam client
-   public static String findStormTopologyId(Long topologyId, String asUser)
-   {
-	  String topologyNamePrefix = generateUniqueStormTopologyNamePrefix(topologyId);
-	  String beamTopologyId = topologyNamePrefix;
+    //TODO add beam client
+    public static String findStormTopologyId(Long topologyId, String asUser) {
+        String topologyNamePrefix = generateUniqueStormTopologyNamePrefix(topologyId);
+        String beamTopologyId = topologyNamePrefix;
 
-	  return beamTopologyId;
-   }
+        return beamTopologyId;
+    }
 
-   public static String findStormCompleteTopologyName(Long topologyId, String asUser)
-   {
-	  String topologyNamePrefix = generateUniqueStormTopologyNamePrefix(topologyId);
+    public static String findStormCompleteTopologyName(Long topologyId, String asUser) {
+        String topologyNamePrefix = generateUniqueStormTopologyNamePrefix(topologyId);
 
-	  return topologyNamePrefix;
-   }
+        return topologyNamePrefix;
+    }
 
-   public static String findOrGenerateTopologyName(Long topologyId, String topologyName, String asUser)
-   {
-	  String actualTopologyName = topologyName + topologyId;
-	  if (actualTopologyName == null)
-	  {
-		 actualTopologyName = generateStormTopologyName(topologyId, topologyName);
-	  }
-	  return actualTopologyName;
-   }
+    public static String findOrGenerateTopologyName(Long topologyId, String topologyName, String asUser) {
+        String actualTopologyName = topologyName + topologyId;
+        if (actualTopologyName == null) {
+            actualTopologyName = generateStormTopologyName(topologyId, topologyName);
+        }
+        return actualTopologyName;
+    }
 
-   public static String extractStreamlineComponentName(String stormComponentId)
-   {
-	  String[] splitted = stormComponentId.split("-");
-	  if (splitted.length <= 1)
-	  {
-		 throw new IllegalArgumentException("Invalid Storm component ID for Streamline: " + stormComponentId);
-	  }
+    public static String extractStreamlineComponentName(String stormComponentId) {
+        String[] splitted = stormComponentId.split("-");
+        if (splitted.length <= 1) {
+            throw new IllegalArgumentException("Invalid Storm component ID for Streamline: " + stormComponentId);
+        }
 
-	  List<String> splittedList = Arrays.asList(splitted);
-	  return String.join("-", splittedList.subList(1, splittedList.size()));
-   }
+        List<String> splittedList = Arrays.asList(splitted);
+        return String.join("-", splittedList.subList(1, splittedList.size()));
+    }
 
-   public static String extractStreamlineComponentId(String stormComponentId)
-   {
-	  // removes all starting from first '-'
-	  return stormComponentId.substring(0, stormComponentId.indexOf('-'));
-   }
+    public static String extractStreamlineComponentId(String stormComponentId) {
+        // removes all starting from first '-'
+        return stormComponentId.substring(0, stormComponentId.indexOf('-'));
+    }
 }

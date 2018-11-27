@@ -15,37 +15,31 @@
  **/
 package com.hortonworks.streamline.streams.layout.beam;
 
-import com.hortonworks.streamline.common.util.*;
-import com.hortonworks.streamline.streams.layout.component.*;
-import org.apache.beam.sdk.*;
-import org.slf4j.*;
+import com.hortonworks.streamline.common.util.ProxyUtil;
+import com.hortonworks.streamline.streams.layout.component.StreamlineComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.net.*;
-import java.nio.file.*;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
 
-class BeamFluxComponentFactory
-{
-   private static final Logger LOG = LoggerFactory.getLogger(BeamFluxComponentFactory.class);
+class BeamFluxComponentFactory {
+    private static final Logger LOG = LoggerFactory.getLogger(BeamFluxComponentFactory.class);
 
-   private final Path extraJarsLocation;
+    private final Path extraJarsLocation;
 
-   BeamFluxComponentFactory(Path extraJarsLocation)
-   {
-	  this.extraJarsLocation = extraJarsLocation;
-   }
+    BeamFluxComponentFactory(Path extraJarsLocation) {
+        this.extraJarsLocation = extraJarsLocation;
+    }
 
-   BeamComponent getFluxComponent(StreamlineComponent streamlineComponent)
-   {
-	  ProxyUtil<BeamComponent> proxyUtil = new ProxyUtil<>(BeamComponent.class);
-	  try
-	  {
-		 BeamComponent beamComponent = proxyUtil.loadClassFromLibDirectory(extraJarsLocation, streamlineComponent.getTransformationClass());
-		 return beamComponent;
-	  }
-	  catch (ClassNotFoundException | MalformedURLException | InstantiationException | IllegalAccessException e)
-	  {
-		 LOG.error("Error while creating flux component", e);
-		 throw new RuntimeException(e);
-	  }
-   }
+    BeamComponent getFluxComponent(StreamlineComponent streamlineComponent) {
+        ProxyUtil<BeamComponent> proxyUtil = new ProxyUtil<>(BeamComponent.class);
+        try {
+            BeamComponent beamComponent = proxyUtil.loadClassFromLibDirectory(extraJarsLocation, streamlineComponent.getTransformationClass());
+            return beamComponent;
+        } catch (ClassNotFoundException | MalformedURLException | InstantiationException | IllegalAccessException e) {
+            LOG.error("Error while creating flux component", e);
+            throw new RuntimeException(e);
+        }
+    }
 }

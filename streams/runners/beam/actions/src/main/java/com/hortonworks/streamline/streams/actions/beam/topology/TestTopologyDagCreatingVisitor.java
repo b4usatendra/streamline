@@ -1,12 +1,12 @@
 /**
  * Copyright 2017 Hortonworks.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
-
- *   http://www.apache.org/licenses/LICENSE-2.0
-
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,13 +15,17 @@
  **/
 package com.hortonworks.streamline.streams.actions.beam.topology;
 
-import com.hortonworks.streamline.common.*;
+import com.hortonworks.streamline.common.Config;
 import com.hortonworks.streamline.streams.layout.component.*;
-import com.hortonworks.streamline.streams.layout.component.impl.*;
-import com.hortonworks.streamline.streams.layout.component.impl.testing.*;
-import com.hortonworks.streamline.streams.layout.storm.*;
+import com.hortonworks.streamline.streams.layout.component.impl.RulesProcessor;
+import com.hortonworks.streamline.streams.layout.component.impl.testing.TestRunProcessor;
+import com.hortonworks.streamline.streams.layout.component.impl.testing.TestRunRulesProcessor;
+import com.hortonworks.streamline.streams.layout.component.impl.testing.TestRunSink;
+import com.hortonworks.streamline.streams.layout.component.impl.testing.TestRunSource;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TestTopologyDagCreatingVisitor extends TopologyDagVisitor {
 

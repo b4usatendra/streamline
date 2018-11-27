@@ -17,44 +17,28 @@
 package com.hortonworks.streamline.streams.service;
 
 import com.codahale.metrics.annotation.Timed;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.hortonworks.registries.schemaregistry.SchemaBranch;
-import com.hortonworks.registries.schemaregistry.SchemaIdVersion;
-import com.hortonworks.registries.schemaregistry.SchemaMetadata;
-import com.hortonworks.registries.schemaregistry.SchemaVersion;
-import com.hortonworks.registries.schemaregistry.SchemaVersionInfo;
-import com.hortonworks.registries.schemaregistry.SchemaVersionKey;
+import com.hortonworks.registries.schemaregistry.*;
 import com.hortonworks.registries.schemaregistry.client.SchemaRegistryClient;
 import com.hortonworks.registries.schemaregistry.errors.IncompatibleSchemaException;
 import com.hortonworks.registries.schemaregistry.errors.InvalidSchemaException;
 import com.hortonworks.registries.schemaregistry.errors.SchemaNotFoundException;
-import com.hortonworks.registries.schemaregistry.state.InbuiltSchemaVersionLifecycleState;
-import com.hortonworks.registries.schemaregistry.state.SchemaVersionLifecycleState;
-import com.hortonworks.registries.schemaregistry.state.SchemaVersionLifecycleStates;
 import com.hortonworks.streamline.common.exception.service.exception.request.BadRequestException;
 import com.hortonworks.streamline.common.exception.service.exception.request.EntityNotFoundException;
 import com.hortonworks.streamline.common.util.WSUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.OK;
@@ -123,7 +107,6 @@ public class SchemaResource {
         try {
             LOG.info("Get all versions for schema : {}", schemaName);
             Collection<SchemaVersionInfo> schemaVersionInfos = schemaRegistryClient.getAllVersions(effectiveBranchName(branchName), schemaName);
-	   //Collection<SchemaVersionInfo> schemaVersionInfos = Lists.newArrayList(  new SchemaVersionInfo(1l, schemaName, 1, "test beam schema", 1l, "test "));
             LOG.debug("Received schema versions [{}] from schema registry for schema: {}", schemaVersionInfos, schemaName);
 
             if (schemaVersionInfos != null && !schemaVersionInfos.isEmpty()) {
@@ -163,8 +146,6 @@ public class SchemaResource {
                                         @Context SecurityContext securityContext) {
         try {
             LOG.info("Get schema:version [{}:{}]", schemaName, version);
-            //SchemaVersionInfo schemaVersionInfo = new SchemaVersionInfo(1l, schemaName, 1, "test beam schema", 1l, "test ");
-
             SchemaVersionInfo schemaVersionInfo = schemaRegistryClient.getSchemaVersionInfo(new SchemaVersionKey(schemaName, Integer.parseInt(version)));
 
             if (schemaVersionInfo != null) {
@@ -196,7 +177,6 @@ public class SchemaResource {
                                       @Context SecurityContext securityContext) {
         try {
             Collection<SchemaBranch> schemaBranches = schemaRegistryClient.getSchemaBranches(schemaName);
-            //Collection<SchemaBranch> schemaBranches =  Lists.newArrayList(new SchemaBranch(SchemaBranch.MASTER_BRANCH, "hard coded branch"));
             LOG.info("Schema branches for schema [{}] : {}", schemaName, schemaBranches);
             List<String> schemaBranchNames = Collections.emptyList();
             if (schemaBranches != null && !schemaBranches.isEmpty()) {

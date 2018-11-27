@@ -15,169 +15,148 @@
  **/
 package com.hortonworks.streamline.streams.layout.beam;
 
-import com.hortonworks.streamline.common.*;
+import com.hortonworks.streamline.common.Config;
 import com.hortonworks.streamline.streams.layout.component.*;
-import com.hortonworks.streamline.streams.layout.component.impl.*;
-import com.hortonworks.streamline.streams.layout.component.rule.*;
-import javax.ws.rs.*;
-import org.apache.beam.sdk.*;
-import org.apache.beam.sdk.io.kafka.*;
-import org.apache.beam.sdk.values.*;
-import org.slf4j.*;
+import com.hortonworks.streamline.streams.layout.component.impl.RulesProcessor;
+import com.hortonworks.streamline.streams.layout.component.rule.Rule;
+import org.apache.beam.sdk.Pipeline;
+import org.apache.beam.sdk.values.KV;
+import org.apache.beam.sdk.values.PCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.NotSupportedException;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.*;
+import java.util.stream.Collectors;
 
-public class BeamTopologyFluxGenerator extends TopologyDagVisitor
-{
-   private static final Logger LOG = LoggerFactory.getLogger(BeamTopologyFluxGenerator.class);
-   private Pipeline pipeline = Pipeline.create();
-   private static final int DELTA = 5;
+public class BeamTopologyFluxGenerator extends TopologyDagVisitor {
+    private static final Logger LOG = LoggerFactory.getLogger(BeamTopologyFluxGenerator.class);
+    private static final int DELTA = 5;
+    private final BeamFluxComponentFactory fluxComponentFactory;
+    private final List<Map.Entry<String, Component>> keysAndComponents = new ArrayList<>();
+    private final TopologyDag topologyDag;
+    private final Map<String, Object> config;
+    private final Config topologyConfig;
+    private final Set<String> edgeAlreadyAddedComponents = new HashSet<>();
+    private Pipeline pipeline = Pipeline.create();
+    private Map<String, BeamComponent> componentMap = new HashMap<String, BeamComponent>();
+    private Set<String> visitedComponent = new HashSet<>();
 
-   private final BeamFluxComponentFactory fluxComponentFactory;
-   private Map<String, BeamComponent> componentMap = new HashMap<String, BeamComponent>();
-   private Set<String> visitedComponent = new HashSet<>();
-   private final List<Map.Entry<String, Component>> keysAndComponents = new ArrayList<>();
-   private final TopologyDag topologyDag;
-   private final Map<String, Object> config;
-   private final Config topologyConfig;
-   private final Set<String> edgeAlreadyAddedComponents = new HashSet<>();
+    public BeamTopologyFluxGenerator(TopologyLayout topologyLayout, Map<String, Object> config, Path extraJarsLocation) {
+        this.topologyDag = topologyLayout.getTopologyDag();
+        this.topologyConfig = topologyLayout.getConfig();
+        this.config = config;
+        fluxComponentFactory = new BeamFluxComponentFactory(extraJarsLocation);
+    }
 
-   public BeamTopologyFluxGenerator(TopologyLayout topologyLayout, Map<String, Object> config, Path extraJarsLocation)
-   {
-	  this.topologyDag = topologyLayout.getTopologyDag();
-	  this.topologyConfig = topologyLayout.getConfig();
-	  this.config = config;
-	  fluxComponentFactory = new BeamFluxComponentFactory(extraJarsLocation);
-   }
-
-   //TODO add stage to the pipeline
-   @Override
-   public void visit(StreamlineSource source)
-   {
-	  String sourceId = getFluxId(source);
-	  if (!componentMap.containsKey(sourceId))
-	  {
-		 BeamComponent beamSourceComponent = fluxComponentFactory.getFluxComponent(source);
-		 getYamlComponents(beamSourceComponent, source);
-		 beamSourceComponent.generateComponent(null);
-		 componentMap.put(sourceId, beamSourceComponent);
-		 visitedComponent.add(sourceId);
-	  }
+    //TODO add stage to the pipeline
+    @Override
+    public void visit(StreamlineSource source) {
+        String sourceId = getFluxId(source);
+        if (!componentMap.containsKey(sourceId)) {
+            BeamComponent beamSourceComponent = fluxComponentFactory.getFluxComponent(source);
+            getYamlComponents(beamSourceComponent, source);
+            beamSourceComponent.generateComponent(null);
+            componentMap.put(sourceId, beamSourceComponent);
+            visitedComponent.add(sourceId);
+        }
 	  /*keysAndComponents.add(makeEntry(BeamTopologyLayoutConstants.YAML_KEY_BEAM_SOURCE,
 			  beamSourceComponent));*/
-   }
+    }
 
-   @Override
-   public void visit(StreamlineSink sink)
-   {
-	  String sinkId = getFluxId(sink);
-	  if (!componentMap.containsKey(sinkId))
-	  {
-		 BeamComponent beamSinkComponent = fluxComponentFactory.getFluxComponent(sink);
-		 getYamlComponents(beamSinkComponent, sink);
-		 componentMap.put(sinkId, beamSinkComponent);
-		 visitedComponent.add(sinkId);
-	  }
+    @Override
+    public void visit(StreamlineSink sink) {
+        String sinkId = getFluxId(sink);
+        if (!componentMap.containsKey(sinkId)) {
+            BeamComponent beamSinkComponent = fluxComponentFactory.getFluxComponent(sink);
+            getYamlComponents(beamSinkComponent, sink);
+            componentMap.put(sinkId, beamSinkComponent);
+            visitedComponent.add(sinkId);
+        }
 
 	  /*keysAndComponents.add(makeEntry(BeamTopologyLayoutConstants.YAML_KEY_BEAM_SINK,
 			  getYamlComponents(fluxComponentFactory.getFluxComponent(sink), sink)));*/
-   }
+    }
 
-   @Override
-   public void visit(StreamlineProcessor processor)
-   {
-	  String processorId = getFluxId(processor);
-	  if (!componentMap.containsKey(processorId))
-	  {
-		 BeamComponent beamProcessorComponent = fluxComponentFactory.getFluxComponent(processor);
-		 getYamlComponents(beamProcessorComponent, processor);
-		 componentMap.put(processorId, beamProcessorComponent);
-		 visitedComponent.add(processorId);
-	  }
+    @Override
+    public void visit(StreamlineProcessor processor) {
+        String processorId = getFluxId(processor);
+        if (!componentMap.containsKey(processorId)) {
+            BeamComponent beamProcessorComponent = fluxComponentFactory.getFluxComponent(processor);
+            getYamlComponents(beamProcessorComponent, processor);
+            componentMap.put(processorId, beamProcessorComponent);
+            visitedComponent.add(processorId);
+        }
 
 	  /*keysAndComponents.add(makeEntry(BeamTopologyLayoutConstants.YAML_KEY_BEAM_PROCESSOR,
 			  getYamlComponents(fluxComponentFactory.getFluxComponent(processor), processor)));*/
-   }
+    }
 
-   @Override
-   public void visit(final RulesProcessor rulesProcessor)
-   {
-	  rulesProcessor.getConfig().setAny("outputStreams", rulesProcessor.getOutputStreams());
-	  List<Rule> rulesWithWindow = new ArrayList<>();
-	  List<Rule> rulesWithoutWindow = new ArrayList<>();
-	  Set<String> inStreams = topologyDag.getEdgesTo(rulesProcessor)
-			  .stream()
-			  .flatMap(e -> e.getStreamGroupings()
-					  .stream()
-					  .map(sg -> sg.getStream().getId()))
-			  .collect(Collectors.toSet());
+    @Override
+    public void visit(final RulesProcessor rulesProcessor) {
+        rulesProcessor.getConfig().setAny("outputStreams", rulesProcessor.getOutputStreams());
+        List<Rule> rulesWithWindow = new ArrayList<>();
+        List<Rule> rulesWithoutWindow = new ArrayList<>();
+        Set<String> inStreams = topologyDag.getEdgesTo(rulesProcessor)
+                .stream()
+                .flatMap(e -> e.getStreamGroupings()
+                        .stream()
+                        .map(sg -> sg.getStream().getId()))
+                .collect(Collectors.toSet());
 
-	  for (Rule rule : rulesProcessor.getRules())
-	  {
-		 if (!inStreams.containsAll(rule.getStreams()))
-		 {
-			throw new IllegalStateException("Input streams of rules processor " + inStreams
-					+ " does not contain rule's input streams " + rule.getStreams()
-					+ ". Please delete and recreate the rule.");
-		 }
-		 if (rule.getWindow() != null)
-		 {
-			rulesWithWindow.add(rule);
-		 } else
-		 {
-			rulesWithoutWindow.add(rule);
-		 }
-	  }
+        for (Rule rule : rulesProcessor.getRules()) {
+            if (!inStreams.containsAll(rule.getStreams())) {
+                throw new IllegalStateException("Input streams of rules processor " + inStreams
+                        + " does not contain rule's input streams " + rule.getStreams()
+                        + ". Please delete and recreate the rule.");
+            }
+            if (rule.getWindow() != null) {
+                rulesWithWindow.add(rule);
+            } else {
+                rulesWithoutWindow.add(rule);
+            }
+        }
 
-	  // assert that RulesProcessor doesn't have mixed kinds of rules.
-	  if (!rulesWithWindow.isEmpty() && !rulesWithoutWindow.isEmpty())
-	  {
-		 throw new IllegalStateException("RulesProcessor should have either windowed or non-windowed rules, not both.");
-	  }
-   }
+        // assert that RulesProcessor doesn't have mixed kinds of rules.
+        if (!rulesWithWindow.isEmpty() && !rulesWithoutWindow.isEmpty()) {
+            throw new IllegalStateException("RulesProcessor should have either windowed or non-windowed rules, not both.");
+        }
+    }
 
-   @Override
-   public void visit(Edge edge)
-   {
-	  if (sourceYamlComponentExists(edge) && !edgeAlreadyAddedComponents.contains(edge.getId()))
-	  {
-		 addEdge(edge.getFrom(),
-				 edge.getTo());
-		 //Add the edges to the list of visited edges
-		 edgeAlreadyAddedComponents.add(edge.getId());
+    @Override
+    public void visit(Edge edge) {
+        if (sourceYamlComponentExists(edge) && !edgeAlreadyAddedComponents.contains(edge.getId())) {
+            addEdge(edge.getFrom(),
+                    edge.getTo());
+            //Add the edges to the list of visited edges
+            edgeAlreadyAddedComponents.add(edge.getId());
 
-	  }
-   }
+        }
+    }
 
-   private void getYamlComponents(BeamComponent fluxComponent, Component topologyComponent)
-   {
-	  Map<String, Object> props = new LinkedHashMap<>();
-	  props.putAll(config);
-	  props.putAll(topologyComponent.getConfig().getProperties());
-	  props.put(BeamTopologyLayoutConstants.STREAMLINE_COMPONENT_CONF_KEY, topologyComponent);
-	  fluxComponent.withConfig(props, pipeline);
-   }
+    private void getYamlComponents(BeamComponent fluxComponent, Component topologyComponent) {
+        Map<String, Object> props = new LinkedHashMap<>();
+        props.putAll(config);
+        props.putAll(topologyComponent.getConfig().getProperties());
+        props.put(BeamTopologyLayoutConstants.STREAMLINE_COMPONENT_CONF_KEY, topologyComponent);
+        fluxComponent.withConfig(props, pipeline);
+    }
 
-   private boolean sourceYamlComponentExists(Edge edge)
-   {
-	  if (visitedComponent.contains(getFluxId(edge.getFrom())))
-	  {
-		 return true;
-	  }
-	  return false;
-   }
+    private boolean sourceYamlComponentExists(Edge edge) {
+        if (visitedComponent.contains(getFluxId(edge.getFrom()))) {
+            return true;
+        }
+        return false;
+    }
 
-   public List<Map.Entry<String, Component>> getYamlKeysAndComponents()
-   {
-	  return keysAndComponents;
-   }
+    public List<Map.Entry<String, Component>> getYamlKeysAndComponents() {
+        return keysAndComponents;
+    }
 
-   public Config getTopologyConfig()
-   {
-	  return topologyConfig;
-   }
+    public Config getTopologyConfig() {
+        return topologyConfig;
+    }
 
   /* private BeamComponent getYamlComponents(BeamComponent beamComponent, Component topologyComponent)
    {
@@ -228,49 +207,41 @@ public class BeamTopologyFluxGenerator extends TopologyDagVisitor
 	  keysAndComponents.add(makeEntry(BeamTopologyLayoutConstants.YAML_KEY_STREAMS, yamlComponent));
    }*/
 
-   //
-   private void addEdge(OutputComponent from, InputComponent to)
-   {
-	  BeamComponent inputBeamComponent = componentMap.get(getFluxId(from));
-	  BeamComponent outputComponent = componentMap.get(getFluxId(to));
+    //
+    private void addEdge(OutputComponent from, InputComponent to) {
+        BeamComponent inputBeamComponent = componentMap.get(getFluxId(from));
+        BeamComponent outputComponent = componentMap.get(getFluxId(to));
 
-	  PCollection<KV<String, String>> outputCollection = inputBeamComponent.getOutputCollection();
+        PCollection<KV<String, String>> outputCollection = inputBeamComponent.getOutputCollection();
 
-	  if (outputComponent == null)
-	  {
-		 if (to instanceof StreamlineSink)
-		 {
-			StreamlineSink sink = (StreamlineSink) to;
-			visit(sink);
-			BeamComponent beamSinkComponent = componentMap.get(getFluxId(sink));
-			beamSinkComponent.generateComponent(outputCollection);
-		 } else if (to instanceof StreamlineProcessor)
-		 {
-			StreamlineProcessor processor = (StreamlineProcessor) to;
-			visit(processor);
-			BeamComponent beamProcessorComponent = componentMap.get(getFluxId(processor));
-			beamProcessorComponent.generateComponent(outputCollection);
-		 } else
-		 {
-			throw new NotSupportedException("Unsupported Component Implementation");
-		 }
+        if (outputComponent == null) {
+            if (to instanceof StreamlineSink) {
+                StreamlineSink sink = (StreamlineSink) to;
+                visit(sink);
+                BeamComponent beamSinkComponent = componentMap.get(getFluxId(sink));
+                beamSinkComponent.generateComponent(outputCollection);
+            } else if (to instanceof StreamlineProcessor) {
+                StreamlineProcessor processor = (StreamlineProcessor) to;
+                visit(processor);
+                BeamComponent beamProcessorComponent = componentMap.get(getFluxId(processor));
+                beamProcessorComponent.generateComponent(outputCollection);
+            } else {
+                throw new NotSupportedException("Unsupported Component Implementation");
+            }
 
 
-	  }
-   }
+        }
+    }
 
-   public Pipeline getPipeline()
-   {
-	  return pipeline;
-   }
+    public Pipeline getPipeline() {
+        return pipeline;
+    }
 
-   private Map.Entry<String, Component> makeEntry(String key, Component component)
-   {
-	  return new AbstractMap.SimpleImmutableEntry<>(key, component);
-   }
+    private Map.Entry<String, Component> makeEntry(String key, Component component) {
+        return new AbstractMap.SimpleImmutableEntry<>(key, component);
+    }
 
-   private String getFluxId(Component component)
-   {
-	  return component.getId() + "-" + component.getName();
-   }
+    private String getFluxId(Component component) {
+        return component.getId() + "-" + component.getName();
+    }
 }

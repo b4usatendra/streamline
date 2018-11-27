@@ -1,17 +1,17 @@
 /**
-  * Copyright 2017 Hortonworks.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-
-  *   http://www.apache.org/licenses/LICENSE-2.0
-
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+ * Copyright 2017 Hortonworks.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  **/
 package com.hortonworks.streamline.streams.cluster.service.metadata;
 
@@ -19,38 +19,23 @@ package com.hortonworks.streamline.streams.cluster.service.metadata;
 import com.hortonworks.streamline.streams.cluster.catalog.Component;
 import com.hortonworks.streamline.streams.cluster.catalog.ComponentProcess;
 import com.hortonworks.streamline.streams.cluster.catalog.ServiceConfiguration;
+import com.hortonworks.streamline.streams.cluster.discovery.ambari.ComponentPropertyPattern;
+import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
 import com.hortonworks.streamline.streams.cluster.exception.ServiceComponentNotFoundException;
 import com.hortonworks.streamline.streams.cluster.exception.ServiceConfigurationNotFoundException;
 import com.hortonworks.streamline.streams.cluster.exception.ServiceNotFoundException;
 import com.hortonworks.streamline.streams.cluster.exception.ZookeeperClientException;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.ComponentPropertyPattern;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
 import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
 import com.hortonworks.streamline.streams.cluster.service.metadata.common.EnvironmentServiceUtil;
 import com.hortonworks.streamline.streams.cluster.service.metadata.common.HostPort;
-import com.hortonworks.streamline.streams.cluster.service.metadata.json.Authorizer;
-import com.hortonworks.streamline.streams.cluster.service.metadata.json.KafkaBrokerListeners;
-import com.hortonworks.streamline.streams.cluster.service.metadata.json.KafkaBrokersInfo;
-import com.hortonworks.streamline.streams.cluster.service.metadata.json.KafkaTopics;
-import com.hortonworks.streamline.streams.cluster.service.metadata.json.Keytabs;
-import com.hortonworks.streamline.streams.cluster.service.metadata.json.Principals;
-import com.hortonworks.streamline.streams.cluster.service.metadata.json.Security;
-import com.hortonworks.streamline.streams.cluster.service.metadata.json.ServicePrincipal;
-
+import com.hortonworks.streamline.streams.cluster.service.metadata.json.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.util.Pair;
 
+import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.core.SecurityContext;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -97,12 +82,10 @@ public class KafkaMetadataService implements AutoCloseable {
      */
     public static KafkaMetadataService newInstance(
             EnvironmentService environmentService, Long clusterId, SecurityContext securityContext)
-                throws ServiceConfigurationNotFoundException, IOException, ServiceNotFoundException, ServiceComponentNotFoundException {
+            throws ServiceConfigurationNotFoundException, IOException, ServiceNotFoundException, ServiceComponentNotFoundException {
 
         final KafkaZkConnection kafkaZkConnection = KafkaZkConnection.newInstance(
                 getZkStringRaw(environmentService, clusterId, AMBARI_JSON_CONFIG_KAFKA_BROKER));
-
-
         final ZookeeperClient zkCli = ZookeeperClient.newInstance(kafkaZkConnection);
         zkCli.start();
 
@@ -167,7 +150,7 @@ public class KafkaMetadataService implements AutoCloseable {
     }
 
     private Map<String, Pair<Component, Collection<ComponentProcess>>> getServiceToComponent() {
-        return new HashMap<String, Pair<Component, Collection<ComponentProcess>>>(){{
+        return new HashMap<String, Pair<Component, Collection<ComponentProcess>>>() {{
             put("kafka", new Pair<>(kafkaBroker, kafkaBrokerProcesses));
         }};
     }
@@ -182,7 +165,7 @@ public class KafkaMetadataService implements AutoCloseable {
     public String getKafkaServiceName() throws IOException {
         final List<Principal> kafkaPrincipals = getPrincipals().toMap().get(SERVICE_NAME_KAFKA);
         return kafkaPrincipals != null && !kafkaPrincipals.isEmpty()
-                ? ((ServicePrincipal)kafkaPrincipals.get(0)).getService()
+                ? ((ServicePrincipal) kafkaPrincipals.get(0)).getService()
                 : "";
     }
 

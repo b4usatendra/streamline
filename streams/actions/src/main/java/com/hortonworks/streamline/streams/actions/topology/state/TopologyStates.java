@@ -94,8 +94,8 @@ public final class TopologyStates {
                 context.setCurrentAction("Setting up extra jars");
                 Topology topology = context.getTopology();
                 TopologyActions topologyActions = context.getTopologyActions();
-                //String mavenArtifacts = context.getTopologyActionsService().setUpExtraJars(topology, topologyActions);
-                //context.setMavenArtifacts(mavenArtifacts);
+                String mavenArtifacts = context.getTopologyActionsService().setUpExtraJars(topology, topologyActions);
+                context.setMavenArtifacts(mavenArtifacts);
                 context.setState(TOPOLOGY_STATE_EXTRA_JARS_SETUP);
                 context.setCurrentAction("Extra jars set up");
             } catch (Exception ex) {

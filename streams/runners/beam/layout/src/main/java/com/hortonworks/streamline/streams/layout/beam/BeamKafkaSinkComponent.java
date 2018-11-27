@@ -15,144 +15,127 @@
  **/
 package com.hortonworks.streamline.streams.layout.beam;
 
-import com.hortonworks.streamline.streams.layout.*;
-import org.apache.beam.sdk.io.kafka.*;
-import org.apache.beam.sdk.transforms.*;
-import org.apache.beam.sdk.values.*;
-import org.apache.kafka.clients.*;
-import org.slf4j.*;
-import sun.reflect.generics.reflectiveObjects.*;
+import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
+import org.apache.beam.sdk.io.kafka.KafkaIO;
+import org.apache.beam.sdk.transforms.Flatten;
+import org.apache.beam.sdk.values.KV;
+import org.apache.beam.sdk.values.PCollection;
+import org.apache.beam.sdk.values.PCollectionList;
+import org.apache.kafka.clients.CommonClientConfigs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implementation for Beam Kafka Producer
  */
-public class BeamKafkaSinkComponent extends AbstractBeamComponent
-{
-   private static final Logger LOG = LoggerFactory.getLogger(BeamKafkaSinkComponent.class);
-   static final String SASL_JAAS_CONFIG_KEY = "saslJaasConfig";
-   static final String SASL_KERBEROS_SERVICE_NAME = "kafkaServiceName";
-   protected PCollection<KV<String, String>> inputCollection;
-   protected PCollection<KV<String, String>> outputCollection;
+public class BeamKafkaSinkComponent extends AbstractBeamComponent {
+    static final String SASL_JAAS_CONFIG_KEY = "saslJaasConfig";
+    static final String SASL_KERBEROS_SERVICE_NAME = "kafkaServiceName";
+    private static final Logger LOG = LoggerFactory.getLogger(BeamKafkaSinkComponent.class);
+    protected PCollection<KV<String, String>> inputCollection;
+    protected PCollection<KV<String, String>> outputCollection;
 
-   public BeamKafkaSinkComponent(){}
+    public BeamKafkaSinkComponent() {
+    }
 
-   @Override
-   public PCollection getOutputCollection()
-   {
-	  throw new NotImplementedException();
-   }
+    @Override
+    public PCollection getOutputCollection() {
+        throw new NotImplementedException();
+    }
 
-   @Override
-   public void unionInputCollection(PCollection<KV<String, String>> collection)
-   {
-	  outputCollection = PCollectionList.of(outputCollection).and(collection).apply(Flatten.<KV<String, String>>pCollections());
-   }
+    @Override
+    public void unionInputCollection(PCollection<KV<String, String>> collection) {
+        outputCollection = PCollectionList.of(outputCollection).and(collection).apply(Flatten.<KV<String, String>>pCollections());
+    }
 
-   @Override
-   public void generateComponent(PCollection pCollection)
-   {
-	  validateSSLConfig();
-	  setSaslJaasConfig();
-	  String sinkId = "beamKafkaSink" + UUID_FOR_COMPONENTS;
-	  String[] configKeys = {
-			  "bootstrapServers", "topic"
-	  };
-	  initializeComponent(pCollection, configKeys);
-   }
+    @Override
+    public void generateComponent(PCollection pCollection) {
+        validateSSLConfig();
+        setSaslJaasConfig();
+        String sinkId = "beamKafkaSink" + UUID_FOR_COMPONENTS;
+        String[] configKeys = {
+                "bootstrapServers", "topic"
+        };
+        initializeComponent(pCollection, configKeys);
+    }
 
-   private void initializeComponent(PCollection<KV<String, String>> pCollection, String[] configKeys)
-   {
-	  pCollection.apply(KafkaIO.<String, String>write()
-			  .withBootstrapServers((String) conf.get(configKeys[0]))
-			  .withTopic((String) conf.get(configKeys[1]))
-			  .withKeySerializer(org.apache.kafka.common.serialization.StringSerializer.class)
-			  .withValueSerializer(org.apache.kafka.common.serialization.StringSerializer.class)
-			  .updateProducerProperties(addProducerProperties()));
+    private void initializeComponent(PCollection<KV<String, String>> pCollection, String[] configKeys) {
+        pCollection.apply(KafkaIO.<String, String>write()
+                .withBootstrapServers((String) conf.get(configKeys[0]))
+                .withTopic((String) conf.get(configKeys[1]))
+                .withKeySerializer(org.apache.kafka.common.serialization.StringSerializer.class)
+                .withValueSerializer(org.apache.kafka.common.serialization.StringSerializer.class)
+                .updateProducerProperties(addProducerProperties()));
 
-	  if (outputCollection == null)
-	  {
-		 outputCollection = pCollection;
-	  } else
-	  {
-		 unionInputCollection(pCollection);
-	  }
-   }
+        if (outputCollection == null) {
+            outputCollection = pCollection;
+        } else {
+            unionInputCollection(pCollection);
+        }
+    }
 
-   private Map<String, Object> addProducerProperties()
-   {
-	  String producerPropertiesComponentId = "producerProperties" + UUID_FOR_COMPONENTS;
+    private Map<String, Object> addProducerProperties() {
+        String producerPropertiesComponentId = "producerProperties" + UUID_FOR_COMPONENTS;
 
-	  Map<String, Object> producerProperties = new HashMap<>();
+        Map<String, Object> producerProperties = new HashMap<>();
 
-	  //fieldNames and propertyNames arrays should be of same length
-	  String[] propertyNames = {
-			  "bootstrap.servers", "buffer.memory", "compression.type", "retries", "batch.size", "client.id", "connections.max.idle.ms",
-			  "linger.ms", "max.block.ms", "max.request.size", "receive.buffer.bytes", "request.timeout.ms", "security.protocol", "send.buffer.bytes",
-			  "timeout.ms", "block.on.buffer.full", "max.in.flight.requests.per.connection", "metadata.fetch.timeout.ms", "metadata.max.age.ms",
-			  "reconnect.backoff.ms", "retry.backoff.ms", "schema.registry.url", "serdes.protocol.version", "writer.schema.version"
-	  };
-	  String[] fieldNames = {
-			  "bootstrapServers", "bufferMemory", "compressionType", "retries", "batchSize", "clientId", "maxConnectionIdle",
-			  "lingerTime", "maxBlock", "maxRequestSize", "receiveBufferSize", "requestTimeout", "securityProtocol", "sendBufferSize",
-			  "timeout", "blocKOnBufferFull", "maxInflighRequests", "metadataFetchTimeout", "metadataMaxAge", "reconnectBackoff", "retryBackoff",
-			  TopologyLayoutConstants.SCHEMA_REGISTRY_URL, "serProtocolVersion", "writerSchemaVersion"
-	  };
+        //fieldNames and propertyNames arrays should be of same length
+        String[] propertyNames = {
+                "bootstrap.servers", "buffer.memory", "compression.type", "retries", "batch.size", "client.id", "connections.max.idle.ms",
+                "linger.ms", "max.block.ms", "max.request.size", "receive.buffer.bytes", "request.timeout.ms", "security.protocol", "send.buffer.bytes",
+                "timeout.ms", "block.on.buffer.full", "max.in.flight.requests.per.connection", "metadata.fetch.timeout.ms", "metadata.max.age.ms",
+                "reconnect.backoff.ms", "retry.backoff.ms", "schema.registry.url", "serdes.protocol.version", "writer.schema.version"
+        };
+        String[] fieldNames = {
+                "bootstrapServers", "bufferMemory", "compressionType", "retries", "batchSize", "clientId", "maxConnectionIdle",
+                "lingerTime", "maxBlock", "maxRequestSize", "receiveBufferSize", "requestTimeout", "securityProtocol", "sendBufferSize",
+                "timeout", "blocKOnBufferFull", "maxInflighRequests", "metadataFetchTimeout", "metadataMaxAge", "reconnectBackoff", "retryBackoff",
+                TopologyLayoutConstants.SCHEMA_REGISTRY_URL, "serProtocolVersion", "writerSchemaVersion"
+        };
 
-	  producerProperties.put("sasl.mechanism", "PLAIN");
-	  producerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
-	  for (int j = 0; j < propertyNames.length; ++j)
-	  {
-		 if (conf.get(fieldNames[j]) != null)
-		 {
-			producerProperties.put(propertyNames[j], conf.get(fieldNames[j]));
-		 }
-	  }
-	  return producerProperties;
-   }
+        producerProperties.put("sasl.mechanism", "PLAIN");
+        producerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
+        for (int j = 0; j < propertyNames.length; ++j) {
+            if (conf.get(fieldNames[j]) != null) {
+                producerProperties.put(propertyNames[j], conf.get(fieldNames[j]));
+            }
+        }
+        return producerProperties;
+    }
 
-   private Class getKeySerializer()
-   {
-	  String keySerializer = (String) conf.get("keySerializer");
-	  if ((keySerializer == null) || "ByteArray".equals(keySerializer))
-	  {
-		 return org.apache.kafka.common.serialization.ByteArraySerializer.class;
-	  } else if ("String".equals(keySerializer))
-	  {
-		 return org.apache.kafka.common.serialization.StringSerializer.class;
-	  } else if ("Integer".equals(keySerializer))
-	  {
-		 return org.apache.kafka.common.serialization.IntegerSerializer.class;
-	  } else if ("Long".equals(keySerializer))
-	  {
-		 return org.apache.kafka.common.serialization.LongSerializer.class;
-	  } else
-	  {
-		 throw new IllegalArgumentException("Key serializer for kafka sink is not supported: " + keySerializer);
-	  }
-   }
+    private Class getKeySerializer() {
+        String keySerializer = (String) conf.get("keySerializer");
+        if ((keySerializer == null) || "ByteArray".equals(keySerializer)) {
+            return org.apache.kafka.common.serialization.ByteArraySerializer.class;
+        } else if ("String".equals(keySerializer)) {
+            return org.apache.kafka.common.serialization.StringSerializer.class;
+        } else if ("Integer".equals(keySerializer)) {
+            return org.apache.kafka.common.serialization.IntegerSerializer.class;
+        } else if ("Long".equals(keySerializer)) {
+            return org.apache.kafka.common.serialization.LongSerializer.class;
+        } else {
+            throw new IllegalArgumentException("Key serializer for kafka sink is not supported: " + keySerializer);
+        }
+    }
 
-   private String getAckMode()
-   {
-	  String ackMode = (String) conf.get("ackMode");
-	  if ("None".equals(ackMode))
-	  {
-		 return "0";
-	  } else if ("Leader".equals(ackMode) || (ackMode == null))
-	  {
-		 return "1";
-	  } else if ("All".equals(ackMode))
-	  {
-		 return "all";
-	  } else
-	  {
-		 throw new IllegalArgumentException("Ack mode for kafka sink is not supported: " + ackMode);
-	  }
-   }
+    private String getAckMode() {
+        String ackMode = (String) conf.get("ackMode");
+        if ("None".equals(ackMode)) {
+            return "0";
+        } else if ("Leader".equals(ackMode) || (ackMode == null)) {
+            return "1";
+        } else if ("All".equals(ackMode)) {
+            return "all";
+        } else {
+            throw new IllegalArgumentException("Ack mode for kafka sink is not supported: " + ackMode);
+        }
+    }
 
-   private void setSaslJaasConfig()
-   {
+    private void setSaslJaasConfig() {
         /*String securityProtocol = (String) conf.get("securityProtocol");
         if (securityProtocol != null && !securityProtocol.isEmpty() && securityProtocol.startsWith("SASL")) {
             StringBuilder saslConfigStrBuilder = new StringBuilder();
@@ -173,10 +156,9 @@ public class BeamKafkaSinkComponent extends AbstractBeamComponent
             conf.put(SASL_JAAS_CONFIG_KEY, saslConfigStrBuilder.toString());
         }*/
 
-   }
+    }
 
-   private void validateSSLConfig()
-   {
+    private void validateSSLConfig() {
         /*String securityProtocol = (String) conf.get("securityProtocol");
         if (securityProtocol != null && !securityProtocol.isEmpty() && securityProtocol.endsWith("SSL")) {
             String truststoreLocation = (String) conf.get("sslTruststoreLocation");
@@ -188,5 +170,5 @@ public class BeamKafkaSinkComponent extends AbstractBeamComponent
                 throw new IllegalArgumentException("Truststore password must be provided for SSL");
             }
         }*/
-   }
+    }
 }

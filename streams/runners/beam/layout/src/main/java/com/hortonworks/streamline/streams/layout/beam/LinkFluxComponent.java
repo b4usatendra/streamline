@@ -1,26 +1,26 @@
 /**
-  * Copyright 2017 Hortonworks.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-
-  *   http://www.apache.org/licenses/LICENSE-2.0
-
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+ * Copyright 2017 Hortonworks.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  **/
 package com.hortonworks.streamline.streams.layout.beam;
 
-import com.hortonworks.streamline.common.exception.*;
-import com.hortonworks.streamline.streams.layout.*;
-import org.apache.beam.sdk.values.*;
-import sun.reflect.generics.reflectiveObjects.*;
+import com.hortonworks.streamline.common.exception.ComponentConfigException;
+import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
+import org.apache.beam.sdk.values.PCollection;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Implementation for flux streams
@@ -28,13 +28,13 @@ import java.util.*;
 public class LinkFluxComponent extends AbstractBeamComponent {
 
 
-    protected void updateLinkComponentWithGrouping (Map<String, Object> groupingInfo) {
+    protected void updateLinkComponentWithGrouping(Map<String, Object> groupingInfo) {
         if (groupingInfo != null && !groupingInfo.isEmpty()) {
             component.put(BeamTopologyLayoutConstants.YAML_KEY_GROUPING, groupingInfo);
         }
     }
 
-    protected Map<String, Object> getGroupingYamlForType (String groupingType) {
+    protected Map<String, Object> getGroupingYamlForType(String groupingType) {
         Map<String, Object> grouping = new LinkedHashMap<>();
         grouping.put(BeamTopologyLayoutConstants.YAML_KEY_TYPE, groupingType);
         if (conf.get(TopologyLayoutConstants.JSON_KEY_STREAM_ID) != null) {
@@ -44,14 +44,12 @@ public class LinkFluxComponent extends AbstractBeamComponent {
     }
 
     @Override
-    public PCollection getOutputCollection()
-    {
+    public PCollection getOutputCollection() {
         return null;
     }
 
     @Override
-    public void generateComponent(PCollection pCollection)
-    {
+    public void generateComponent(PCollection pCollection) {
         String linkName = "link" + UUID_FOR_COMPONENTS;
         component.put(BeamTopologyLayoutConstants.YAML_KEY_NAME, linkName);
         component.put(BeamTopologyLayoutConstants.YAML_KEY_FROM, conf.get
@@ -61,24 +59,23 @@ public class LinkFluxComponent extends AbstractBeamComponent {
     }
 
     @Override
-    public void unionInputCollection(PCollection collection)
-    {
+    public void unionInputCollection(PCollection collection) {
 
     }
 
     @Override
-    public void validateConfig () throws ComponentConfigException {
+    public void validateConfig() throws ComponentConfigException {
         validateStringFields();
     }
 
-    private void validateStringFields () throws ComponentConfigException {
+    private void validateStringFields() throws ComponentConfigException {
         String[] requiredStringFields = {
-            TopologyLayoutConstants.JSON_KEY_FROM,
-            TopologyLayoutConstants.JSON_KEY_TO
+                TopologyLayoutConstants.JSON_KEY_FROM,
+                TopologyLayoutConstants.JSON_KEY_TO
         };
         validateStringFields(requiredStringFields, true);
         String[] optionalStringFields = {
-            TopologyLayoutConstants.JSON_KEY_STREAM_ID
+                TopologyLayoutConstants.JSON_KEY_STREAM_ID
         };
         validateStringFields(optionalStringFields, false);
     }
