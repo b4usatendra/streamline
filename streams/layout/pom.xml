@@ -17,10 +17,7 @@
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>common</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.hortonworks.streamline</groupId>
-            <artifactId>streamline-sdk</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>org.apache.calcite</groupId>
             <artifactId>calcite-core</artifactId>
@@ -37,6 +34,10 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hortonworks.streamline</groupId>
+            <artifactId>streamline-sdk</artifactId>
         </dependency>
     </dependencies>
     <build>

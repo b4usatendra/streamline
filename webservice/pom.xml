@@ -151,7 +151,6 @@
         <dependency>
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-sdk</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.hortonworks.streamline</groupId>

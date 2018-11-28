@@ -16,47 +16,42 @@
 
 package com.hortonworks.streamline.webservice;
 
-import com.hortonworks.registries.auth.Login;
-import com.hortonworks.registries.common.ServletFilterConfiguration;
-import com.hortonworks.registries.common.util.FileStorage;
+import com.hortonworks.registries.auth.*;
+import com.hortonworks.registries.common.*;
+import com.hortonworks.registries.common.util.*;
 import com.hortonworks.registries.storage.*;
-import com.hortonworks.registries.storage.transaction.TransactionEventListener;
-import com.hortonworks.streamline.common.Constants;
+import com.hortonworks.registries.storage.transaction.*;
+import com.hortonworks.streamline.common.*;
 import com.hortonworks.streamline.common.ModuleRegistration;
-import com.hortonworks.streamline.common.exception.ConfigException;
+import com.hortonworks.streamline.common.exception.*;
 import com.hortonworks.streamline.common.util.ReflectionHelper;
-import com.hortonworks.streamline.streams.security.StreamlineAuthorizer;
-import com.hortonworks.streamline.streams.security.authentication.StreamlineKerberosRequestFilter;
-import com.hortonworks.streamline.streams.security.impl.DefaultStreamlineAuthorizer;
-import com.hortonworks.streamline.streams.security.service.SecurityCatalogService;
-import com.hortonworks.streamline.streams.service.GenericExceptionMapper;
+import com.hortonworks.streamline.streams.security.*;
+import com.hortonworks.streamline.streams.security.authentication.*;
+import com.hortonworks.streamline.streams.security.impl.*;
+import com.hortonworks.streamline.streams.security.service.*;
 import com.hortonworks.streamline.webservice.configurations.*;
+import com.hortonworks.streamline.webservice.configurations.ModuleConfiguration;
 import com.hortonworks.streamline.webservice.configurations.StorageProviderConfiguration;
-import com.hortonworks.streamline.webservice.resources.StreamlineConfigurationResource;
+import com.hortonworks.streamline.webservice.resources.*;
 import io.dropwizard.Application;
-import io.dropwizard.assets.AssetsBundle;
-import io.dropwizard.jetty.HttpConnectorFactory;
-import io.dropwizard.server.AbstractServerFactory;
-import io.dropwizard.server.DefaultServerFactory;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
-import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jetty.servlet.ErrorPageErrorHandler;
-import org.eclipse.jetty.servlets.CrossOriginFilter;
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.dropwizard.assets.*;
+import io.dropwizard.jetty.*;
+import io.dropwizard.server.*;
+import io.dropwizard.setup.*;
+import org.apache.commons.lang3.*;
+import org.eclipse.jetty.servlet.*;
+import org.eclipse.jetty.servlets.*;
+import org.glassfish.jersey.media.multipart.*;
+import org.slf4j.*;
 
-import javax.security.auth.Subject;
-import javax.security.auth.login.LoginException;
-import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
-import javax.servlet.FilterRegistration;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.core.Response;
+import javax.security.auth.*;
+import javax.security.auth.login.*;
+import javax.servlet.*;
+import javax.ws.rs.container.*;
+import javax.ws.rs.core.*;
 import java.util.*;
 
-import static com.hortonworks.registries.storage.util.StorageUtils.getStorableEntities;
+import static com.hortonworks.registries.storage.util.StorageUtils.*;
 
 public class StreamlineApplication extends Application<StreamlineConfiguration> {
     private static final Logger LOG = LoggerFactory.getLogger(StreamlineApplication.class);

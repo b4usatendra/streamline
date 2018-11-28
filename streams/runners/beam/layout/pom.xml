@@ -18,13 +18,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.beam</groupId>
-            <artifactId>beam-sdks-java-io-kafka</artifactId>
-            <version>${beam.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-layout</artifactId>
         </dependency>
@@ -49,6 +42,11 @@
             <artifactId>druid-server</artifactId>
             <version>0.9.1</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.beam</groupId>
+            <artifactId>beam-sdks-java-io-kafka</artifactId>
+            <version>${beam.version}</version>
         </dependency>
     </dependencies>
 </project>

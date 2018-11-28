@@ -16,28 +16,22 @@
 package com.hortonworks.streamline.streams.cluster.service.metadata;
 
 
-import com.hortonworks.streamline.streams.cluster.catalog.Component;
-import com.hortonworks.streamline.streams.cluster.catalog.ComponentProcess;
-import com.hortonworks.streamline.streams.cluster.catalog.ServiceConfiguration;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.ComponentPropertyPattern;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
-import com.hortonworks.streamline.streams.cluster.exception.ServiceComponentNotFoundException;
-import com.hortonworks.streamline.streams.cluster.exception.ServiceConfigurationNotFoundException;
-import com.hortonworks.streamline.streams.cluster.exception.ServiceNotFoundException;
-import com.hortonworks.streamline.streams.cluster.exception.ZookeeperClientException;
-import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
-import com.hortonworks.streamline.streams.cluster.service.metadata.common.EnvironmentServiceUtil;
-import com.hortonworks.streamline.streams.cluster.service.metadata.common.HostPort;
+import com.hortonworks.streamline.streams.cluster.catalog.*;
+import com.hortonworks.streamline.streams.cluster.discovery.ambari.*;
+import com.hortonworks.streamline.streams.cluster.exception.*;
+import com.hortonworks.streamline.streams.cluster.service.*;
+import com.hortonworks.streamline.streams.cluster.service.metadata.common.*;
 import com.hortonworks.streamline.streams.cluster.service.metadata.json.*;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.math3.util.Pair;
+import com.hortonworks.streamline.streams.cluster.service.metadata.json.Security;
+import org.apache.commons.lang3.*;
+import org.apache.commons.math3.util.*;
 
-import javax.ws.rs.core.SecurityContext;
-import java.io.IOException;
-import java.security.Principal;
+import javax.ws.rs.core.*;
+import java.io.*;
+import java.security.*;
 import java.util.*;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 /**
  * This class opens zookeeper client connections which must be closed either by calling the {@link KafkaMetadataService#close()}'

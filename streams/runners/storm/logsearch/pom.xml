@@ -15,10 +15,7 @@
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-common-storm</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.hortonworks.streamline</groupId>
-            <artifactId>streamline-logsearch</artifactId>
-        </dependency>
+
         <!-- ambari infra -->
         <dependency>
             <groupId>org.apache.solr</groupId>
@@ -38,7 +35,10 @@
             <groupId>org.jmockit</groupId>
             <artifactId>jmockit</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.hortonworks.streamline</groupId>
+            <artifactId>streamline-logsearch</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

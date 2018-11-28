@@ -15,20 +15,18 @@
  **/
 package com.hortonworks.streamline.streams.layout.beam;
 
-import com.hortonworks.streamline.common.Config;
+import com.hortonworks.streamline.common.*;
 import com.hortonworks.streamline.streams.layout.component.*;
-import com.hortonworks.streamline.streams.layout.component.impl.RulesProcessor;
-import com.hortonworks.streamline.streams.layout.component.rule.Rule;
-import org.apache.beam.sdk.Pipeline;
-import org.apache.beam.sdk.values.KV;
-import org.apache.beam.sdk.values.PCollection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.hortonworks.streamline.streams.layout.component.impl.*;
+import com.hortonworks.streamline.streams.layout.component.rule.*;
+import org.apache.beam.sdk.*;
+import org.apache.beam.sdk.values.*;
+import org.slf4j.*;
 
-import javax.ws.rs.NotSupportedException;
+import javax.ws.rs.*;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
 public class BeamTopologyFluxGenerator extends TopologyDagVisitor {
     private static final Logger LOG = LoggerFactory.getLogger(BeamTopologyFluxGenerator.class);
@@ -40,6 +38,7 @@ public class BeamTopologyFluxGenerator extends TopologyDagVisitor {
     private final Config topologyConfig;
     private final Set<String> edgeAlreadyAddedComponents = new HashSet<>();
     private Pipeline pipeline = Pipeline.create();
+
     private Map<String, BeamComponent> componentMap = new HashMap<String, BeamComponent>();
     private Set<String> visitedComponent = new HashSet<>();
 

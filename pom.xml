@@ -10,7 +10,10 @@
     <packaging>pom</packaging>
     <name>Streaming Analyitcs Manager</name>
     <description>
-        Develop and deploy Streaming Analytics applications visually with bindings for streaming engine and multiple source/sinks, rich set of streaming operators and operational lifecycle management. Streaming Analytics Manager makes it easy to develop, monitor streaming applications and also provides analytics of data thats being processed by streaming application.
+        Develop and deploy Streaming Analytics applications visually with bindings for streaming engine and multiple
+        source/sinks, rich set of streaming operators and operational lifecycle management. Streaming Analytics Manager
+        makes it easy to develop, monitor streaming applications and also provides analytics of data thats being
+        processed by streaming application.
     </description>
     <url>http://github.com/hortonworks/streamline</url>
 
@@ -204,6 +207,59 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Framework related dependencies -->
+            <dependency>
+                <groupId>com.hortonworks.registries</groupId>
+                <artifactId>schema-registry-client</artifactId>
+                <version>${schema-registry.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.sun.jersey</groupId>
+                        <artifactId>jersey-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>servlet-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.jersey</groupId>
+                        <artifactId>jersey-json</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.registries</groupId>
+                <artifactId>schema-registry-serdes</artifactId>
+                <version>${schema-registry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.registries</groupId>
+                <artifactId>registry-common</artifactId>
+                <version>${schema-registry.version}</version>
+                <exclusions>
+                    <!-- This is needed to avoid conflict with email notifier -->
+                    <exclusion>
+                        <groupId>javax.mail</groupId>
+                        <artifactId>mailapi</artifactId>
+                    </exclusion>
+                    <!--gpl license-->
+                    <exclusion>
+                        <groupId>org.mozilla</groupId>
+                        <artifactId>rhino</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.jersey</groupId>
+                        <artifactId>jersey-core</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.registries</groupId>
+                <artifactId>common-auth</artifactId>
+                <version>${schema-registry.version}</version>
+            </dependency>
+
+
 
             <!-- Compile Scope Dependencies. Default, hence no need to explicitly declare -->
             <dependency>
@@ -276,56 +332,7 @@
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.hortonworks.registries</groupId>
-                <artifactId>schema-registry-client</artifactId>
-                <version>${schema-registry.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun.jersey</groupId>
-                        <artifactId>jersey-core</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>javax.servlet</groupId>
-                        <artifactId>servlet-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.jersey</groupId>
-                        <artifactId>jersey-json</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.registries</groupId>
-                <artifactId>schema-registry-serdes</artifactId>
-                <version>${schema-registry.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.registries</groupId>
-                <artifactId>registry-common</artifactId>
-                <version>${schema-registry.version}</version>
-                <exclusions>
-                    <!-- This is needed to avoid conflict with email notifier -->
-                    <exclusion>
-                        <groupId>javax.mail</groupId>
-                        <artifactId>mailapi</artifactId>
-                    </exclusion>
-                    <!--gpl license-->
-                    <exclusion>
-                        <groupId>org.mozilla</groupId>
-                        <artifactId>rhino</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sun.jersey</groupId>
-                        <artifactId>jersey-core</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.registries</groupId>
-                <artifactId>common-auth</artifactId>
-                <version>${schema-registry.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>com.sun.mail</groupId>
                 <artifactId>javax.mail</artifactId>
@@ -720,7 +727,172 @@
             </dependency>
             <dependency>
                 <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-authorizer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-actions</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-metrics</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-notification</artifactId>
+                <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-sampling</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-notifier</artifactId>
+                <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-runners</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-sql</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-runtime</artifactId>
+                <version>${project.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-sdk</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-logsearch</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streams</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>tag-registry</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>dashboard-registry</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>webservice</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- STORM streamEngine related dependencies -->
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-runtime-storm</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-logsearch-storm</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-runners-storm</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-sampling-storm</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-common-storm</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-metrics-storm</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-actions-storm</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
                 <artifactId>streamline-layout-storm</artifactId>
+                <version>${project.version}</version>
+                <!-- dropwizard and phoenix have conflicts in jersey related dependencies  -->
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.phoenix</groupId>
+                        <artifactId>phoenix-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                    <!-- Storm will load its underlying framework for slf4j,
+                    so exclude underlying logging framework for Streamline -->
+                    <exclusion>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-classic</artifactId>
+                    </exclusion>
+                    <!-- This is needed to avoid conflict with email notifier -->
+                    <exclusion>
+                        <groupId>javax.mail</groupId>
+                        <artifactId>mailapi</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- BEAM streamEngine related dependencies -->
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-layout-beam</artifactId>
                 <version>${project.version}</version>
                 <!-- dropwizard and phoenix have conflicts in jersey related dependencies  -->
                 <exclusions>
@@ -747,137 +919,35 @@
             </dependency>
             <dependency>
                 <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-authorizer</artifactId>
+                <artifactId>streamline-actions-beam</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+
             <dependency>
                 <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-actions</artifactId>
+                <artifactId>streamline-metrics-beam</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-actions-storm</artifactId>
+                <artifactId>streamline-common-beam</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-metrics</artifactId>
+                <artifactId>streamline-sampling-beam</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-metrics-storm</artifactId>
+                <artifactId>streamline-runners-beam</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-common-storm</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-notification</artifactId>
-                <version>${project.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-log4j12</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-sampling</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-sampling-storm</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-notifier</artifactId>
-                <version>${project.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-log4j12</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-runners</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-runners-storm</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-sql</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-runtime</artifactId>
-                <version>${project.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-log4j12</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-runtime-storm</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-sdk</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-service</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-logsearch</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streamline-logsearch-storm</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>streams</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>tag-registry</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>dashboard-registry</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hortonworks.streamline</groupId>
-                <artifactId>webservice</artifactId>
-                <version>${project.version}</version>
-            </dependency>
+
             <!-- END Project Artifact Dependencies -->
 
             <!-- Runtime Scope Dependencies -->
@@ -1017,10 +1087,11 @@
                             <configuration>
                                 <transformers>
                                     <transformer
-                                            implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                            implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                     <transformer
                                             implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                        <mainClass>com.hortonworks.streamline.webservice.StreamlineApplication</mainClass>
+                                        <mainClass>com.hortonworks.streamline.webservice.StreamlineApplication
+                                        </mainClass>
                                     </transformer>
                                 </transformers>
                             </configuration>

@@ -17,6 +17,14 @@
         <module>actions</module>
         <module>commons</module>
         <module>sampling</module>
+        <module>metrics</module>
     </modules>
-
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.apache.beam/beam-sdks-java-core -->
+        <dependency>
+            <groupId>org.apache.beam</groupId>
+            <artifactId>beam-sdks-java-core</artifactId>
+            <version>${beam.version}</version>
+        </dependency>
+    </dependencies>
 </project>

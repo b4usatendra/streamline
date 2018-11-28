@@ -28,18 +28,36 @@
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-actions</artifactId>
         </dependency>
+
+       <dependency>
+            <groupId>com.hortonworks.streamline</groupId>
+            <artifactId>streamline-actions-beam</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hortonworks.streamline</groupId>
+            <artifactId>streamline-layout-beam</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hortonworks.streamline</groupId>
+            <artifactId>streamline-metrics-beam</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-actions-storm</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-layout-storm</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-metrics-storm</artifactId>
         </dependency>
+
         <dependency>
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-logsearch-storm</artifactId>

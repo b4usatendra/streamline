@@ -24,156 +24,131 @@ import com.hortonworks.streamline.streams.layout.*;
 import com.hortonworks.streamline.streams.metrics.*;
 import com.hortonworks.streamline.streams.metrics.container.mapping.*;
 import com.hortonworks.streamline.streams.metrics.topology.*;
-import javax.security.auth.*;
 
+import javax.security.auth.*;
 import java.util.*;
 
-public class TopologyMetricsContainer extends NamespaceAwareContainer<TopologyMetrics>
-{
+public class TopologyMetricsContainer extends NamespaceAwareContainer<TopologyMetrics> {
 
-   public static final String COMPONENT_NAME_METRICS_COLLECTOR = ComponentPropertyPattern.METRICS_COLLECTOR.name();
-   public static final String COLLECTOR_API_URL_KEY = "collectorApiUrl";
+    public static final String COMPONENT_NAME_METRICS_COLLECTOR = ComponentPropertyPattern.METRICS_COLLECTOR.name();
+    public static final String COLLECTOR_API_URL_KEY = "collectorApiUrl";
 
-   private final Subject subject;
+    private final Subject subject;
 
-   public TopologyMetricsContainer(EnvironmentService environmentService, Subject subject)
-   {
-	  super(environmentService);
-	  this.subject = subject;
-   }
+    public TopologyMetricsContainer(EnvironmentService environmentService, Subject subject) {
+        super(environmentService);
+        this.subject = subject;
+    }
 
-   @Override
-   protected TopologyMetrics initializeInstance(Namespace namespace)
-   {
-	  String streamingEngine = namespace.getStreamingEngine();
+    @Override
+    protected TopologyMetrics initializeInstance(Namespace namespace) {
+        String streamingEngine = namespace.getStreamingEngine();
 
-	  MappedTopologyMetricsImpl metricsImpl;
-	  // Only Storm is supported as streaming engine
-	  try
-	  {
-		 metricsImpl = MappedTopologyMetricsImpl.valueOf(streamingEngine);
-	  }
-	  catch (IllegalArgumentException e)
-	  {
-		 throw new RuntimeException("Unsupported streaming engine: " + streamingEngine, e);
-	  }
+        MappedTopologyMetricsImpl metricsImpl;
+        // Only Storm is supported as streaming engine
+        try {
+            metricsImpl = MappedTopologyMetricsImpl.valueOf(streamingEngine);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Unsupported streaming engine: " + streamingEngine, e);
+        }
 
-	  Map<String, Object> conf = null;
-	  //TODO add beam as one of the stream engine
-	  // FIXME: "how to initialize" is up to implementation detail - now we just only consider about Storm implementation
-	  if (streamingEngine.equalsIgnoreCase("storm"))
-	  {
-		 conf = buildStormTopologyMetricsConfigMap(namespace, streamingEngine, subject);
-	  } else if (streamingEngine.equalsIgnoreCase("beam"))
-	  {
-		 conf = buildBeamTopologyMetricsConfigMap(namespace, streamingEngine, subject);
-	  }
+        Map<String, Object> conf = null;
+        //TODO add beam as one of the stream engine
+        // FIXME: "how to initialize" is up to implementation detail - now we just only consider about Storm implementation
+        if (streamingEngine.equalsIgnoreCase("storm")) {
+            conf = buildStormTopologyMetricsConfigMap(namespace, streamingEngine, subject);
+        } else if (streamingEngine.equalsIgnoreCase("beam")) {
+            conf = buildBeamTopologyMetricsConfigMap(namespace, streamingEngine, subject);
+        }
 
-	  String className = metricsImpl.getClassName();
-	  TopologyMetrics topologyMetrics = initTopologyMetrics(conf, className);
+        String className = metricsImpl.getClassName();
+        TopologyMetrics topologyMetrics = initTopologyMetrics(conf, className);
 
-	  String timeSeriesDB = namespace.getTimeSeriesDB();
-	  if (timeSeriesDB != null && !timeSeriesDB.isEmpty())
-	  {
-		 String querierKey = MappedTimeSeriesQuerierImpl.getName(streamingEngine, timeSeriesDB);
+        String timeSeriesDB = namespace.getTimeSeriesDB();
+        if (timeSeriesDB != null && !timeSeriesDB.isEmpty()) {
+            String querierKey = MappedTimeSeriesQuerierImpl.getName(streamingEngine, timeSeriesDB);
 
-		 MappedTimeSeriesQuerierImpl timeSeriesQuerierImpl;
-		 try
-		 {
-			timeSeriesQuerierImpl = MappedTimeSeriesQuerierImpl.valueOf(querierKey);
-		 }
-		 catch (IllegalArgumentException e)
-		 {
-			throw new RuntimeException("Unsupported streaming engine and time-series DB combination: " + streamingEngine +
-					" & " + timeSeriesDB, e);
-		 }
+            MappedTimeSeriesQuerierImpl timeSeriesQuerierImpl;
+            try {
+                timeSeriesQuerierImpl = MappedTimeSeriesQuerierImpl.valueOf(querierKey);
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Unsupported streaming engine and time-series DB combination: " + streamingEngine +
+                        " & " + timeSeriesDB, e);
+            }
 
-		 // FIXME: "how to initialize" is up to implementation detail - now we just only consider about Storm & AMS implementation
-		 Map<String, String> confTimeSeriesQuerier = buildAMSTimeSeriesQuerierConfigMap(namespace, timeSeriesDB);
+            // FIXME: "how to initialize" is up to implementation detail - now we just only consider about Storm & AMS implementation
+            Map<String, String> confTimeSeriesQuerier = buildAMSTimeSeriesQuerierConfigMap(namespace, timeSeriesDB);
 
-		 className = timeSeriesQuerierImpl.getClassName();
-		 TimeSeriesQuerier timeSeriesQuerier = initTimeSeriesQuerier(confTimeSeriesQuerier, className);
+            className = timeSeriesQuerierImpl.getClassName();
+            TimeSeriesQuerier timeSeriesQuerier = initTimeSeriesQuerier(confTimeSeriesQuerier, className);
 
-		 topologyMetrics.setTimeSeriesQuerier(timeSeriesQuerier);
-	  }
+            topologyMetrics.setTimeSeriesQuerier(timeSeriesQuerier);
+        }
 
-	  return topologyMetrics;
-   }
+        return topologyMetrics;
+    }
 
-   private TopologyMetrics initTopologyMetrics(Map<String, Object> conf, String className)
-   {
-	  try
-	  {
-		 TopologyMetrics topologyMetrics = instantiate(className);
-		 topologyMetrics.init(conf);
-		 return topologyMetrics;
-	  }
-	  catch (IllegalAccessException | InstantiationException | ClassNotFoundException | ConfigException e)
-	  {
-		 throw new RuntimeException("Can't initialize Topology metrics instance - Class Name: " + className, e);
-	  }
-   }
+    private TopologyMetrics initTopologyMetrics(Map<String, Object> conf, String className) {
+        try {
+            TopologyMetrics topologyMetrics = instantiate(className);
+            topologyMetrics.init(conf);
+            return topologyMetrics;
+        } catch (IllegalAccessException | InstantiationException | ClassNotFoundException | ConfigException e) {
+            throw new RuntimeException("Can't initialize Topology metrics instance - Class Name: " + className, e);
+        }
+    }
 
-   private TimeSeriesQuerier initTimeSeriesQuerier(Map<String, String> conf, String className)
-   {
-	  try
-	  {
-		 Class<?> timeSeriesQuerierImplClass = Class.forName(className);
-		 TimeSeriesQuerier timeSeriesQuerier = (TimeSeriesQuerier) timeSeriesQuerierImplClass.newInstance();
-		 timeSeriesQuerier.init(conf);
-		 return timeSeriesQuerier;
-	  }
-	  catch (IllegalAccessException | InstantiationException | ClassNotFoundException | ConfigException e)
-	  {
-		 throw new RuntimeException("Can't initialize Time-series Querier instance - Class Name: " + className, e);
-	  }
-   }
+    private TimeSeriesQuerier initTimeSeriesQuerier(Map<String, String> conf, String className) {
+        try {
+            Class<?> timeSeriesQuerierImplClass = Class.forName(className);
+            TimeSeriesQuerier timeSeriesQuerier = (TimeSeriesQuerier) timeSeriesQuerierImplClass.newInstance();
+            timeSeriesQuerier.init(conf);
+            return timeSeriesQuerier;
+        } catch (IllegalAccessException | InstantiationException | ClassNotFoundException | ConfigException e) {
+            throw new RuntimeException("Can't initialize Time-series Querier instance - Class Name: " + className, e);
+        }
+    }
 
-   private Map<String, Object> buildStormTopologyMetricsConfigMap(Namespace namespace, String streamingEngine, Subject subject)
-   {
-	  Map<String, Object> conf = new HashMap<>();
-	  conf.put(TopologyLayoutConstants.STORM_API_ROOT_URL_KEY, buildStormRestApiRootUrl(namespace, streamingEngine));
-	  conf.put(TopologyLayoutConstants.SUBJECT_OBJECT, subject);
-	  return conf;
-   }
+    private Map<String, Object> buildStormTopologyMetricsConfigMap(Namespace namespace, String streamingEngine, Subject subject) {
+        Map<String, Object> conf = new HashMap<>();
+        conf.put(TopologyLayoutConstants.STORM_API_ROOT_URL_KEY, buildStormRestApiRootUrl(namespace, streamingEngine));
+        conf.put(TopologyLayoutConstants.SUBJECT_OBJECT, subject);
+        return conf;
+    }
 
-   private Map<String, Object> buildBeamTopologyMetricsConfigMap(Namespace namespace, String streamingEngine, Subject subject)
-   {
-	  Map<String, Object> conf = new HashMap<>();
-	  return conf;
-   }
-   private Map<String, String> buildAMSTimeSeriesQuerierConfigMap(Namespace namespace, String timeSeriesDB)
-   {
-	  // Assuming that a namespace has one mapping of time-series DB service
-	  Service timeSeriesDBService = getFirstOccurenceServiceForNamespace(namespace, timeSeriesDB);
-	  if (timeSeriesDBService == null)
-	  {
-		 throw new RuntimeException("Time-series DB " + timeSeriesDB + " is not associated to the namespace " +
-				 namespace.getName() + "(" + namespace.getId() + ")");
-	  }
+    private Map<String, Object> buildBeamTopologyMetricsConfigMap(Namespace namespace, String streamingEngine, Subject subject) {
+        Map<String, Object> conf = new HashMap<>();
+        return conf;
+    }
 
-	  Component metricsCollector = getComponent(timeSeriesDBService, COMPONENT_NAME_METRICS_COLLECTOR)
-			  .orElseThrow(() -> new RuntimeException(timeSeriesDB + " doesn't have " + COMPONENT_NAME_METRICS_COLLECTOR + " as component"));
+    private Map<String, String> buildAMSTimeSeriesQuerierConfigMap(Namespace namespace, String timeSeriesDB) {
+        // Assuming that a namespace has one mapping of time-series DB service
+        Service timeSeriesDBService = getFirstOccurenceServiceForNamespace(namespace, timeSeriesDB);
+        if (timeSeriesDBService == null) {
+            throw new RuntimeException("Time-series DB " + timeSeriesDB + " is not associated to the namespace " +
+                    namespace.getName() + "(" + namespace.getId() + ")");
+        }
 
-	  Collection<ComponentProcess> metricsCollectorProcesses = environmentService.listComponentProcesses(metricsCollector.getId());
-	  if (metricsCollectorProcesses.isEmpty())
-	  {
-		 throw new RuntimeException(timeSeriesDB + " doesn't have any process for " + COMPONENT_NAME_METRICS_COLLECTOR + " as component");
-	  }
+        Component metricsCollector = getComponent(timeSeriesDBService, COMPONENT_NAME_METRICS_COLLECTOR)
+                .orElseThrow(() -> new RuntimeException(timeSeriesDB + " doesn't have " + COMPONENT_NAME_METRICS_COLLECTOR + " as component"));
 
-	  ComponentProcess metricsCollectorProcess = metricsCollectorProcesses.iterator().next();
-	  String metricsCollectorHost = metricsCollectorProcess.getHost();
-	  Integer metricsCollectorPort = metricsCollectorProcess.getPort();
+        Collection<ComponentProcess> metricsCollectorProcesses = environmentService.listComponentProcesses(metricsCollector.getId());
+        if (metricsCollectorProcesses.isEmpty()) {
+            throw new RuntimeException(timeSeriesDB + " doesn't have any process for " + COMPONENT_NAME_METRICS_COLLECTOR + " as component");
+        }
 
-	  assertHostAndPort(COMPONENT_NAME_METRICS_COLLECTOR, metricsCollectorHost, metricsCollectorPort);
+        ComponentProcess metricsCollectorProcess = metricsCollectorProcesses.iterator().next();
+        String metricsCollectorHost = metricsCollectorProcess.getHost();
+        Integer metricsCollectorPort = metricsCollectorProcess.getPort();
 
-	  Map<String, String> confForTimeSeriesQuerier = new HashMap<>();
-	  confForTimeSeriesQuerier.put(COLLECTOR_API_URL_KEY, buildAMSCollectorRestApiRootUrl(metricsCollectorHost, metricsCollectorPort));
-	  return confForTimeSeriesQuerier;
-   }
+        assertHostAndPort(COMPONENT_NAME_METRICS_COLLECTOR, metricsCollectorHost, metricsCollectorPort);
 
-   private String buildAMSCollectorRestApiRootUrl(String host, Integer port)
-   {
-	  return "http://" + host + ":" + port + "/ws/v1/timeline/metrics";
-   }
+        Map<String, String> confForTimeSeriesQuerier = new HashMap<>();
+        confForTimeSeriesQuerier.put(COLLECTOR_API_URL_KEY, buildAMSCollectorRestApiRootUrl(metricsCollectorHost, metricsCollectorPort));
+        return confForTimeSeriesQuerier;
+    }
+
+    private String buildAMSCollectorRestApiRootUrl(String host, Integer port) {
+        return "http://" + host + ":" + port + "/ws/v1/timeline/metrics";
+    }
 }

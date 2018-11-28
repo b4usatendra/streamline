@@ -15,36 +15,26 @@
  **/
 package com.hortonworks.streamline.streams.actions.beam.topology;
 
-import com.hortonworks.streamline.common.Config;
-import com.hortonworks.streamline.streams.actions.TopologyActionContext;
-import com.hortonworks.streamline.streams.actions.TopologyActions;
-import com.hortonworks.streamline.streams.beam.common.BeamTopologyUtil;
-import com.hortonworks.streamline.streams.catalog.TopologyTestRunHistory;
-import com.hortonworks.streamline.streams.cluster.catalog.NamespaceServiceClusterMap;
-import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
-import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
-import com.hortonworks.streamline.streams.layout.beam.BeamTopologyFluxGenerator;
-import com.hortonworks.streamline.streams.layout.beam.BeamTopologyLayoutConstants;
-import com.hortonworks.streamline.streams.layout.component.TopologyDag;
-import com.hortonworks.streamline.streams.layout.component.TopologyLayout;
-import com.hortonworks.streamline.streams.layout.component.impl.testing.TestRunProcessor;
-import com.hortonworks.streamline.streams.layout.component.impl.testing.TestRunRulesProcessor;
-import com.hortonworks.streamline.streams.layout.component.impl.testing.TestRunSink;
-import com.hortonworks.streamline.streams.layout.component.impl.testing.TestRunSource;
-import org.apache.beam.sdk.Pipeline;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.hortonworks.streamline.common.*;
+import com.hortonworks.streamline.streams.actions.*;
+import com.hortonworks.streamline.streams.beam.common.*;
+import com.hortonworks.streamline.streams.catalog.*;
+import com.hortonworks.streamline.streams.cluster.catalog.*;
+import com.hortonworks.streamline.streams.cluster.service.*;
+import com.hortonworks.streamline.streams.layout.*;
+import com.hortonworks.streamline.streams.layout.beam.*;
+import com.hortonworks.streamline.streams.layout.component.*;
+import com.hortonworks.streamline.streams.layout.component.impl.testing.*;
+import org.apache.beam.sdk.*;
+import org.apache.commons.lang.*;
+import org.slf4j.*;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.*;
+import java.nio.file.*;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import java.util.concurrent.*;
+import java.util.stream.*;
 
 /**
  * Storm implementation of the TopologyActions interface
@@ -201,6 +191,14 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     @Override
     public void deploy(TopologyLayout topology, String mavenArtifacts, TopologyActionContext ctx, String asUser)
             throws Exception {
+        String xyz = null;
+        ClassIterator cI = new ClassIterator();
+        Class[] classes = cI.getClassesInPackage("com.hortonworks.streamline.streams");
+        for (Class c : classes) {
+            System.out.println("Found: " + c.getCanonicalName());
+        }
+        createYamlFile(topology, true);
+        System.out.println("");
 
     }
 
@@ -372,8 +370,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
         createYamlFile(topology, false);
     }
 
-    private void createYamlFile(TopologyLayout topology, boolean deploy)
-            throws Exception {
+    private void createYamlFile(TopologyLayout topology, boolean deploy) throws Exception {
         Map<String, Object> yamlMap;
         File f;
         OutputStreamWriter fileWriter = null;
@@ -381,44 +378,19 @@ public class BeamTopologyActionsImpl implements TopologyActions {
             f = new File(this.getFilePath(topology));
             if (f.exists()) {
                 if (!f.delete()) {
-                    throw new Exception("Unable to delete old storm " +
-                            "artifact for topology id " + topology.getId());
+                    throw new Exception("Unable to delete old storm " + "artifact for topology id " + topology.getId());
                 }
             }
             yamlMap = new LinkedHashMap<>();
             yamlMap.put(BeamTopologyLayoutConstants.YAML_KEY_NAME, generateStormTopologyName(topology));
             TopologyDag topologyDag = topology.getTopologyDag();
             LOG.debug("Initial Topology config {}", topology.getConfig());
-            BeamTopologyFluxGenerator fluxGenerator = new BeamTopologyFluxGenerator(topology, conf,
-                    getExtraJarsLocation(topology));
+            BeamTopologyFluxGenerator fluxGenerator = new BeamTopologyFluxGenerator(topology, conf, getExtraJarsLocation(topology));
             topologyDag.traverse(fluxGenerator);
             Pipeline pipeline = fluxGenerator.getPipeline();
+
             pipeline.run();
-		/* for (Map.Entry<String, Map<String, Object>> entry : fluxGenerator.getYamlKeysAndComponents())
-		 {
-			addComponentToCollection(yamlMap, entry.getValue(), entry.getKey());
-		 }
-		 Config topologyConfig = fluxGenerator.getTopologyConfig();
-		 registerEventLogger(topologyConfig);
-		 maybeAddNotifierPlugin(topologyConfig);
-		 Map<String, Object> properties = topologyConfig.getProperties();
-		 if (!deploy)
-		 {
-			LOG.debug("Disabling topology event logger for test mode...");
-			properties.put("topology.eventlogger.executors", 0);
-		 }
-
-		 LOG.debug("Final Topology properties {}", properties);
-
-		 addTopologyConfig(yamlMap, properties);
-		 DumperOptions options = new DumperOptions();
-		 options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-		 options.setSplitLines(false);
-		 //options.setDefaultScalarStyle(DumperOptions.ScalarStyle.PLAIN);
-		 Yaml yaml = new Yaml(options);
-		 fileWriter = new OutputStreamWriter(new FileOutputStream(f), "UTF-8");
-		 yaml.dump(yamlMap, fileWriter);
-		 return f.getAbsolutePath();*/
+            System.out.println(pipeline.toString());         /*for (Map.Entry<String, Map<String, Object>> entry : fluxGenerator.getYamlKeysAndComponents()) 		 { 			addComponentToCollection(yamlMap, entry.getValue(), entry.getKey()); 		 } 		 Config topologyConfig = fluxGenerator.getTopologyConfig(); 		 registerEventLogger(topologyConfig); 		 maybeAddNotifierPlugin(topologyConfig); 		 Map<String, Object> properties = topologyConfig.getProperties(); 		 if (!deploy) 		 { 			LOG.debug("Disabling topology event logger for test mode..."); 			properties.put("topology.eventlogger.executors", 0); 		 } 		 LOG.debug("Final Topology properties {}", properties); 		 addTopologyConfig(yamlMap, properties); 		 DumperOptions options = new DumperOptions(); 		 options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK); 		 options.setSplitLines(false); 		 //options.setDefaultScalarStyle(DumperOptions.ScalarStyle.PLAIN); 		 Yaml yaml = new Yaml(options); 		 fileWriter = new OutputStreamWriter(new FileOutputStream(f), "UTF-8"); 		 yaml.dump(yamlMap, fileWriter); 		 return f.getAbsolutePath();*/
         } finally {
             if (fileWriter != null) {
                 fileWriter.close();

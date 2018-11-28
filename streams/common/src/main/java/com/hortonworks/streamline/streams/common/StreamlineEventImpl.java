@@ -1,45 +1,36 @@
 /**
-  * Copyright 2017 Hortonworks.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-
-  *   http://www.apache.org/licenses/LICENSE-2.0
-
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+ * Copyright 2017 Hortonworks.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  **/
 package com.hortonworks.streamline.streams.common;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.google.common.base.Joiner;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ForwardingMap;
-import com.google.common.collect.ImmutableMap;
-import com.hortonworks.streamline.streams.StreamlineEvent;
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.core.type.*;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.annotation.*;
+import com.google.common.base.*;
+import com.google.common.collect.*;
+import com.hortonworks.streamline.streams.*;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * A default implementation of StreamlineEvent.
  */
-@JsonSerialize(as=StreamlineEventImpl.class)
+@JsonSerialize(as = StreamlineEventImpl.class)
 public final class StreamlineEventImpl extends ForwardingMap<String, Object> implements StreamlineEvent {
     // Default value chosen to be blank and not the default used in storm since wanted to keep it independent of storm.
     public final static String DEFAULT_SOURCE_STREAM = "default";
@@ -92,7 +83,8 @@ public final class StreamlineEventImpl extends ForwardingMap<String, Object> imp
         private String sourceStream = DEFAULT_SOURCE_STREAM;
         private String dataSourceId = "";
 
-        private Builder() {}
+        private Builder() {
+        }
 
         public Builder from(StreamlineEvent other) {
             return this.header(other.getHeader())
@@ -255,6 +247,7 @@ public final class StreamlineEventImpl extends ForwardingMap<String, Object> imp
     /**
      * Returns a new Streamline event with the given headers added to the existing headers.
      * All the other fields are copied from this event.
+     *
      * @param headers the map of fieldsAndValues to add or overwrite
      * @return the new StreamlineEvent
      */
@@ -331,7 +324,8 @@ public final class StreamlineEventImpl extends ForwardingMap<String, Object> imp
         try {
             Map<String, Object> event = mapper.readValue(
                     s.substring(s.indexOf(TO_STRING_PREFIX) + TO_STRING_PREFIX.length()),
-                    new TypeReference<Map<String, Object>>() {});
+                    new TypeReference<Map<String, Object>>() {
+                    });
             return StreamlineEventImpl.builder()
                     .header((Map<String, Object>) event.get("header"))
                     .sourceStream((String) event.get("sourceStream"))
@@ -355,7 +349,7 @@ public final class StreamlineEventImpl extends ForwardingMap<String, Object> imp
             event.put("dataSourceId", dataSourceId);
             event.put("id", id);
             event.put("fieldsAndValues", delegate);
-            return  TO_STRING_PREFIX + mapper.writeValueAsString(event);
+            return TO_STRING_PREFIX + mapper.writeValueAsString(event);
         } catch (JsonProcessingException ex) {
             throw new RuntimeException(ex);
         }
