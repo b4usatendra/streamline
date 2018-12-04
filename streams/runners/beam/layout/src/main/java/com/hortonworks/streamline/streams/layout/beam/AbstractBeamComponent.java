@@ -16,6 +16,7 @@
 package com.hortonworks.streamline.streams.layout.beam;
 
 import com.hortonworks.streamline.common.exception.ComponentConfigException;
+import com.hortonworks.streamline.streams.beam.common.*;
 import com.hortonworks.streamline.streams.layout.ConfigFieldValidation;
 import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
 import org.apache.beam.sdk.Pipeline;
@@ -107,7 +108,7 @@ public abstract class AbstractBeamComponent implements BeamComponent {
                 (configMethodNames.length == values.length) && (values.length > 0)) {
             for (int i = 0; i < values.length; ++i) {
                 Map<String, Object> configMethod = new LinkedHashMap<>();
-                configMethod.put(BeamTopologyLayoutConstants.YAML_KEY_NAME, configMethodNames[i]);
+                configMethod.put(TopologyLayoutConstants.YAML_KEY_NAME, configMethodNames[i]);
                 List<Object> methodArgs = new ArrayList<>();
                 Object[] value = values[i];
                 for (int j = 0; j < value.length; j++) {
@@ -116,7 +117,7 @@ public abstract class AbstractBeamComponent implements BeamComponent {
                     }
                 }
 
-                configMethod.put(BeamTopologyLayoutConstants.YAML_KEY_ARGS, methodArgs);
+                configMethod.put(TopologyLayoutConstants.YAML_KEY_ARGS, methodArgs);
                 configMethods.add(configMethod);
             }
         }

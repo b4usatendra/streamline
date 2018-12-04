@@ -15,6 +15,8 @@
  **/
 package com.hortonworks.streamline.streams.beam.common;
 
+import org.apache.beam.repackaged.beam_sdks_java_core.com.google.common.base.*;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,7 +52,7 @@ public class BeamTopologyUtil {
 
     public static String findOrGenerateTopologyName(Long topologyId, String topologyName, String asUser) {
         String actualTopologyName = topologyName + topologyId;
-        if (actualTopologyName == null) {
+        if (Strings.isNullOrEmpty(actualTopologyName)) {
             actualTopologyName = generateStormTopologyName(topologyId, topologyName);
         }
         return actualTopologyName;
@@ -59,7 +61,7 @@ public class BeamTopologyUtil {
     public static String extractStreamlineComponentName(String stormComponentId) {
         String[] splitted = stormComponentId.split("-");
         if (splitted.length <= 1) {
-            throw new IllegalArgumentException("Invalid Storm component ID for Streamline: " + stormComponentId);
+            throw new IllegalArgumentException("Invalid Beam component ID for Streamline: " + stormComponentId);
         }
 
         List<String> splittedList = Arrays.asList(splitted);

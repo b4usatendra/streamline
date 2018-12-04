@@ -2727,6 +2727,9 @@ public class StreamCatalogService {
                             + bundleJar.getAbsolutePath());
                 }
             }
+            //TODO add logic for beam streamEngine
+        }else if(topologyComponentBundle.getStreamingEngine().equals(TopologyLayoutConstants.BEAM_STREAMING_ENGINE)){
+            System.out.println();
         }
     }
 

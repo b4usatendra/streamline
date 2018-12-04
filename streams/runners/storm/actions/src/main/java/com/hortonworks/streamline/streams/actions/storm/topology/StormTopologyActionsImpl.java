@@ -200,8 +200,8 @@ public class StormTopologyActionsImpl implements TopologyActions {
             nimbusSeeds = (String) conf.get(NIMBUS_SEEDS);
             nimbusPort = Integer.valueOf((String) conf.get(NIMBUS_PORT));
 
-            if (conf.containsKey(TopologyLayoutConstants.NIMBUS_THRIFT_MAX_BUFFER_SIZE)) {
-                nimbusThriftMaxBufferSize = (Long) conf.get(TopologyLayoutConstants.NIMBUS_THRIFT_MAX_BUFFER_SIZE);
+            if (conf.containsKey(StormTopologyLayoutConstants.NIMBUS_THRIFT_MAX_BUFFER_SIZE)) {
+                nimbusThriftMaxBufferSize = (Long) conf.get(StormTopologyLayoutConstants.NIMBUS_THRIFT_MAX_BUFFER_SIZE);
             } else {
                 nimbusThriftMaxBufferSize = DEFAULT_NIMBUS_THRIFT_MAX_BUFFER_SIZE;
             }
@@ -224,23 +224,23 @@ public class StormTopologyActionsImpl implements TopologyActions {
     }
 
     private void setupSecuredStormCluster(Map<String, Object> conf) {
-        thriftTransport = (String) conf.get(TopologyLayoutConstants.STORM_THRIFT_TRANSPORT);
+        thriftTransport = (String) conf.get(StormTopologyLayoutConstants.STORM_THRIFT_TRANSPORT);
 
-        if (conf.containsKey(TopologyLayoutConstants.STORM_NIMBUS_PRINCIPAL_NAME)) {
-            String nimbusPrincipal = (String) conf.get(TopologyLayoutConstants.STORM_NIMBUS_PRINCIPAL_NAME);
+        if (conf.containsKey(StormTopologyLayoutConstants.STORM_NIMBUS_PRINCIPAL_NAME)) {
+            String nimbusPrincipal = (String) conf.get(StormTopologyLayoutConstants.STORM_NIMBUS_PRINCIPAL_NAME);
             String kerberizedNimbusServiceName = nimbusPrincipal.split("/")[0];
             jaasFilePath = Optional.of(createJaasFile(kerberizedNimbusServiceName));
         } else {
             jaasFilePath = Optional.empty();
         }
 
-        principalToLocal = (String) conf.getOrDefault(TopologyLayoutConstants.STORM_PRINCIPAL_TO_LOCAL, DEFAULT_PRINCIPAL_TO_LOCAL);
+        principalToLocal = (String) conf.getOrDefault(StormTopologyLayoutConstants.STORM_PRINCIPAL_TO_LOCAL, DEFAULT_PRINCIPAL_TO_LOCAL);
 
         if (thriftTransport == null) {
             if (jaasFilePath.isPresent()) {
-                thriftTransport = (String) conf.get(TopologyLayoutConstants.STORM_SECURED_THRIFT_TRANSPORT);
+                thriftTransport = (String) conf.get(StormTopologyLayoutConstants.STORM_SECURED_THRIFT_TRANSPORT);
             } else {
-                thriftTransport = (String) conf.get(TopologyLayoutConstants.STORM_NONSECURED_THRIFT_TRANSPORT);
+                thriftTransport = (String) conf.get(StormTopologyLayoutConstants.STORM_NONSECURED_THRIFT_TRANSPORT);
             }
         }
 

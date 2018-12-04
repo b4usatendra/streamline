@@ -16,6 +16,7 @@
 package com.hortonworks.streamline.streams.layout.beam;
 
 import com.hortonworks.streamline.common.exception.ComponentConfigException;
+import com.hortonworks.streamline.streams.beam.common.*;
 import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
 import org.apache.beam.sdk.values.PCollection;
 
@@ -30,15 +31,15 @@ public class LinkFluxComponent extends AbstractBeamComponent {
 
     protected void updateLinkComponentWithGrouping(Map<String, Object> groupingInfo) {
         if (groupingInfo != null && !groupingInfo.isEmpty()) {
-            component.put(BeamTopologyLayoutConstants.YAML_KEY_GROUPING, groupingInfo);
+            component.put(TopologyLayoutConstants.YAML_KEY_GROUPING, groupingInfo);
         }
     }
 
     protected Map<String, Object> getGroupingYamlForType(String groupingType) {
         Map<String, Object> grouping = new LinkedHashMap<>();
-        grouping.put(BeamTopologyLayoutConstants.YAML_KEY_TYPE, groupingType);
+        grouping.put(TopologyLayoutConstants.YAML_KEY_TYPE, groupingType);
         if (conf.get(TopologyLayoutConstants.JSON_KEY_STREAM_ID) != null) {
-            grouping.put(BeamTopologyLayoutConstants.YAML_KEY_STREAM_ID, conf.get(TopologyLayoutConstants.JSON_KEY_STREAM_ID));
+            grouping.put(TopologyLayoutConstants.YAML_KEY_STREAM_ID, conf.get(TopologyLayoutConstants.JSON_KEY_STREAM_ID));
         }
         return grouping;
     }
@@ -51,10 +52,10 @@ public class LinkFluxComponent extends AbstractBeamComponent {
     @Override
     public void generateComponent(PCollection pCollection) {
         String linkName = "link" + UUID_FOR_COMPONENTS;
-        component.put(BeamTopologyLayoutConstants.YAML_KEY_NAME, linkName);
-        component.put(BeamTopologyLayoutConstants.YAML_KEY_FROM, conf.get
+        component.put(TopologyLayoutConstants.YAML_KEY_NAME, linkName);
+        component.put(TopologyLayoutConstants.YAML_KEY_FROM, conf.get
                 (TopologyLayoutConstants.JSON_KEY_FROM));
-        component.put(BeamTopologyLayoutConstants.YAML_KEY_TO, conf.get
+        component.put(TopologyLayoutConstants.YAML_KEY_TO, conf.get
                 (TopologyLayoutConstants.JSON_KEY_TO));
     }
 

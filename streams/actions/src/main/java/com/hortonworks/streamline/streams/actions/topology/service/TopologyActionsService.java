@@ -1,74 +1,51 @@
 /**
-  * Copyright 2017 Hortonworks.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-
-  *   http://www.apache.org/licenses/LICENSE-2.0
-
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+ * Copyright 2017 Hortonworks.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  **/
 package com.hortonworks.streamline.streams.actions.topology.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hortonworks.registries.common.transaction.TransactionIsolation;
-import com.hortonworks.registries.common.util.FileStorage;
-import com.hortonworks.registries.storage.TransactionManager;
-import com.hortonworks.registries.storage.transaction.ManagedTransaction;
-import com.hortonworks.streamline.common.configuration.ConfigFileType;
-import com.hortonworks.streamline.common.configuration.ConfigFileWriter;
-import com.hortonworks.streamline.registries.model.client.MLModelRegistryClient;
-import com.hortonworks.streamline.streams.actions.TopologyActions;
-import com.hortonworks.streamline.streams.actions.container.TopologyActionsContainer;
-import com.hortonworks.streamline.streams.actions.topology.state.TopologyContext;
-import com.hortonworks.streamline.streams.actions.topology.state.TopologyState;
-import com.hortonworks.streamline.streams.actions.topology.state.TopologyStateFactory;
-import com.hortonworks.streamline.streams.actions.topology.state.TopologyStates;
-import com.hortonworks.streamline.streams.catalog.CatalogToLayoutConverter;
-import com.hortonworks.streamline.streams.catalog.Topology;
-import com.hortonworks.streamline.streams.catalog.TopologyTestRunCase;
-import com.hortonworks.streamline.streams.catalog.TopologyTestRunHistory;
-import com.hortonworks.streamline.streams.catalog.service.StreamCatalogService;
-import com.hortonworks.streamline.streams.catalog.topology.TopologyComponentBundle;
-import com.hortonworks.streamline.streams.catalog.topology.component.TopologyDagBuilder;
-import com.hortonworks.streamline.streams.cluster.catalog.Namespace;
-import com.hortonworks.streamline.streams.cluster.catalog.NamespaceServiceClusterMap;
-import com.hortonworks.streamline.streams.cluster.catalog.Service;
-import com.hortonworks.streamline.streams.cluster.catalog.ServiceConfiguration;
-import com.hortonworks.streamline.streams.cluster.container.ContainingNamespaceAwareContainer;
-import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
-import com.hortonworks.streamline.streams.layout.component.Edge;
-import com.hortonworks.streamline.streams.layout.component.OutputComponent;
-import com.hortonworks.streamline.streams.layout.component.StreamlineProcessor;
-import com.hortonworks.streamline.streams.layout.component.StreamlineSource;
-import com.hortonworks.streamline.streams.layout.component.TopologyDag;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.core.type.*;
+import com.fasterxml.jackson.databind.*;
+import com.hortonworks.registries.common.transaction.*;
+import com.hortonworks.registries.common.util.*;
+import com.hortonworks.registries.storage.*;
+import com.hortonworks.registries.storage.transaction.*;
+import com.hortonworks.streamline.common.configuration.*;
+import com.hortonworks.streamline.registries.model.client.*;
+import com.hortonworks.streamline.streams.actions.*;
+import com.hortonworks.streamline.streams.actions.container.*;
+import com.hortonworks.streamline.streams.actions.topology.state.*;
+import com.hortonworks.streamline.streams.catalog.*;
+import com.hortonworks.streamline.streams.catalog.service.*;
+import com.hortonworks.streamline.streams.catalog.topology.*;
+import com.hortonworks.streamline.streams.catalog.topology.component.*;
+import com.hortonworks.streamline.streams.cluster.catalog.*;
+import com.hortonworks.streamline.streams.cluster.container.*;
+import com.hortonworks.streamline.streams.cluster.service.*;
+import com.hortonworks.streamline.streams.layout.*;
+import com.hortonworks.streamline.streams.layout.component.*;
+import org.apache.commons.io.*;
+import org.apache.commons.lang3.*;
+import org.slf4j.*;
 
-import javax.security.auth.Subject;
+import javax.security.auth.*;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
-import static com.hortonworks.streamline.streams.actions.topology.state.TopologyStates.TOPOLOGY_STATE_INITIAL;
+import static com.hortonworks.streamline.streams.actions.topology.state.TopologyStates.*;
 
 public class TopologyActionsService implements ContainingNamespaceAwareContainer {
     private static final Logger LOG = LoggerFactory.getLogger(TopologyActionsService.class);
@@ -166,7 +143,7 @@ public class TopologyActionsService implements ContainingNamespaceAwareContainer
     }
 
     public TopologyActions.LogLevelInformation configureLogLevel(Topology topology, TopologyActions.LogLevel targetLogLevel, int durationSecs,
-                                  String asUser) throws Exception {
+                                                                 String asUser) throws Exception {
         TopologyActions topologyActions = getTopologyActionsInstance(topology);
         return topologyActions.configureLogLevel(CatalogToLayoutConverter.getTopologyLayout(topology), targetLogLevel,
                 durationSecs, asUser);
@@ -220,6 +197,7 @@ public class TopologyActionsService implements ContainingNamespaceAwareContainer
     // Copies all the extra jars needed for deploying the topology to extraJarsLocation and returns
     // a string representing all additional maven modules needed for deploying the topology
     public String setUpExtraJars(Topology topology, TopologyActions topologyActions) throws IOException {
+
         StormTopologyDependenciesHandler extraJarsHandler = new StormTopologyDependenciesHandler(catalogService);
         topology.getTopologyDag().traverse(extraJarsHandler);
         Path extraJarsLocation = topologyActions.getExtraJarsLocation(CatalogToLayoutConverter.getTopologyLayout(topology));
@@ -228,20 +206,31 @@ public class TopologyActionsService implements ContainingNamespaceAwareContainer
         extraJars.addAll(extraJarsHandler.getExtraJars());
         extraJars.addAll(getBundleJars(extraJarsHandler.getTopologyComponentBundleSet()));
         downloadAndCopyJars(extraJars, extraJarsLocation);
+
+
+        Namespace namespace = environmentService.getNamespace(topology.getNamespaceId());
+        if (namespace.getStreamingEngine().equalsIgnoreCase(TopologyLayoutConstants.STORM_STREAMING_ENGINE)) {
+
+        } else if (namespace.getStreamingEngine().equalsIgnoreCase(TopologyLayoutConstants.BEAM_STREAMING_ENGINE)) {
+
+        }
+
         return extraJarsHandler.getMavenDeps();
     }
 
-    private Set<String> getBundleJars (Set<TopologyComponentBundle> bundlesToDeploy) throws IOException {
+    private Set<String> getBundleJars(Set<TopologyComponentBundle> bundlesToDeploy) throws IOException {
         Set<String> bundleJars = new HashSet<>();
-        for (TopologyComponentBundle topologyComponentBundle: bundlesToDeploy) {
+        for (TopologyComponentBundle topologyComponentBundle : bundlesToDeploy) {
             bundleJars.add(topologyComponentBundle.getBundleJar());
         }
         return bundleJars;
     }
 
-    private void downloadAndCopyJars (Set<String> jarsToDownload, Path destinationPath) throws IOException {
+
+
+    private void downloadAndCopyJars(Set<String> jarsToDownload, Path destinationPath) throws IOException {
         Set<String> copiedJars = new HashSet<>();
-        for (String jar: jarsToDownload) {
+        for (String jar : jarsToDownload) {
             if (!copiedJars.contains(jar)) {
                 Path jarPath = Paths.get(jar);
                 if (destinationPath == null || jarPath == null) {
@@ -315,7 +304,8 @@ public class TopologyActionsService implements ContainingNamespaceAwareContainer
                 File destPath = Paths.get(artifactsDir.toString(), filename).toFile();
 
                 Map<String, String> conf = objectMapper.readValue(configuration.getConfiguration(),
-                        new TypeReference<Map<String, String>>() {});
+                        new TypeReference<Map<String, String>>() {
+                        });
 
                 try {
                     configFileWriter.writeConfigToFile(fileType, conf, destPath);

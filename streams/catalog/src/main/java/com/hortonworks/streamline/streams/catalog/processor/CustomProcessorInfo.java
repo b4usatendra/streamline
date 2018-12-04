@@ -244,6 +244,7 @@ public class CustomProcessorInfo {
         result.setType(TopologyComponentBundle.TopologyComponentType.PROCESSOR);
         result.setSubType(TopologyLayoutConstants.JSON_KEY_CUSTOM_PROCESSOR_SUB_TYPE);
         result.setStreamingEngine(this.streamingEngine);
+        //TODO extend the functionality for beam streamEngine
         if (TopologyLayoutConstants.STORM_STREAMING_ENGINE.equals(this.streamingEngine)) {
             result.setName("customProcessorBoltComponent");
         }

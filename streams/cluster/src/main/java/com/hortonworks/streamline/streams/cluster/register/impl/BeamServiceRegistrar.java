@@ -125,10 +125,6 @@ public class BeamServiceRegistrar extends AbstractServiceRegistrar
 	  {
 		 throw new IllegalArgumentException("Required parameter " + PARAM_CONNECTION_ENDPOINT + " not present.");
 	  }
-
-	  Map<String, String> confMap = new HashMap<>();
-	  confMap.put(PARAM_CONNECTION_ENDPOINT, config.getString(PARAM_CONNECTION_ENDPOINT));
-
 	  Component beamComponent = new Component();
 	  beamComponent.setName(Constants.Beam.PROPERTY_CONNECTION_ENDPOINT);
 

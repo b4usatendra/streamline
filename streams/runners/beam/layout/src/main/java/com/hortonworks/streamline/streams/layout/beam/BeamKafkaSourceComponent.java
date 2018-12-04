@@ -15,6 +15,7 @@
  **/
 package com.hortonworks.streamline.streams.layout.beam;
 
+import com.hortonworks.streamline.streams.beam.common.*;
 import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
 import com.hortonworks.streamline.streams.layout.component.StreamlineSource;
 import com.hortonworks.streamline.streams.layout.component.impl.KafkaSource;
@@ -57,7 +58,7 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
     @Override
     public void generateComponent(PCollection inputCollection) {
         if (!isGenerated) {
-            StreamlineSource streamlineSource = (StreamlineSource) conf.get(BeamTopologyLayoutConstants.STREAMLINE_COMPONENT_CONF_KEY);
+            StreamlineSource streamlineSource = (StreamlineSource) conf.get(TopologyLayoutConstants.STREAMLINE_COMPONENT_CONF_KEY);
             kafkaSource = new KafkaSource();
             kafkaSource.setConfig(streamlineSource.getConfig());
             kafkaSource.setId(streamlineSource.getId());

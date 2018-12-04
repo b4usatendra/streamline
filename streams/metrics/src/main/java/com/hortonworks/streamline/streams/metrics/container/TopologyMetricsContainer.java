@@ -55,9 +55,9 @@ public class TopologyMetricsContainer extends NamespaceAwareContainer<TopologyMe
         Map<String, Object> conf = null;
         //TODO add beam as one of the stream engine
         // FIXME: "how to initialize" is up to implementation detail - now we just only consider about Storm implementation
-        if (streamingEngine.equalsIgnoreCase("storm")) {
+        if (streamingEngine.equalsIgnoreCase(TopologyLayoutConstants.STORM_STREAMING_ENGINE.toLowerCase())) {
             conf = buildStormTopologyMetricsConfigMap(namespace, streamingEngine, subject);
-        } else if (streamingEngine.equalsIgnoreCase("beam")) {
+        } else if (streamingEngine.equalsIgnoreCase(TopologyLayoutConstants.STORM_STREAMING_ENGINE.toLowerCase())) {
             conf = buildBeamTopologyMetricsConfigMap(namespace, streamingEngine, subject);
         }
 

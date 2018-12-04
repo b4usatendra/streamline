@@ -16,6 +16,7 @@
 package com.hortonworks.streamline.streams.layout.beam;
 
 import com.hortonworks.streamline.common.*;
+import com.hortonworks.streamline.streams.beam.common.*;
 import com.hortonworks.streamline.streams.layout.component.*;
 import com.hortonworks.streamline.streams.layout.component.impl.*;
 import com.hortonworks.streamline.streams.layout.component.rule.*;

@@ -1,43 +1,55 @@
 /**
-  * Copyright 2017 Hortonworks.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-
-  *   http://www.apache.org/licenses/LICENSE-2.0
-
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+ * Copyright 2017 Hortonworks.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  **/
 package com.hortonworks.streamline.streams.layout;
 
 public final class TopologyLayoutConstants {
 
+    private TopologyLayoutConstants() {
+    }
 
-
-
-    private TopologyLayoutConstants () {}
     // streaming engines
     public static final String STORM_STREAMING_ENGINE = "STORM";
+    public static final String BEAM_STREAMING_ENGINE = "BEAM";
 
+
+    public static final String STREAMLINE_COMPONENT_CONF_KEY = "streamlineComponent";
+
+    //storm constants
     public static final String STORM_NIMBUS_PRINCIPAL_NAME = "nimbus_principal_name";
-
     public static final String STORM_THRIFT_TRANSPORT = "storm.thrift.transport";
     public static final String STORM_SECURED_THRIFT_TRANSPORT = "_storm.thrift.secure.transport";
     public static final String STORM_NONSECURED_THRIFT_TRANSPORT = "_storm.thrift.nonsecure.transport";
     public static final String STORM_PRINCIPAL_TO_LOCAL = "storm.principal.tolocal";
     public static final String NIMBUS_THRIFT_MAX_BUFFER_SIZE = "nimbus.thrift.max_buffer_size";
+    public static final String DEFAULT_ABSOLUTE_JAR_LOCATION_DIR = "default.jar.location";
 
-  // metric
+    // metric
     public static final String STORM_API_ROOT_URL_KEY = "stormApiRootUrl";
 
     public static final String SCHEMA_REGISTRY_URL = "schemaRegistryUrl";
 
     // json keys
+    public static final String YAML_KEY_NAME = "name";
+    public static final String YAML_KEY_ARGS = "args";
+    public static final String YAML_KEY_TYPE = "type";
+    public static final String YAML_KEY_GROUPING = "grouping";
+    public static final String YAML_KEY_STREAM_ID = "streamId";
+    public static final String YAML_KEY_FROM = "from";
+    public static final String YAML_KEY_TO = "to";
+
     public final static String JSON_KEY_TRANSFORMATION_CLASS =
             "transformationClass";
     public final static String JSON_KEY_DATA_SOURCES = "dataSources";
@@ -136,14 +148,14 @@ public final class TopologyLayoutConstants {
     public final static String JSON_KEY_CUSTOM_GROUPING_IMPL = "customGroupingImpl";
     public final static String JSON_KEY_PARALLELISM = "parallelism";
     public final static String JSON_KEY_PARALLELISM_TOOLTIP = "Number of executors";
-    public final static String JSON_KEY_RULES_PROCESSOR_CONFIG ="rulesProcessorConfig";
+    public final static String JSON_KEY_RULES_PROCESSOR_CONFIG = "rulesProcessorConfig";
     public final static String JSON_KEY_RULES = "rules";
     public final static String JSON_KEY_RULE_ACTIONS = "actions";
     public final static String JSON_KEY_RULE_DECLARED_OUTPUT = "declaredOutput";
     public final static String JSON_KEY_RULE_WINDOW_CONFIG = "windowConfig";
 
     // normalization processor related constants
-    public final static String JSON_KEY_NORMALIZATION_PROCESSOR_CONFIG ="normalizationProcessorConfig";
+    public final static String JSON_KEY_NORMALIZATION_PROCESSOR_CONFIG = "normalizationProcessorConfig";
 
     public final static String JSON_KEY_INPUT_SCHEMA = "inputSchema";
     public final static String JSON_KEY_INPUT_SCHEMA_MAP = "inputSchemaMap";

@@ -17,6 +17,13 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.apache.beam</groupId>
+            <artifactId>beam-sdks-java-io-kafka</artifactId>
+            <version>${beam.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-layout</artifactId>
@@ -25,8 +32,12 @@
         <dependency>
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-common</artifactId>
-            <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.hortonworks.streamline</groupId>
+            <artifactId>streamline-common-beam</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -43,10 +54,6 @@
             <version>0.9.1</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.beam</groupId>
-            <artifactId>beam-sdks-java-io-kafka</artifactId>
-            <version>${beam.version}</version>
-        </dependency>
+
     </dependencies>
 </project>
