@@ -266,7 +266,7 @@ and show only sample for creating a service, service configuration, component.
 
 ### Create Service Bundle
 
-`POST /api/v1/catalog/s`
+`POST /api/v1/catalog/servicebundles`
 
 **Sample Input**
 
@@ -346,7 +346,7 @@ and show only sample for creating a service, service configuration, component.
 
 ### List Services Bundle
 
-`GET /api/v1/catalog/s`
+`GET /api/v1/catalog/servicebundles`
 
 ### Get Service Bundle
 

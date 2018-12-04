@@ -19,11 +19,12 @@ import com.hortonworks.streamline.streams.beam.common.*;
 import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
 import com.hortonworks.streamline.streams.layout.component.StreamlineSource;
 import com.hortonworks.streamline.streams.layout.component.impl.KafkaSource;
+import com.hortonworks.streamline.streams.layout.event.*;
 import org.apache.beam.sdk.io.kafka.KafkaIO;
 import org.apache.beam.sdk.values.KV;
 import org.apache.beam.sdk.values.PCollection;
 import org.apache.kafka.clients.CommonClientConfigs;
-import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -108,6 +109,7 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
                         .withKeyDeserializer(StringDeserializer.class)
                         .withValueDeserializer(StringDeserializer.class)
                         .updateConsumerProperties(addConsumerProperties()).withoutMetadata());
+        ;
     }
 
     private Map<String, Object> addConsumerProperties() {
@@ -131,6 +133,21 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
         }
 
         return consumerProperties;
+    }
+
+    private Class getKeyDeserializer () {
+        String keySerializer = (String) conf.get("keySerializer");
+        if ((keySerializer == null) || "ByteArray".equals(keySerializer)) {
+            return org.apache.kafka.common.serialization.ByteArrayDeserializer.class;
+        } else if ("String".equals(keySerializer)) {
+            return org.apache.kafka.common.serialization.StringDeserializer.class;
+        } else if ("Integer".equals(keySerializer)) {
+            return org.apache.kafka.common.serialization.IntegerDeserializer.class;
+        } else if ("Long".equals(keySerializer)) {
+            return org.apache.kafka.common.serialization.LongDeserializer.class;
+        } else {
+            throw new IllegalArgumentException("Key serializer for kafka sink is not supported: " + keySerializer);
+        }
     }
 
     private void setSaslJaasConfig() {

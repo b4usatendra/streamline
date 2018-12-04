@@ -906,7 +906,7 @@ __Request JSON__ :
           "consumerGroupId": "topology-id-26",
             "topic": "topic1",
             "zkRoot": "/topologyId",
-            "zkUrl": ""
+            "zkUrl": "localhost:2181"
         }
     },
     "topologyComponentBundleId":1,
