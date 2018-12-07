@@ -15,18 +15,19 @@
  **/
 package com.hortonworks.streamline.streams.metrics.container;
 
+import com.hortonworks.streamline.common.exception.ConfigException;
 import com.hortonworks.streamline.streams.cluster.catalog.Component;
 import com.hortonworks.streamline.streams.cluster.catalog.ComponentProcess;
 import com.hortonworks.streamline.streams.cluster.catalog.Namespace;
 import com.hortonworks.streamline.streams.cluster.catalog.Service;
-import com.hortonworks.streamline.streams.metrics.container.mapping.MappedTimeSeriesQuerierImpl;
-import com.hortonworks.streamline.streams.metrics.container.mapping.MappedTopologyMetricsImpl;
+import com.hortonworks.streamline.streams.cluster.container.ConfigAwareContainer;
 import com.hortonworks.streamline.streams.cluster.container.NamespaceAwareContainer;
 import com.hortonworks.streamline.streams.cluster.discovery.ambari.ComponentPropertyPattern;
 import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
-import com.hortonworks.streamline.common.exception.ConfigException;
-import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
 import com.hortonworks.streamline.streams.metrics.TimeSeriesQuerier;
+import com.hortonworks.streamline.streams.metrics.config.mapping.MappedTopologyMetricsConfigImpl;
+import com.hortonworks.streamline.streams.metrics.container.mapping.MappedTimeSeriesQuerierImpl;
+import com.hortonworks.streamline.streams.metrics.container.mapping.MappedTopologyMetricsImpl;
 import com.hortonworks.streamline.streams.metrics.topology.TopologyMetrics;
 
 import javax.security.auth.Subject;
@@ -59,7 +60,10 @@ public class TopologyMetricsContainer extends NamespaceAwareContainer<TopologyMe
         }
 
         // FIXME: "how to initialize" is up to implementation detail - now we just only consider about Storm implementation
-        Map<String, Object> conf = buildStormTopologyMetricsConfigMap(namespace, streamingEngine, subject);
+//        Map<String, Object> conf = buildStormTopologyMetricsConfigMap(namespace, streamingEngine, subject);
+
+        ConfigAwareContainer topologyMetricsConfig = initMetricsConfig(streamingEngine);
+        final Map<String, Object> conf = topologyMetricsConfig.buildConfig(this, null, subject, namespace);
 
         String className = metricsImpl.getClassName();
         TopologyMetrics topologyMetrics = initTopologyMetrics(conf, className);
@@ -88,6 +92,22 @@ public class TopologyMetricsContainer extends NamespaceAwareContainer<TopologyMe
         return topologyMetrics;
     }
 
+    private ConfigAwareContainer initMetricsConfig(String streamingEngine) {
+        MappedTopologyMetricsConfigImpl metricsConfigImpl;
+        try {
+            metricsConfigImpl = MappedTopologyMetricsConfigImpl.valueOf(streamingEngine);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Unsupported streaming engine: " + streamingEngine, e);
+        }
+        String className = metricsConfigImpl.getClassName();
+        try {
+            Class<ConfigAwareContainer> clazz = (Class<ConfigAwareContainer>) Class.forName(className);
+            return clazz.newInstance();
+        } catch (IllegalAccessException | InstantiationException | ClassNotFoundException e) {
+            throw new RuntimeException("Can't initialize Topology actions config instance - Class Name: " + className, e);
+        }
+    }
+
     private TopologyMetrics initTopologyMetrics(Map<String, Object> conf, String className) {
         try {
             TopologyMetrics topologyMetrics = instantiate(className);
@@ -109,12 +129,12 @@ public class TopologyMetricsContainer extends NamespaceAwareContainer<TopologyMe
         }
     }
 
-    private Map<String, Object> buildStormTopologyMetricsConfigMap(Namespace namespace, String streamingEngine, Subject subject) {
-        Map<String, Object> conf = new HashMap<>();
-        conf.put(TopologyLayoutConstants.STORM_API_ROOT_URL_KEY, buildStormRestApiRootUrl(namespace, streamingEngine));
-        conf.put(TopologyLayoutConstants.SUBJECT_OBJECT, subject);
-        return conf;
-    }
+//    private Map<String, Object> buildStormTopologyMetricsConfigMap(Namespace namespace, String streamingEngine, Subject subject) {
+//        Map<String, Object> conf = new HashMap<>();
+//        conf.put(TopologyLayoutConstants.STORM_API_ROOT_URL_KEY, buildStormRestApiRootUrl(namespace, streamingEngine));
+//        conf.put(TopologyLayoutConstants.SUBJECT_OBJECT, subject);
+//        return conf;
+//    }
 
     private Map<String, String> buildAMSTimeSeriesQuerierConfigMap(Namespace namespace, String timeSeriesDB) {
         // Assuming that a namespace has one mapping of time-series DB service

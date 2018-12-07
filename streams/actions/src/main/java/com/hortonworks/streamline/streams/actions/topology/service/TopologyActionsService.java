@@ -42,6 +42,7 @@ import com.hortonworks.streamline.streams.cluster.catalog.NamespaceServiceCluste
 import com.hortonworks.streamline.streams.cluster.catalog.Service;
 import com.hortonworks.streamline.streams.cluster.catalog.ServiceConfiguration;
 import com.hortonworks.streamline.streams.cluster.container.ContainingNamespaceAwareContainer;
+import com.hortonworks.streamline.streams.cluster.container.NamespaceAwareContainer;
 import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
 import com.hortonworks.streamline.streams.layout.component.Edge;
 import com.hortonworks.streamline.streams.layout.component.OutputComponent;
@@ -80,7 +81,7 @@ public class TopologyActionsService implements ContainingNamespaceAwareContainer
     private final TopologyDagBuilder topologyDagBuilder;
     private final ConfigFileWriter configFileWriter;
     private final FileStorage fileStorage;
-    private final TopologyActionsContainer topologyActionsContainer;
+    private final NamespaceAwareContainer<TopologyActions> topologyActionsContainer;
     private final TopologyStateFactory stateFactory;
     private final TopologyTestRunner topologyTestRunner;
     private final ManagedTransaction managedTransaction;
