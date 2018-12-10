@@ -138,12 +138,6 @@ public class BeamTopologyActionsImpl implements TopologyActions
 		   throws Exception
    {
 	  String xyz = null;
-	  ClassIterator cI = new ClassIterator();
-	  Class[] classes = cI.getClassesInPackage("com.hortonworks.streamline.streams");
-	  for (Class c : classes)
-	  {
-		 System.out.println("Found: " + c.getCanonicalName());
-	  }
 	  createYamlFile(topology, true);
 	  System.out.println("");
    }

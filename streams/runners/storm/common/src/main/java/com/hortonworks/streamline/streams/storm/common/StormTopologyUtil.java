@@ -18,7 +18,6 @@ package com.hortonworks.streamline.streams.storm.common;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class StormTopologyUtil {
     private StormTopologyUtil() {

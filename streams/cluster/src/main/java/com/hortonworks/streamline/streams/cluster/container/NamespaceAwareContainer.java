@@ -15,22 +15,11 @@
  **/
 package com.hortonworks.streamline.streams.cluster.container;
 
-import com.hortonworks.streamline.streams.cluster.catalog.Cluster;
-import com.hortonworks.streamline.streams.cluster.catalog.Component;
-import com.hortonworks.streamline.streams.cluster.catalog.ComponentProcess;
-import com.hortonworks.streamline.streams.cluster.catalog.Namespace;
-import com.hortonworks.streamline.streams.cluster.catalog.NamespaceServiceClusterMap;
-import com.hortonworks.streamline.streams.cluster.catalog.Service;
-import com.hortonworks.streamline.streams.cluster.catalog.ServiceConfiguration;
+import com.hortonworks.streamline.streams.cluster.catalog.*;
 import com.hortonworks.streamline.streams.cluster.discovery.ambari.ComponentPropertyPattern;
 import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -42,7 +31,12 @@ public abstract class NamespaceAwareContainer<T> {
     public static final String COMPONENT_NAME_STORM_UI_SERVER = ComponentPropertyPattern.STORM_UI_SERVER.name();
 
     private Map<Long, T> namespaceToInstance;
+
     protected final EnvironmentService environmentService;
+
+    public EnvironmentService getEnvironmentService() {
+        return environmentService;
+    }
 
     public NamespaceAwareContainer(EnvironmentService environmentService) {
         this.environmentService = environmentService;
@@ -66,7 +60,7 @@ public abstract class NamespaceAwareContainer<T> {
 
     protected abstract T initializeInstance(Namespace namespace);
 
-    protected Service getFirstOccurenceServiceForNamespace(Namespace namespace, String serviceName) {
+    public Service getFirstOccurenceServiceForNamespace(Namespace namespace, String serviceName) {
         Collection<Service> services = getServiceForNamespace(namespace, serviceName);
         if (services.isEmpty()) {
             return null;
@@ -102,7 +96,7 @@ public abstract class NamespaceAwareContainer<T> {
         return services;
     }
 
-    protected Optional<Component> getComponent(Service service, String componentName) {
+    public Optional<Component> getComponent(Service service, String componentName) {
         Collection<Component> allComponents = environmentService.listComponents(service.getId());
 
         List<Component> components = allComponents.stream().filter(x -> x.getName().equals(componentName)).collect(toList());
@@ -113,7 +107,7 @@ public abstract class NamespaceAwareContainer<T> {
         return Optional.of(components.get(0));
     }
 
-    protected Optional<ServiceConfiguration> getServiceConfiguration(Service service, String serviceConfigurationName) {
+    public Optional<ServiceConfiguration> getServiceConfiguration(Service service, String serviceConfigurationName) {
         Collection<ServiceConfiguration> allServiceConfigurations = environmentService.listServiceConfigurations(service.getId());
 
         List<ServiceConfiguration> configurations = allServiceConfigurations.stream()
@@ -130,38 +124,38 @@ public abstract class NamespaceAwareContainer<T> {
         return clazz.newInstance();
     }
 
-    protected void assertHostAndPort(String componentName, String host, Integer port) {
+    public void assertHostAndPort(String componentName, String host, Integer port) {
         if (host == null || host.isEmpty() || port == null) {
             throw new RuntimeException(componentName + " component doesn't have enough information - host: " + host +
                     " / port: " + port);
         }
     }
 
-    protected void assertHostsAndPort(String componentName, List<String> hosts, Integer port) {
+    public void assertHostsAndPort(String componentName, List<String> hosts, Integer port) {
         if (hosts == null || hosts.isEmpty() || port == null) {
             throw new RuntimeException(componentName + " component doesn't have enough information - hosts: " + hosts +
                     " / port: " + port);
         }
     }
 
-    protected String buildStormRestApiRootUrl(Namespace namespace, String streamingEngine) {
-        // Assuming that a namespace has one mapping of streaming engine
-        Service streamingEngineService = getFirstOccurenceServiceForNamespace(namespace, streamingEngine);
-        if (streamingEngineService == null) {
-            throw new RuntimeException("Streaming Engine " + streamingEngine + " is not associated to the namespace " +
-                    namespace.getName() + "(" + namespace.getId() + ")");
-        }
-        Component uiServer = getComponent(streamingEngineService, COMPONENT_NAME_STORM_UI_SERVER)
-                .orElseThrow(() -> new RuntimeException(streamingEngine + " doesn't have " + COMPONENT_NAME_STORM_UI_SERVER + " as component"));
-        Collection<ComponentProcess> uiServerProcesses = environmentService.listComponentProcesses(uiServer.getId());
-        if (uiServerProcesses.isEmpty()) {
-            throw new RuntimeException(streamingEngine + " doesn't have any process for " + COMPONENT_NAME_STORM_UI_SERVER + " as component");
-        }
-        ComponentProcess uiServerProcess = uiServerProcesses.iterator().next();
-        String uiHost = uiServerProcess.getHost();
-        Integer uiPort = uiServerProcess.getPort();
-        assertHostAndPort(uiServer.getName(), uiHost, uiPort);
-        return "http://" + uiHost + ":" + uiPort + "/api/v1";
-    }
+//    protected String buildStormRestApiRootUrl(Namespace namespace, String streamingEngine) {
+//        // Assuming that a namespace has one mapping of streaming engine
+//        Service streamingEngineService = getFirstOccurenceServiceForNamespace(namespace, streamingEngine);
+//        if (streamingEngineService == null) {
+//            throw new RuntimeException("Streaming Engine " + streamingEngine + " is not associated to the namespace " +
+//                    namespace.getName() + "(" + namespace.getId() + ")");
+//        }
+//        Component uiServer = getComponent(streamingEngineService, COMPONENT_NAME_STORM_UI_SERVER)
+//                .orElseThrow(() -> new RuntimeException(streamingEngine + " doesn't have " + COMPONENT_NAME_STORM_UI_SERVER + " as component"));
+//        Collection<ComponentProcess> uiServerProcesses = environmentService.listComponentProcesses(uiServer.getId());
+//        if (uiServerProcesses.isEmpty()) {
+//            throw new RuntimeException(streamingEngine + " doesn't have any process for " + COMPONENT_NAME_STORM_UI_SERVER + " as component");
+//        }
+//        ComponentProcess uiServerProcess = uiServerProcesses.iterator().next();
+//        String uiHost = uiServerProcess.getHost();
+//        Integer uiPort = uiServerProcess.getPort();
+//        assertHostAndPort(uiServer.getName(), uiHost, uiPort);
+//        return "http://" + uiHost + ":" + uiPort + "/api/v1";
+//    }
 
 }

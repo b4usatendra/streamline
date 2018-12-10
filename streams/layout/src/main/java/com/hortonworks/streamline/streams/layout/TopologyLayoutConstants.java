@@ -17,9 +17,6 @@ package com.hortonworks.streamline.streams.layout;
 
 public final class TopologyLayoutConstants {
 
-
-
-
     private TopologyLayoutConstants () {}
     // streaming engines
     public static final String STORM_STREAMING_ENGINE = "STORM";

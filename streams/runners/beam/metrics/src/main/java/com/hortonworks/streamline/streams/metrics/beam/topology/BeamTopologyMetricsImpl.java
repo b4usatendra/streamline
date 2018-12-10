@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package com.hortonworks.streamline.streams.metrics.beam;
+package com.hortonworks.streamline.streams.metrics.beam.topology;
 
 import com.google.common.base.*;
 import com.google.common.cache.*;
