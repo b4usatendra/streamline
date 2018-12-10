@@ -790,6 +790,7 @@
             </dependency>
             <dependency>
                 <groupId>com.hortonworks.streamline</groupId>
+
                 <artifactId>streamline-sdk</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -800,12 +801,14 @@
             </dependency>
             <dependency>
                 <groupId>com.hortonworks.streamline</groupId>
+
                 <artifactId>streamline-logsearch</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.hortonworks.streamline</groupId>
+
                 <artifactId>streams</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -821,6 +824,7 @@
             </dependency>
             <dependency>
                 <groupId>com.hortonworks.streamline</groupId>
+
                 <artifactId>model-registry</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -847,6 +851,7 @@
             </dependency>
             <dependency>
                 <groupId>com.hortonworks.streamline</groupId>
+
                 <artifactId>streamline-sampling-storm</artifactId>
                 <version>${project.version}</version>
             </dependency>

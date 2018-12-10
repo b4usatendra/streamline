@@ -19,6 +19,7 @@
         <module>sampling</module>
         <module>metrics</module>
         <module>runtime</module>
+
     </modules>
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.apache.beam/beam-sdks-java-core -->

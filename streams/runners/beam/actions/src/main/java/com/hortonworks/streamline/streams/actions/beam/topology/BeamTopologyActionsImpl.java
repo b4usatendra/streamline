@@ -15,6 +15,7 @@
  **/
 package com.hortonworks.streamline.streams.actions.beam.topology;
 
+
 import com.google.common.base.*;
 import com.hortonworks.streamline.streams.actions.*;
 import com.hortonworks.streamline.streams.actions.topology.service.*;
@@ -44,7 +45,7 @@ import java.util.stream.*;
 import static java.util.stream.Collectors.*;
 
 /**
- * Storm implementation of the TopologyActions interface
+ * Beam implementation of the TopologyActions interface
  */
 public class BeamTopologyActionsImpl implements TopologyActions {
     private static final Logger LOG = LoggerFactory.getLogger(BeamTopologyActionsImpl.class);
@@ -128,7 +129,6 @@ public class BeamTopologyActionsImpl implements TopologyActions {
 			}
 			stormCliPath = stormHomeDir + "bin" + File.separator + "storm";
 		 }
-
 */
             //catalogRootUrl = (String) conf.get(BeamTopologyLayoutConstants.YAML_KEY_CATALOG_ROOT_URL);
 
@@ -143,6 +143,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
             } else {
                 javaJarCommand = "jar";
             }
+
 
 		/* String stormApiRootUrl = (String) conf.get(TopologyLayoutConstants.STORM_API_ROOT_URL_KEY);
 		 Subject subject = (Subject) conf.get(TopologyLayoutConstants.SUBJECT_OBJECT);
@@ -163,10 +164,12 @@ public class BeamTopologyActionsImpl implements TopologyActions {
 */
             setupSecuredCluster(conf);
 
+
             EnvironmentService environmentService = (EnvironmentService) conf.get(TopologyLayoutConstants.ENVIRONMENT_SERVICE_OBJECT);
             Number namespaceId = (Number) conf.get(TopologyLayoutConstants.NAMESPACE_ID);
 		 /*this.serviceConfigurationReader = new AutoCredsServiceConfigurationReader(environmentService,
 				 namespaceId.longValue());*/
+
             this.environmentServiceNames = environmentService.listServiceClusterMapping(namespaceId.longValue())
                     .stream()
                     .map(NamespaceServiceClusterMap::getServiceName)

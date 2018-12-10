@@ -1,5 +1,6 @@
 {
   "type": "SINK",
+
   "name": "Beam-Kafka-Sink",
   "subType": "KAFKA",
   "streamingEngine": "BEAM",

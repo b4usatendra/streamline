@@ -13,39 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package com.hortonworks.streamline.streams.metrics.storm.topology;
+package com.hortonworks.streamline.streams.metrics.beam;
 
 import com.google.common.base.*;
 import com.google.common.cache.*;
 import com.google.common.util.concurrent.*;
 import com.hortonworks.streamline.common.exception.*;
 import com.hortonworks.streamline.common.util.*;
-import com.hortonworks.streamline.streams.exception.*;
-import com.hortonworks.streamline.streams.layout.*;
+import com.hortonworks.streamline.streams.beam.common.*;
 import com.hortonworks.streamline.streams.layout.component.*;
 import com.hortonworks.streamline.streams.metrics.*;
 import com.hortonworks.streamline.streams.metrics.topology.*;
-import com.hortonworks.streamline.streams.storm.common.*;
-import javax.security.auth.*;
-import javax.ws.rs.client.*;
-import org.apache.commons.lang3.*;
 import org.apache.commons.lang3.tuple.*;
-import org.glassfish.jersey.client.*;
 import org.slf4j.*;
 
 import java.util.*;
 import java.util.concurrent.*;
 
-import static com.hortonworks.streamline.streams.storm.common.StormRestAPIConstant.*;
-
 /**
- * Storm implementation of the TopologyMetrics interface
+ * Beam implementation of the TopologyMetrics interface
  */
-public class StormTopologyMetricsImpl implements TopologyMetrics
+public class BeamTopologyMetricsImpl implements TopologyMetrics
 {
-   private static final Logger LOG = LoggerFactory.getLogger(StormTopologyMetricsImpl.class);
+   private static final Logger LOG = LoggerFactory.getLogger(BeamTopologyMetricsImpl.class);
 
-   private static final String FRAMEWORK = "STORM";
+   private static final String FRAMEWORK = "BEAM";
    private static final int MAX_SIZE_TOPOLOGY_CACHE = 10;
    private static final int MAX_SIZE_COMPONENT_CACHE = 50;
    private static final int CACHE_DURATION_SECS = 5;
@@ -54,13 +46,12 @@ public class StormTopologyMetricsImpl implements TopologyMetrics
    // shared across the metrics instances
    private static final ForkJoinPool FORK_JOIN_POOL = new ForkJoinPool(FORK_JOIN_POOL_PARALLELISM);
 
-   private StormRestAPIClient client;
    private TopologyTimeSeriesMetrics timeSeriesMetrics;
 
    private LoadingCache<Pair<String, String>, Map<String, ?>> topologyRetrieveCache;
    private LoadingCache<Pair<Pair<String, String>, String>, Map<String, ?>> componentRetrieveCache;
 
-   public StormTopologyMetricsImpl()
+   public BeamTopologyMetricsImpl()
    {
    }
 
@@ -71,46 +62,7 @@ public class StormTopologyMetricsImpl implements TopologyMetrics
    public void init(Map<String, Object> conf)
 		   throws ConfigException
    {
-	  String stormApiRootUrl = null;
-	  Subject subject = null;
-	  if (conf != null)
-	  {
-		 stormApiRootUrl = (String) conf.get(TopologyLayoutConstants.STORM_API_ROOT_URL_KEY);
-		 subject = (Subject) conf.get(TopologyLayoutConstants.SUBJECT_OBJECT);
-	  }
-	  Client restClient = ClientBuilder.newClient(new ClientConfig());
-	  this.client = new StormRestAPIClient(restClient, stormApiRootUrl, subject);
-	  timeSeriesMetrics = new StormTopologyTimeSeriesMetricsImpl(client);
-	  topologyRetrieveCache = CacheBuilder.newBuilder()
-			  .maximumSize(MAX_SIZE_TOPOLOGY_CACHE)
-			  .expireAfterWrite(CACHE_DURATION_SECS, TimeUnit.SECONDS)
-			  .build(new CacheLoader<Pair<String, String>, Map<String, ?>>()
-			  {
-				 @Override
-				 public Map<String, ?> load(Pair<String, String> stormTopologyIdAndAsUser)
-				 {
-					String stormTopologyId = stormTopologyIdAndAsUser.getLeft();
-					String asUser = stormTopologyIdAndAsUser.getRight();
-					LOG.debug("retrieving topology info - topology id: {}, asUser: {}", stormTopologyId, asUser);
-					return client.getTopology(stormTopologyId, asUser);
-				 }
-			  });
-	  componentRetrieveCache = CacheBuilder.newBuilder()
-			  .maximumSize(MAX_SIZE_COMPONENT_CACHE)
-			  .expireAfterWrite(CACHE_DURATION_SECS, TimeUnit.SECONDS)
-			  .build(new CacheLoader<Pair<Pair<String, String>, String>, Map<String, ?>>()
-			  {
-				 @Override
-				 public Map<String, ?> load(Pair<Pair<String, String>, String> componentIdAndAsUserPair)
-				 {
-					String topologyId = componentIdAndAsUserPair.getLeft().getLeft();
-					String componentId = componentIdAndAsUserPair.getLeft().getRight();
-					String asUser = componentIdAndAsUserPair.getRight();
-					LOG.debug("retrieving component info - topology id: {}, component id: {}, asUser: {}",
-							topologyId, componentId, asUser);
-					return client.getComponent(topologyId, componentId, asUser);
-				 }
-			  });
+
    }
 
    /**
@@ -119,57 +71,9 @@ public class StormTopologyMetricsImpl implements TopologyMetrics
    @Override
    public TopologyMetric getTopologyMetric(TopologyLayout topology, String asUser)
    {
-	  String topologyId = StormTopologyUtil.findStormTopologyId(client, topology.getId(), asUser);
-	  if (StringUtils.isEmpty(topologyId))
-	  {
-		 throw new TopologyNotAliveException("Topology not found in Storm Cluster - topology id: " + topology.getId());
-	  }
 
-	  Map<String, ?> responseMap = getTopologyInfo(topologyId, asUser);
-
-	  Long uptimeSeconds = ((Number) responseMap.get(TOPOLOGY_JSON_UPTIME_SECS)).longValue();
-	  String status = (String) responseMap.get(TOPOLOGY_JSON_STATUS);
-	  Long workerTotal = ((Number) responseMap.get(TOPOLOGY_JSON_WORKERS_TOTAL)).longValue();
-	  Long executorTotal = ((Number) responseMap.get(TOPOLOGY_JSON_EXECUTORS_TOTAL)).longValue();
-
-	  List<Map<String, ?>> topologyStatsList = (List<Map<String, ?>>) responseMap.get(TOPOLOGY_JSON_STATS);
-	  List<Map<String, ?>> spouts = (List<Map<String, ?>>) responseMap.get(TOPOLOGY_JSON_SPOUTS);
-	  List<Map<String, ?>> bolts = (List<Map<String, ?>>) responseMap.get(TOPOLOGY_JSON_BOLTS);
-
-	  // pick smallest time window
-	  Map<String, ?> topologyStatsMap = null;
-	  Long smallestWindow = Long.MAX_VALUE;
-	  for (Map<String, ?> topoStats : topologyStatsList)
-	  {
-		 String windowStr = (String) topoStats.get(TOPOLOGY_JSON_WINDOW);
-		 Long window = convertWindowString(windowStr, uptimeSeconds);
-		 if (smallestWindow > window)
-		 {
-			smallestWindow = window;
-			topologyStatsMap = topoStats;
-		 }
-	  }
-
-	  // extract metrics from smallest time window
-	  Long window = smallestWindow;
-	  Long acked = getLongValueOrDefault(topologyStatsMap, STATS_JSON_ACKED_TUPLES, 0L);
-	  Long failedRecords = getLongValueOrDefault(topologyStatsMap, STATS_JSON_FAILED_TUPLES, 0L);
-	  Double completeLatency = getDoubleValueFromStringOrDefault(topologyStatsMap, STATS_JSON_COMPLETE_LATENCY, 0.0d);
-
-	  // Storm specific metrics
-	  Long emittedTotal = getLongValueOrDefault(topologyStatsMap, STATS_JSON_EMITTED_TUPLES, 0L);
-	  Long transferred = getLongValueOrDefault(topologyStatsMap, STATS_JSON_TRANSFERRED_TUPLES, 0L);
-	  Long errorsTotal = getErrorCountFromAllComponents(topologyId, spouts, bolts, asUser);
-
-	  Map<String, Number> miscMetrics = new HashMap<>();
-	  miscMetrics.put(TOPOLOGY_JSON_WORKERS_TOTAL, workerTotal);
-	  miscMetrics.put(TOPOLOGY_JSON_EXECUTORS_TOTAL, executorTotal);
-	  miscMetrics.put(STATS_JSON_EMITTED_TUPLES, emittedTotal);
-	  miscMetrics.put(STATS_JSON_TRANSFERRED_TUPLES, transferred);
-	  miscMetrics.put(STATS_JSON_TOPOLOGY_ERROR_COUNT, errorsTotal);
-
-	  return new TopologyMetric(FRAMEWORK, topology.getName(), status, uptimeSeconds, window,
-			  acked * 1.0 / window, completeLatency, failedRecords, miscMetrics);
+	  return new TopologyMetric(FRAMEWORK, topology.getName(), "TOPOLOGY_STATE_DEPLOYED", 1000l, 1000l,
+			  1.0, 1.0, 0l, null);
    }
 
    /**
@@ -178,20 +82,15 @@ public class StormTopologyMetricsImpl implements TopologyMetrics
    @Override
    public Map<String, ComponentMetric> getMetricsForTopology(TopologyLayout topology, String asUser)
    {
-	  String topologyId = StormTopologyUtil.findStormTopologyId(client, topology.getId(), asUser);
-	  if (StringUtils.isEmpty(topologyId))
-	  {
-		 throw new TopologyNotAliveException("Topology not found in Storm Cluster - topology id: " + topology.getId());
-	  }
 
-	  Map<String, ?> responseMap = getTopologyInfo(topologyId, asUser);
+	  Map<String, ?> responseMap = getTopologyInfo("test-topology", asUser);
 
 	  Map<String, ComponentMetric> metricMap = new HashMap<>();
-	  List<Map<String, ?>> spouts = (List<Map<String, ?>>) responseMap.get(TOPOLOGY_JSON_SPOUTS);
-	  extractMetrics(metricMap, spouts, TOPOLOGY_JSON_SPOUT_ID);
+	  List<Map<String, ?>> spouts = (List<Map<String, ?>>) responseMap.get(BeamRestAPIConstant.TOPOLOGY_JSON_SPOUTS);
+	  extractMetrics(metricMap, spouts, BeamRestAPIConstant.TOPOLOGY_JSON_SPOUT_ID);
 
-	  List<Map<String, ?>> bolts = (List<Map<String, ?>>) responseMap.get(TOPOLOGY_JSON_BOLTS);
-	  extractMetrics(metricMap, bolts, TOPOLOGY_JSON_BOLT_ID);
+	  List<Map<String, ?>> bolts = (List<Map<String, ?>>) responseMap.get(BeamRestAPIConstant.TOPOLOGY_JSON_BOLTS);
+	  extractMetrics(metricMap, bolts, BeamRestAPIConstant.TOPOLOGY_JSON_BOLT_ID);
 
 	  return metricMap;
    }
@@ -263,7 +162,7 @@ public class StormTopologyMetricsImpl implements TopologyMetrics
 		 {
 			for (Map<String, ?> spout : spouts)
 			{
-			   componentIds.add((String) spout.get(TOPOLOGY_JSON_SPOUT_ID));
+			   componentIds.add((String) spout.get(BeamRestAPIConstant.TOPOLOGY_JSON_SPOUT_ID));
 			}
 		 }
 
@@ -271,7 +170,7 @@ public class StormTopologyMetricsImpl implements TopologyMetrics
 		 {
 			for (Map<String, ?> bolt : bolts)
 			{
-			   componentIds.add((String) bolt.get(TOPOLOGY_JSON_BOLT_ID));
+			   componentIds.add((String) bolt.get(BeamRestAPIConstant.TOPOLOGY_JSON_BOLT_ID));
 			}
 		 }
 
@@ -279,7 +178,7 @@ public class StormTopologyMetricsImpl implements TopologyMetrics
 		 long errorCount = ParallelStreamUtil.execute(() ->
 				 componentIds.parallelStream().mapToLong(componentId -> {
 					Map componentStats = getComponentInfo(topologyId, componentId, asUser);
-					List<?> componentErrors = (List<?>) componentStats.get(TOPOLOGY_JSON_COMPONENT_ERRORS);
+					List<?> componentErrors = (List<?>) componentStats.get(BeamRestAPIConstant.TOPOLOGY_JSON_COMPONENT_ERRORS);
 					if (componentErrors != null && !componentErrors.isEmpty())
 					{
 					   return componentErrors.size();
@@ -305,7 +204,7 @@ public class StormTopologyMetricsImpl implements TopologyMetrics
 	  for (Map<String, ?> component : components)
 	  {
 		 String name = (String) component.get(topologyJsonID);
-		 String componentId = StormTopologyUtil.extractStreamlineComponentId(name);
+		 String componentId = BeamTopologyUtil.extractStreamlineComponentId(name);
 		 ComponentMetric metric = extractMetric(name, component);
 		 metricMap.put(componentId, metric);
 	  }
@@ -313,12 +212,12 @@ public class StormTopologyMetricsImpl implements TopologyMetrics
 
    private ComponentMetric extractMetric(String componentName, Map<String, ?> componentMap)
    {
-	  Long inputRecords = getLongValueOrDefault(componentMap, STATS_JSON_EXECUTED_TUPLES, 0L);
-	  Long outputRecords = getLongValueOrDefault(componentMap, STATS_JSON_EMITTED_TUPLES, 0L);
-	  Long failedRecords = getLongValueOrDefault(componentMap, STATS_JSON_FAILED_TUPLES, 0L);
-	  Double processedTime = getDoubleValueFromStringOrDefault(componentMap, STATS_JSON_PROCESS_LATENCY, 0.0d);
+	  Long inputRecords = getLongValueOrDefault(componentMap, BeamRestAPIConstant.STATS_JSON_EXECUTED_TUPLES, 0L);
+	  Long outputRecords = getLongValueOrDefault(componentMap, BeamRestAPIConstant.STATS_JSON_EMITTED_TUPLES, 0L);
+	  Long failedRecords = getLongValueOrDefault(componentMap, BeamRestAPIConstant.STATS_JSON_FAILED_TUPLES, 0L);
+	  Double processedTime = getDoubleValueFromStringOrDefault(componentMap, BeamRestAPIConstant.STATS_JSON_PROCESS_LATENCY, 0.0d);
 
-	  return new ComponentMetric(StormTopologyUtil.extractStreamlineComponentName(componentName), inputRecords,
+	  return new ComponentMetric(BeamTopologyUtil.extractStreamlineComponentName(componentName), inputRecords,
 			  outputRecords, failedRecords, processedTime);
    }
 

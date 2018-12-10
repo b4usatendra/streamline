@@ -20,6 +20,7 @@ import com.hortonworks.streamline.common.Config;
 import com.hortonworks.streamline.streams.layout.component.StreamlineProcessor;
 import com.hortonworks.streamline.streams.layout.component.StreamlineSink;
 import com.hortonworks.streamline.streams.layout.component.StreamlineSource;
+import com.hortonworks.streamline.streams.storm.common.*;
 import mockit.Mock;
 import mockit.MockUp;
 import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
@@ -30,9 +31,6 @@ import com.hortonworks.streamline.streams.metrics.TimeSeriesQuerier;
 import mockit.Expectations;
 import mockit.Mocked;
 import com.hortonworks.streamline.streams.metrics.topology.TopologyTimeSeriesMetrics;
-import com.hortonworks.streamline.streams.storm.common.StormRestAPIClient;
-import com.hortonworks.streamline.streams.storm.common.StormRestAPIConstant;
-import com.hortonworks.streamline.streams.storm.common.StormTopologyUtil;
 import org.junit.Before;
 import org.junit.Test;
 
