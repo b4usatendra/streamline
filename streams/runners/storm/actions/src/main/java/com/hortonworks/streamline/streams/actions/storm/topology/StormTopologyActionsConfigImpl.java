@@ -1,34 +1,31 @@
-/**
-  * Copyright 2017 Hortonworks.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
+package com.hortonworks.streamline.streams.actions.storm.topology;
 
-  *   http://www.apache.org/licenses/LICENSE-2.0
-
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
- **/
-package com.hortonworks.streamline.streams.actions.container;
-
-import com.hortonworks.streamline.streams.actions.TopologyActions;
-import com.hortonworks.streamline.streams.actions.config.mapping.MappedTopologyActionsConfigImpl;
-import com.hortonworks.streamline.streams.actions.container.mapping.MappedTopologyActionsImpl;
-import com.hortonworks.streamline.streams.cluster.catalog.Namespace;
-import com.hortonworks.streamline.streams.cluster.container.ConfigAwareContainer;
-import com.hortonworks.streamline.streams.cluster.container.NamespaceAwareContainer;
+import com.hortonworks.streamline.streams.actions.config.TopologyActionsConfig;
+import com.hortonworks.streamline.streams.actions.container.TopologyActionsContainer;
+import com.hortonworks.streamline.streams.cluster.catalog.*;
 import com.hortonworks.streamline.streams.cluster.discovery.ambari.ComponentPropertyPattern;
 import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
 import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
+import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.security.auth.Subject;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public class TopologyActionsContainer extends NamespaceAwareContainer<TopologyActions> {
+/**
+ * @author suman.bn
+ */
+public class StormTopologyActionsConfigImpl implements TopologyActionsConfig {
+
+    private static final Logger LOG = LoggerFactory.getLogger(StormTopologyActionsConfigImpl.class);
 
     private static final String COMPONENT_NAME_STORM_UI_SERVER = ComponentPropertyPattern.STORM_UI_SERVER.name();
     private static final String COMPONENT_NAME_NIMBUS = ComponentPropertyPattern.NIMBUS.name();
@@ -45,67 +42,22 @@ public class TopologyActionsContainer extends NamespaceAwareContainer<TopologyAc
     private static final String DEFAULT_STORM_JAR_LOCATION_DIR = "${STREAMLINE_HOME}/libs";
     private static final String DEFAULT_STORM_JAR_FILE_PREFIX = "streamline-runtime-storm-";
 
-    private final Map<String, String> streamlineConf;
-    private final Subject subject;
+    private EnvironmentService environmentService;
+    private TopologyActionsContainer topologyActionsContainer;
+    private Map<String, String> streamlineConf;
 
-    public TopologyActionsContainer(EnvironmentService environmentService, Map<String, String> streamlineConf,
-                                    Subject subject) {
-        super(environmentService);
+    public Map<String, Object> buildConfig(TopologyActionsContainer topologyActionsContainer,
+                                           Map<String, String> streamlineConf, Subject subject, Namespace namespace) {
+        this.topologyActionsContainer = topologyActionsContainer;
+        this.environmentService = topologyActionsContainer.getEnvironmentService();
         this.streamlineConf = streamlineConf;
-        this.subject = subject;
+        return buildStormTopologyActionsConfigMap(namespace, subject);
     }
 
-    @Override
-    protected TopologyActions initializeInstance(Namespace namespace) {
-        String streamingEngine = namespace.getStreamingEngine();
-
-        MappedTopologyActionsImpl actionsImpl;
-        // Only Storm is supported as streaming engine
-        try {
-            actionsImpl = MappedTopologyActionsImpl.valueOf(streamingEngine);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Unsupported streaming engine: " + streamingEngine, e);
-        }
-
-        // FIXME: "how to initialize" is up to implementation detail - now we just only consider about Storm implementation
-//        Map<String, Object> conf = buildStormTopologyActionsConfigMap(namespace, streamingEngine, subject);
-
-        ConfigAwareContainer topologyActionsConfig = initActionsConfig(streamingEngine);
-        final Map<String, Object> conf = topologyActionsConfig.buildConfig(this, streamlineConf, subject, namespace);
-
-        String className = actionsImpl.getClassName();
-        return initTopologyActions(conf, className);
-    }
-
-    private ConfigAwareContainer initActionsConfig(String streamingEngine) {
-        MappedTopologyActionsConfigImpl actionsConfigImpl;
-        try {
-            actionsConfigImpl = MappedTopologyActionsConfigImpl.valueOf(streamingEngine);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Unsupported streaming engine: " + streamingEngine, e);
-        }
-        String className = actionsConfigImpl.getClassName();
-        try {
-            Class<ConfigAwareContainer> clazz = (Class<ConfigAwareContainer>) Class.forName(className);
-            return clazz.newInstance();
-        } catch (IllegalAccessException | InstantiationException | ClassNotFoundException e) {
-            throw new RuntimeException("Can't initialize Topology actions config instance - Class Name: " + className, e);
-        }
-    }
-
-    private TopologyActions initTopologyActions(Map<String, Object> conf, String className) {
-        try {
-            TopologyActions topologyActions = instantiate(className);
-            topologyActions.init(conf);
-            return topologyActions;
-        } catch (IllegalAccessException | InstantiationException | ClassNotFoundException e) {
-            throw new RuntimeException("Can't initialize Topology actions instance - Class Name: " + className, e);
-        }
-    }
-
-    /*private Map<String, Object> buildStormTopologyActionsConfigMap(Namespace namespace, String streamingEngine, Subject subject) {
+    private Map<String, Object> buildStormTopologyActionsConfigMap(Namespace namespace, Subject subject) {
         // Assuming that a namespace has one mapping of streaming engine except test environment
-        Service streamingEngineService = getFirstOccurenceServiceForNamespace(namespace, streamingEngine);
+        String streamingEngine = namespace.getStreamingEngine();
+        Service streamingEngineService = topologyActionsContainer.getFirstOccurenceServiceForNamespace(namespace, streamingEngine);
         if (streamingEngineService == null) {
             if (!namespace.getInternal()) {
                 throw new RuntimeException("Streaming Engine " + streamingEngine + " is not associated to the namespace " +
@@ -116,7 +68,7 @@ public class TopologyActionsContainer extends NamespaceAwareContainer<TopologyAc
             }
         }
 
-        Component uiServer = getComponent(streamingEngineService, COMPONENT_NAME_STORM_UI_SERVER)
+        Component uiServer = topologyActionsContainer.getComponent(streamingEngineService, COMPONENT_NAME_STORM_UI_SERVER)
                 .orElseThrow(() -> new RuntimeException(streamingEngine + " doesn't have " + COMPONENT_NAME_STORM_UI_SERVER + " as component"));
 
         Collection<ComponentProcess> uiServerProcesses = environmentService.listComponentProcesses(uiServer.getId());
@@ -128,9 +80,9 @@ public class TopologyActionsContainer extends NamespaceAwareContainer<TopologyAc
         final String uiHost = uiServerProcess.getHost();
         Integer uiPort = uiServerProcess.getPort();
 
-        assertHostAndPort(uiServer.getName(), uiHost, uiPort);
+        topologyActionsContainer.assertHostAndPort(uiServer.getName(), uiHost, uiPort);
 
-        Component nimbus = getComponent(streamingEngineService, COMPONENT_NAME_NIMBUS)
+        Component nimbus = topologyActionsContainer.getComponent(streamingEngineService, COMPONENT_NAME_NIMBUS)
                 .orElseThrow(() -> new RuntimeException(streamingEngine + " doesn't have " + COMPONENT_NAME_NIMBUS + " as component"));
 
         Collection<ComponentProcess> nimbusProcesses = environmentService.listComponentProcesses(nimbus.getId());
@@ -143,7 +95,7 @@ public class TopologyActionsContainer extends NamespaceAwareContainer<TopologyAc
         Integer nimbusPort = nimbusProcesses.stream().map(ComponentProcess::getPort)
                 .findAny().get();
 
-        assertHostsAndPort(nimbus.getName(), nimbusHosts, nimbusPort);
+        topologyActionsContainer.assertHostsAndPort(nimbus.getName(), nimbusHosts, nimbusPort);
 
         Map<String, Object> conf = new HashMap<>();
 
@@ -214,9 +166,9 @@ public class TopologyActionsContainer extends NamespaceAwareContainer<TopologyAc
     }
 
     private void putStormConfigurations(Service streamingEngineService, Map<String, Object> conf) {
-        ServiceConfiguration storm = getServiceConfiguration(streamingEngineService, SERVICE_CONFIGURATION_STORM)
+        ServiceConfiguration storm = topologyActionsContainer.getServiceConfiguration(streamingEngineService, SERVICE_CONFIGURATION_STORM)
                 .orElse(new ServiceConfiguration());
-        ServiceConfiguration stormEnv = getServiceConfiguration(streamingEngineService, SERVICE_CONFIGURATION_STORM_ENV)
+        ServiceConfiguration stormEnv = topologyActionsContainer.getServiceConfiguration(streamingEngineService, SERVICE_CONFIGURATION_STORM_ENV)
                 .orElse(new ServiceConfiguration());
 
         try {
@@ -284,5 +236,4 @@ public class TopologyActionsContainer extends NamespaceAwareContainer<TopologyAc
     private String getCWD() {
         return Paths.get(".").toAbsolutePath().normalize().toString();
     }
-    */
 }
