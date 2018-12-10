@@ -20,13 +20,14 @@ import com.hortonworks.streamline.streams.cluster.catalog.*;
 import com.hortonworks.streamline.streams.cluster.container.*;
 import com.hortonworks.streamline.streams.cluster.discovery.ambari.*;
 import com.hortonworks.streamline.streams.cluster.service.*;
-import com.hortonworks.streamline.streams.layout.*;
 import com.hortonworks.streamline.streams.metrics.*;
+import com.hortonworks.streamline.streams.metrics.config.mapping.*;
 import com.hortonworks.streamline.streams.metrics.container.mapping.*;
 import com.hortonworks.streamline.streams.metrics.topology.*;
 
 import javax.security.auth.*;
 import java.util.*;
+
 
 public class TopologyMetricsContainer extends NamespaceAwareContainer<TopologyMetrics> {
 
@@ -52,14 +53,13 @@ public class TopologyMetricsContainer extends NamespaceAwareContainer<TopologyMe
             throw new RuntimeException("Unsupported streaming engine: " + streamingEngine, e);
         }
 
-        Map<String, Object> conf = null;
-        //TODO add beam as one of the stream engine
+
         // FIXME: "how to initialize" is up to implementation detail - now we just only consider about Storm implementation
-        if (streamingEngine.equalsIgnoreCase(TopologyLayoutConstants.STORM_STREAMING_ENGINE.toLowerCase())) {
-            conf = buildStormTopologyMetricsConfigMap(namespace, streamingEngine, subject);
-        } else if (streamingEngine.equalsIgnoreCase(TopologyLayoutConstants.STORM_STREAMING_ENGINE.toLowerCase())) {
-            conf = buildBeamTopologyMetricsConfigMap(namespace, streamingEngine, subject);
-        }
+//        Map<String, Object> conf = buildStormTopologyMetricsConfigMap(namespace, streamingEngine, subject);
+
+        ConfigAwareContainer topologyMetricsConfig = initMetricsConfig(streamingEngine);
+        final Map<String, Object> conf = topologyMetricsConfig.buildConfig(this, null, subject, namespace);
+
 
         String className = metricsImpl.getClassName();
         TopologyMetrics topologyMetrics = initTopologyMetrics(conf, className);
@@ -88,6 +88,23 @@ public class TopologyMetricsContainer extends NamespaceAwareContainer<TopologyMe
         return topologyMetrics;
     }
 
+
+    private ConfigAwareContainer initMetricsConfig(String streamingEngine) {
+        MappedTopologyMetricsConfigImpl metricsConfigImpl;
+        try {
+            metricsConfigImpl = MappedTopologyMetricsConfigImpl.valueOf(streamingEngine);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Unsupported streaming engine: " + streamingEngine, e);
+        }
+        String className = metricsConfigImpl.getClassName();
+        try {
+            Class<ConfigAwareContainer> clazz = (Class<ConfigAwareContainer>) Class.forName(className);
+            return clazz.newInstance();
+        } catch (IllegalAccessException | InstantiationException | ClassNotFoundException e) {
+            throw new RuntimeException("Can't initialize Topology actions config instance - Class Name: " + className, e);
+        }
+    }
+
     private TopologyMetrics initTopologyMetrics(Map<String, Object> conf, String className) {
         try {
             TopologyMetrics topologyMetrics = instantiate(className);
@@ -109,17 +126,6 @@ public class TopologyMetricsContainer extends NamespaceAwareContainer<TopologyMe
         }
     }
 
-    private Map<String, Object> buildStormTopologyMetricsConfigMap(Namespace namespace, String streamingEngine, Subject subject) {
-        Map<String, Object> conf = new HashMap<>();
-        conf.put(TopologyLayoutConstants.STORM_API_ROOT_URL_KEY, buildStormRestApiRootUrl(namespace, streamingEngine));
-        conf.put(TopologyLayoutConstants.SUBJECT_OBJECT, subject);
-        return conf;
-    }
-
-    private Map<String, Object> buildBeamTopologyMetricsConfigMap(Namespace namespace, String streamingEngine, Subject subject) {
-        Map<String, Object> conf = new HashMap<>();
-        return conf;
-    }
 
     private Map<String, String> buildAMSTimeSeriesQuerierConfigMap(Namespace namespace, String timeSeriesDB) {
         // Assuming that a namespace has one mapping of time-series DB service
