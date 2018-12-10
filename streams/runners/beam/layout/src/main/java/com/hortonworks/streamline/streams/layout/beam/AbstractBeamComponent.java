@@ -16,6 +16,7 @@
 package com.hortonworks.streamline.streams.layout.beam;
 
 import com.hortonworks.streamline.common.exception.ComponentConfigException;
+import com.hortonworks.streamline.streams.*;
 import com.hortonworks.streamline.streams.beam.common.*;
 import com.hortonworks.streamline.streams.layout.ConfigFieldValidation;
 import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
@@ -58,7 +59,7 @@ public abstract class AbstractBeamComponent implements BeamComponent {
     public abstract PCollection getOutputCollection();
 
     @Override
-    public abstract void unionInputCollection(PCollection<KV<String, String>> collection);
+    public abstract void unionInputCollection(PCollection<KV<Object, StreamlineEvent>> collection);
 
     @Override
     public void validateConfig()

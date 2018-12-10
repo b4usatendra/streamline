@@ -18,11 +18,13 @@ package com.hortonworks.streamline.streams.actions.beam.topology;
 import com.google.common.base.*;
 import com.hortonworks.streamline.streams.actions.*;
 import com.hortonworks.streamline.streams.actions.topology.service.*;
+import com.hortonworks.streamline.streams.beam.common.BeamTopologyLayoutConstants;
 import com.hortonworks.streamline.streams.beam.common.*;
 import com.hortonworks.streamline.streams.catalog.*;
 import com.hortonworks.streamline.streams.cluster.catalog.*;
 import com.hortonworks.streamline.streams.cluster.service.*;
 import com.hortonworks.streamline.streams.layout.*;
+import com.hortonworks.streamline.streams.layout.beam.*;
 import com.hortonworks.streamline.streams.layout.component.*;
 import com.hortonworks.streamline.streams.layout.component.impl.testing.*;
 import groovyx.net.http.*;
@@ -210,11 +212,24 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     public void deploy(TopologyLayout topology, String mavenArtifacts, TopologyActionContext ctx, String asUser)
             throws Exception {
 
+        //serialize topology
+        String filePath = "/tmp/serialized_object";
+        Map<String, Object> config = new HashMap<String, Object>();
+        Set<Map.Entry<String, Object>> set = conf.entrySet();
+
+        for (Map.Entry<String, Object> entry : set) {
+            if (entry.getValue() instanceof String) {
+                config.put(entry.getKey(), entry.getValue());
+            }
+        }
+        serializeTopologyDag(new TopologyMapper(config, topology), filePath);
+
         ctx.setCurrentAction("Adding artifacts to jar");
         //downloadArtifactsAndCopyJars(mavenArtifacts, getExtraJarsLocation(topology));
-        Path jarToDeploy = addArtifactsToJar(getExtraJarsLocation(topology));
+        //Path jarToDeploy = addArtifactsToJar(getExtraJarsLocation(topology));
+        Path jarToDeploy = Paths.get(beamJarLocation);
+
         ctx.setCurrentAction("Creating Beam Pipeline from topology");
-        createYamlFileForDeploy(topology);
         ctx.setCurrentAction("Deploying beam topology via 'java jar' command");
         List<String> commands = new ArrayList<String>();
         commands.add("java");
@@ -306,10 +321,9 @@ public class BeamTopologyActionsImpl implements TopologyActions {
                         Path path = httpFileDownloader.download(downloadUrl);
                         FileUtils.copyFileToDirectory(new File(path.toAbsolutePath().toString()), new File(destinationPath.toAbsolutePath().toString()));
                         isDownloadedSet.add(dependency);
-                    } catch (HttpResponseException e){
+                    } catch (HttpResponseException e) {
                         LOG.error("%s not found in repository %s", dependency, url);
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -515,30 +529,21 @@ public class BeamTopologyActionsImpl implements TopologyActions {
         }
     }*/
 
-    private void createYamlFileForDeploy(TopologyLayout topology)
-            throws Exception {
-        createYamlFile(topology, true);
-    }
+
 
    /* private void createYamlFileForTest(TopologyLayout topology)
             throws Exception {
         createYamlFile(topology, false);
     }*/
 
-    private void createYamlFile(TopologyLayout topology, boolean deploy) throws Exception {
 
-        String filePath = "/tmp/" + "serialized_object";
-        serializeTopologyDag(topology, filePath);
-    }
-
-
-    private void serializeTopologyDag(TopologyLayout topologyLayout, String filePath) {
+    private void serializeTopologyDag(TopologyMapper topologyMapper, String filePath) {
         // Serialization
         try {
             //Saving of object in a file
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filePath));
             // Method for serialization of object
-            out.writeObject(topologyLayout);
+            out.writeObject(topologyMapper);
             out.close();
 
             System.out.println("Object has been serialized");

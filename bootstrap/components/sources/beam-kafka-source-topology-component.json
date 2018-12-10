@@ -1,7 +1,7 @@
 {
   "type": "SOURCE",
-  "name": "Kafka",
-  "subType": "KAFKA",
+  "name": "Beam-Kafka-Source",
+  "subType": "Kafka",
   "streamingEngine": "BEAM",
   "builtin": true,
   "fieldHintProviderClass": "com.hortonworks.streamline.streams.cluster.bundle.impl.KafkaBundleHintProvider",
@@ -9,7 +9,14 @@
   "mavenDeps": "org.apache.kafka:kafka-clients:0.10.2.1,org.apache.beam:beam-sdks-java-io-kafka:2.6.0",
   "topologyComponentUISpecification": {
     "fields": [
-
+      {
+        "uiName": "Security Protocol",
+        "fieldName": "securityProtocol",
+        "isOptional": false,
+        "tooltip": "Protocol to be used to communicate with Kafka brokers",
+        "type": "enumstring",
+        "options": []
+      },
       {
         "uiName": "Bootstrap servers",
         "fieldName": "bootstrapServers",

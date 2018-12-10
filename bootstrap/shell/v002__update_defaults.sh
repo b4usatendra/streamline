@@ -96,7 +96,7 @@ function put_topology_component_bundle {
   uri=$1
   data=$2
   subType=$3
-  out=$(curl -i --negotiate -u:anyUser  -b /tmp/cookiejar.txt -c /tmp/cookiejar.txt -s -X GET -H "Content-Type: application/json" -H "Cache-Control: no-cache" "${CATALOG_ROOT_URL}$uri?subType=${subType}&streamingEngine=STORM")
+  out=$(curl -i --negotiate -u:anyUser  -b /tmp/cookiejar.txt -c /tmp/cookiejar.txt -s -X GET -H "Content-Type: application/json" -H "Cache-Control: no-cache" "${CATALOG_ROOT_URL}$uri?subType=${subType}&streamingEngine=BEAM")
   bundleId=$(getId $out)
   cmd="curl -i --negotiate -u:anyUser  -b /tmp/cookiejar.txt -c /tmp/cookiejar.txt -sS -X PUT -i -F topologyComponentBundle=@$data ${CATALOG_ROOT_URL}$uri/$bundleId"
   echo "PUT $data"
@@ -155,22 +155,22 @@ echo "User/Role bundle Root dir: ${user_role_dir}"
 
 function update_bundles {
     # === Source ===
-    put_topology_component_bundle /streams/componentbundles/SOURCE ${component_dir}/sources/kafka-source-topology-component.json KAFKA
+    put_topology_component_bundle /streams/componentbundles/SOURCE ${component_dir}/sources/beam-kafka-source-topology-component.json KAFKA
     # === Processor ===
 
     # === Sink ===
-    put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/hdfs-sink-topology-component.json HDFS
-    put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/jdbc-sink-topology-component.json JDBC
-    put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/hive-sink-topology-component.json HIVE
-    put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/druid-sink-topology-component.json DRUID
+    #put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/hdfs-sink-topology-component.json HDFS
+    #put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/jdbc-sink-topology-component.json JDBC
+    #put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/hive-sink-topology-component.json HIVE
+    #put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/druid-sink-topology-component.json DRUID
     # === Topology ===
-    put_topology_component_bundle /streams/componentbundles/TOPOLOGY ${component_dir}/topology/storm-topology-component.json TOPOLOGY
+    #put_topology_component_bundle /streams/componentbundles/TOPOLOGY ${component_dir}/topology/storm-topology-component.json TOPOLOGY
     # === Service Bundle ===
-    put_service_bundle /servicebundles/KAFKA ${service_dir}/kafka-bundle.json
-    put_service_bundle /servicebundles/STORM ${service_dir}/storm-bundle.json
-    put_service_bundle /servicebundles/ZOOKEEPER ${service_dir}/zookeeper-bundle.json
-    put_service_bundle /servicebundles/BEAM ${service_dir}/beam-bundle.json
-    post /servicebundles ${service_dir}/druid-bundle.json
+    #put_service_bundle /servicebundles/KAFKA ${service_dir}/kafka-bundle.json
+    #put_service_bundle /servicebundles/STORM ${service_dir}/storm-bundle.json
+    #put_service_bundle /servicebundles/ZOOKEEPER ${service_dir}/zookeeper-bundle.json
+    #put_service_bundle /servicebundles/BEAM ${service_dir}/beam-bundle.json
+    #post /servicebundles ${service_dir}/druid-bundle.json
 }
 
 function add_udfs {
@@ -268,8 +268,8 @@ function main {
     echo "Running bootstrap.sh will create streamline default components, notifiers, udfs and roles"
 
     update_bundles
-    add_udfs
-    update_custom_processors_with_digest
+    #add_udfs
+    #update_custom_processors_with_digest
 }
 
 main

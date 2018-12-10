@@ -15,19 +15,17 @@
  **/
 package com.hortonworks.streamline.streams.layout.beam;
 
-import com.hortonworks.streamline.streams.beam.common.*;
-import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
-import com.hortonworks.streamline.streams.layout.component.StreamlineSource;
-import com.hortonworks.streamline.streams.layout.component.impl.KafkaSource;
-import com.hortonworks.streamline.streams.layout.event.*;
-import org.apache.beam.sdk.io.kafka.KafkaIO;
-import org.apache.beam.sdk.values.KV;
-import org.apache.beam.sdk.values.PCollection;
-import org.apache.kafka.clients.CommonClientConfigs;
-import org.apache.kafka.common.serialization.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import com.hortonworks.streamline.streams.*;
+import com.hortonworks.streamline.streams.layout.*;
+import com.hortonworks.streamline.streams.layout.component.*;
+import com.hortonworks.streamline.streams.layout.component.impl.*;
+import javassist.bytecode.*;
+import joptsimple.internal.*;
+import org.apache.beam.sdk.io.kafka.*;
+import org.apache.beam.sdk.values.*;
+import org.apache.kafka.clients.*;
+import org.slf4j.*;
+import sun.reflect.generics.reflectiveObjects.*;
 
 import java.util.*;
 
@@ -39,8 +37,9 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
     static final String SASL_JAAS_CONFIG_KEY = "saslJaasConfig";
     static final String SASL_KERBEROS_SERVICE_NAME = "kafkaServiceName";
     private static final Logger LOG = LoggerFactory.getLogger(BeamKafkaSourceComponent.class);
-    protected PCollection<KV<String, String>> outputCollection;
+    protected PCollection<KV<Object, StreamlineEvent>> outputCollection;
     private KafkaSource kafkaSource;
+    private KafkaSourceComponent kafkaSourceComponent;
 
     // for unit tests
     public BeamKafkaSourceComponent() {
@@ -81,35 +80,50 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
             validateSSLConfig();
             setSaslJaasConfig();
 
-            List<Object> configMethods = new ArrayList<>();
-            String[] configMethodNames = {
-                    "withBootstrapServers", "withTopics"
-            };
-            String[] configKeys = {
-                    "bootstrapServers", "topic"
-            };
-
-            configMethods.addAll(getConfigMethodsYaml(configMethodNames, configKeys));
-            String[] moreConfigMethodNames = {
-                    "setRetry", "setRecordTranslator", "setProp"
-            };
-            String[] configMethodArgRefs = new String[moreConfigMethodNames.length];
             String beamSourceId = "beamKafkaSource" + UUID_FOR_COMPONENTS;
 
-            initializeComponent(configKeys);
+            String outputStream = (String) conf.get(TopologyLayoutConstants.JSON_KEY_OUTPUT_STREAM_ID);
+            String topic = (String) conf.get(TopologyLayoutConstants.JSON_KEY_TOPIC);
+            String sourceId = streamlineSource.getId();
+
+
+            kafkaSourceComponent = getComponent();
+            initializeComponent();
             isGenerated = true;
         }
     }
 
-    private void initializeComponent(String[] configKeys) {
-        outputCollection = this.pipeline
-                .apply(KafkaIO.<String, String>read()
-                        .withBootstrapServers((String) conf.get(configKeys[0]))
-                        .withTopics(Arrays.asList((String) conf.get(configKeys[1])))
-                        .withKeyDeserializer(StringDeserializer.class)
-                        .withValueDeserializer(StringDeserializer.class)
-                        .updateConsumerProperties(addConsumerProperties()).withoutMetadata());
-        ;
+    //TODO create constansts class for all kafka related constants
+    private void initializeComponent() {
+
+        KafkaIO.Read<Object, StreamlineEvent> reader = kafkaSourceComponent
+                .getKafkaSource(conf,
+                        (String) conf.get("bootstrapServers"),
+                        (String) conf.get("topic"), addConsumerProperties());
+        outputCollection = this.pipeline.apply(reader.withoutMetadata());
+    }
+
+
+    //TODO add keyDeserializer/keySerializer property at component level
+    private KafkaSourceComponent getComponent() {
+        String keySerializer = (String) conf.get("keyDeserializer");
+        KafkaSourceComponent kafkaSourceComponent = null;
+        if ((keySerializer == null) || "ByteArray".equals(keySerializer)) {
+            kafkaSourceComponent = new KafkaSourceComponent<ByteArray>();
+
+        } else if ("String".equals(keySerializer)) {
+            kafkaSourceComponent = new KafkaSourceComponent<String>();
+
+        } else if ("Integer".equals(keySerializer)) {
+            kafkaSourceComponent = new KafkaSourceComponent<Integer>();
+
+        } else if ("Long".equals(keySerializer)) {
+            kafkaSourceComponent = new KafkaSourceComponent<Long>();
+
+        } else {
+            throw new IllegalArgumentException("Key serializer for kafka sink is not supported: " + keySerializer);
+        }
+        return kafkaSourceComponent;
     }
 
     private Map<String, Object> addConsumerProperties() {
@@ -117,14 +131,25 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
         Map<String, Object> consumerProperties = new HashMap<String, Object>();
 
         String[] propertyNames = {
-                "group.id", "fetch.min.bytes", "max.partition.fetch.bytes", "max.poll.records", "security.protocol",
+                "group.id", "fetch.min.bytes", "max.partition.fetch.bytes", "max.poll.records", "security.protocol", "schema.registry.url",
+                "reader.schema.version"
+
         };
         String[] fieldNames = {
-                "consumerGroupId", "fetchMinimumBytes", "fetchMaximumBytesPerPartition", "maxRecordsPerPoll", "securityProtocol",
+                "consumerGroupId", "fetchMinimumBytes", "fetchMaximumBytesPerPartition", "maxRecordsPerPoll", "securityProtocol", "schemaRegistryUrl"
+                ,"readerSchemaVersion"
         };
 
-        consumerProperties.put("sasl.mechanism", "PLAIN");
-        consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
+
+
+        String securityProtocol =  (String)conf.get("securityProtocol");
+
+        //TODO create JAAS file based on the logged in user
+        if(!Strings.isNullOrEmpty(securityProtocol)){
+            consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,securityProtocol);
+            consumerProperties.put("sasl.mechanism", "PLAIN");
+            System.setProperty("java.security.auth.login.config", "/Users/satendra.sahu/code/github/streamline/conf/jaas.conf");
+        }
 
         for (int j = 0; j < propertyNames.length; ++j) {
             if (conf.get(fieldNames[j]) != null) {
@@ -133,21 +158,6 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
         }
 
         return consumerProperties;
-    }
-
-    private Class getKeyDeserializer () {
-        String keySerializer = (String) conf.get("keySerializer");
-        if ((keySerializer == null) || "ByteArray".equals(keySerializer)) {
-            return org.apache.kafka.common.serialization.ByteArrayDeserializer.class;
-        } else if ("String".equals(keySerializer)) {
-            return org.apache.kafka.common.serialization.StringDeserializer.class;
-        } else if ("Integer".equals(keySerializer)) {
-            return org.apache.kafka.common.serialization.IntegerDeserializer.class;
-        } else if ("Long".equals(keySerializer)) {
-            return org.apache.kafka.common.serialization.LongDeserializer.class;
-        } else {
-            throw new IllegalArgumentException("Key serializer for kafka sink is not supported: " + keySerializer);
-        }
     }
 
     private void setSaslJaasConfig() {

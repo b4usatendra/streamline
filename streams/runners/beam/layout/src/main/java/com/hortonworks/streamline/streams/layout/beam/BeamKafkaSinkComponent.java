@@ -15,19 +15,18 @@
  **/
 package com.hortonworks.streamline.streams.layout.beam;
 
-import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
-import org.apache.beam.sdk.io.kafka.KafkaIO;
-import org.apache.beam.sdk.transforms.Flatten;
-import org.apache.beam.sdk.values.KV;
-import org.apache.beam.sdk.values.PCollection;
-import org.apache.beam.sdk.values.PCollectionList;
-import org.apache.kafka.clients.CommonClientConfigs;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import com.hortonworks.streamline.streams.*;
+import com.hortonworks.streamline.streams.layout.*;
+import javassist.bytecode.*;
+import joptsimple.internal.*;
+import org.apache.beam.sdk.io.kafka.*;
+import org.apache.beam.sdk.transforms.*;
+import org.apache.beam.sdk.values.*;
+import org.apache.kafka.clients.*;
+import org.slf4j.*;
+import sun.reflect.generics.reflectiveObjects.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Implementation for Beam Kafka Producer
@@ -36,8 +35,9 @@ public class BeamKafkaSinkComponent extends AbstractBeamComponent {
     static final String SASL_JAAS_CONFIG_KEY = "saslJaasConfig";
     static final String SASL_KERBEROS_SERVICE_NAME = "kafkaServiceName";
     private static final Logger LOG = LoggerFactory.getLogger(BeamKafkaSinkComponent.class);
-    protected PCollection<KV<String, String>> inputCollection;
-    protected PCollection<KV<String, String>> outputCollection;
+    protected PCollection<KV<Object, StreamlineEvent>> inputCollection;
+    protected PCollection<KV<Object, StreamlineEvent>> outputCollection;
+    private KafkaSinkComponent kafkaSinkComponent;
 
     public BeamKafkaSinkComponent() {
     }
@@ -48,8 +48,8 @@ public class BeamKafkaSinkComponent extends AbstractBeamComponent {
     }
 
     @Override
-    public void unionInputCollection(PCollection<KV<String, String>> collection) {
-        outputCollection = PCollectionList.of(outputCollection).and(collection).apply(Flatten.<KV<String, String>>pCollections());
+    public void unionInputCollection(PCollection<KV<Object, StreamlineEvent>> collection) {
+        outputCollection = PCollectionList.of(outputCollection).and(collection).apply(Flatten.<KV<Object, StreamlineEvent>>pCollections());
     }
 
     @Override
@@ -57,25 +57,41 @@ public class BeamKafkaSinkComponent extends AbstractBeamComponent {
         validateSSLConfig();
         setSaslJaasConfig();
         String sinkId = "beamKafkaSink" + UUID_FOR_COMPONENTS;
-        String[] configKeys = {
-                "bootstrapServers", "topic"
-        };
-        initializeComponent(pCollection, configKeys);
+        kafkaSinkComponent = getComponent();
+        initializeComponent(pCollection);
     }
 
-    private void initializeComponent(PCollection<KV<String, String>> pCollection, String[] configKeys) {
-        pCollection.apply(KafkaIO.<String, String>write()
-                .withBootstrapServers((String) conf.get(configKeys[0]))
-                .withTopic((String) conf.get(configKeys[1]))
-                .withKeySerializer(org.apache.kafka.common.serialization.StringSerializer.class)
-                .withValueSerializer(org.apache.kafka.common.serialization.StringSerializer.class)
-                .updateProducerProperties(addProducerProperties()));
+    private void initializeComponent(PCollection<KV<Object, StreamlineEvent>> pCollection) {
+        KafkaIO.Write<Object, StreamlineEvent> writer = kafkaSinkComponent.getKafkaSink(conf, (String) conf.get("bootstrapServers"), (String) conf.get("topic"), addProducerProperties());
+        pCollection.apply(writer);
 
         if (outputCollection == null) {
             outputCollection = pCollection;
         } else {
             unionInputCollection(pCollection);
         }
+    }
+
+    private KafkaSinkComponent getComponent() {
+        String keySerializer = (String) conf.get("keySerializer");
+        KafkaSinkComponent kafkaSinkComponent = null;
+
+        if ((keySerializer == null) || "ByteArray".equals(keySerializer)) {
+            kafkaSinkComponent = new KafkaSinkComponent<ByteArray>();
+
+        } else if ("String".equals(keySerializer)) {
+            kafkaSinkComponent = new KafkaSinkComponent<String>();
+
+        } else if ("Integer".equals(keySerializer)) {
+            kafkaSinkComponent = new KafkaSinkComponent<Integer>();
+
+        } else if ("Long".equals(keySerializer)) {
+            kafkaSinkComponent = new KafkaSinkComponent<Long>();
+
+        } else {
+            throw new IllegalArgumentException("Key serializer for kafka sink is not supported: " + keySerializer);
+        }
+        return kafkaSinkComponent;
     }
 
     private Map<String, Object> addProducerProperties() {
@@ -97,13 +113,20 @@ public class BeamKafkaSinkComponent extends AbstractBeamComponent {
                 TopologyLayoutConstants.SCHEMA_REGISTRY_URL, "serProtocolVersion", "writerSchemaVersion"
         };
 
-        producerProperties.put("sasl.mechanism", "PLAIN");
-        producerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
+        String securityProtocol =  (String)conf.get("securityProtocol");
+        if(!Strings.isNullOrEmpty(securityProtocol)){
+            producerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,securityProtocol);
+            producerProperties.put("sasl.mechanism", "PLAIN");
+            System.setProperty("java.security.auth.login.config", "/Users/satendra.sahu/code/github/streamline/conf/jaas.conf");
+        }
+
         for (int j = 0; j < propertyNames.length; ++j) {
             if (conf.get(fieldNames[j]) != null) {
                 producerProperties.put(propertyNames[j], conf.get(fieldNames[j]));
             }
         }
+
+        //add schemaRegistry url
         return producerProperties;
     }
 

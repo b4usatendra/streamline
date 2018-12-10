@@ -18,13 +18,15 @@ public class BeamPipelineExecutor {
     private Pipeline pipeline;
     private static final Logger LOG = LoggerFactory.getLogger(BeamPipelineExecutor.class);
     private String stormArtifactsLocation = "/tmp/storm-artifacts/";
+    private TopologyMapper topologyMapper;
 
-    private void initializePipeline(){
+    private void initializePipeline() {
         System.setProperty("java.security.auth.login.config", "/Users/satendra.sahu/code/github/streamline/conf/jaas.conf");
 
-        TopologyLayout newLayout = deserializeTopologyDag();
+        TopologyMapper topologyMapper = deserializeTopologyDag();
+        TopologyLayout newLayout = topologyMapper.getTopologyLayout();
         LOG.debug("Initial Topology config {}", newLayout.getConfig());
-        Map<String, Object> conf= new HashMap<>();
+        Map<String, Object> conf = topologyMapper.getConf();
 
         //-Dexec.args="--runner=DirectRunner"
         //System.setProperty("runner", "DirectRunner");
@@ -44,29 +46,29 @@ public class BeamPipelineExecutor {
         return BeamTopologyUtil.generateStormTopologyName(topology.getId(), topology.getName());
     }
 
-    private TopologyLayout deserializeTopologyDag() {
+    private TopologyMapper deserializeTopologyDag() {
         // Deserialization
-        TopologyLayout topologyLayout = null;
+        TopologyMapper topologyMapper = null;
         try {
             // Reading the object from a file
             FileInputStream file = new FileInputStream("/tmp/serialized_object");
             ObjectInputStream in = new ObjectInputStream(file);
 
             // Method for deserialization of object
-            topologyLayout = (TopologyLayout) in.readObject();
+            topologyMapper = (TopologyMapper) in.readObject();
 
             in.close();
             file.close();
 
             System.out.println("Object has been deserialized ");
-            System.out.println("a = " + topologyLayout.toString());
+            System.out.println("a = " + topologyMapper.toString());
         } catch (IOException ex) {
             System.out.println("IOException is caught");
         } catch (ClassNotFoundException ex) {
             System.out.println("ClassNotFoundException is caught");
         }
 
-        return topologyLayout;
+        return topologyMapper;
     }
 
 

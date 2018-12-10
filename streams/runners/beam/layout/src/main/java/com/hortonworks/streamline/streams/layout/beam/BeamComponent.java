@@ -1,6 +1,7 @@
 package com.hortonworks.streamline.streams.layout.beam;
 
 import com.hortonworks.streamline.common.exception.ComponentConfigException;
+import com.hortonworks.streamline.streams.*;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.values.KV;
 import org.apache.beam.sdk.values.PCollection;
@@ -48,7 +49,7 @@ public interface BeamComponent {
 
     public void generateComponent(PCollection pCollection);
 
-    void unionInputCollection(PCollection<KV<String, String>> inputCollection);
+    void unionInputCollection(PCollection<KV<Object, StreamlineEvent>> inputCollection);
 
     /*
     validate the configuration for this component.

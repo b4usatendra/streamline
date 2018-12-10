@@ -58,7 +58,6 @@ public class StreamlineApplication extends Application<StreamlineConfiguration> 
 
     public static void main(String[] args)
             throws Exception {
-        System.setProperty("java.security.auth.login.config", "/Users/satendra.sahu/code/github/streamline/conf/jaas.conf");
         new StreamlineApplication().run(args);
     }
 

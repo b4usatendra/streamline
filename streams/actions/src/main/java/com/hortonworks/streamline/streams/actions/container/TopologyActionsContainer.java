@@ -86,10 +86,11 @@ public class TopologyActionsContainer extends NamespaceAwareContainer<TopologyAc
             topologyActions.init(conf);
             return topologyActions;
         } catch (IllegalAccessException | InstantiationException | ClassNotFoundException e) {
-            throw new RuntimeException("tialize Topology actions instance - Class Name: " + className, e);
+            throw new RuntimeException("initialize Topology actions instance - Class Name: " + className, e);
         }
     }
 
+    //TODO add beam related properties here
     private Map<String, Object> buildBeamTopologyConfigMap(Namespace namespace, String streamingEngine, Subject subject) {
 
         // Assuming that a namespace has one mapping of streaming engine except test environment

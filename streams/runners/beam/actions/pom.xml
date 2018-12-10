@@ -30,6 +30,10 @@
             <artifactId>streamline-common-beam</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.hortonworks.streamline</groupId>
+            <artifactId>streamline-layout-beam</artifactId>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
