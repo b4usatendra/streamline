@@ -36,10 +36,6 @@ public class StormTopologyActionsConfigImpl implements TopologyActionsConfig {
     private static final String NIMBUS_PORT = "nimbus.port";
     public static final String STREAMLINE_STORM_JAR = "streamlineStormJar";
     public static final String STORM_HOME_DIR = "stormHomeDir";
-
-    public static final String RESERVED_PATH_STREAMLINE_HOME = "${STREAMLINE_HOME}";
-    public static final String SYSTEM_PROPERTY_STREAMLINE_HOME = "streamline.home";
-    private static final String DEFAULT_STORM_JAR_LOCATION_DIR = "${STREAMLINE_HOME}/libs";
     private static final String DEFAULT_STORM_JAR_FILE_PREFIX = "streamline-runtime-storm-";
 
     private EnvironmentService environmentService;
@@ -102,7 +98,7 @@ public class StormTopologyActionsConfigImpl implements TopologyActionsConfig {
         // We need to have some local configurations anyway because topology submission can't be done with REST API.
         String stormJarLocation = streamlineConf.get(STREAMLINE_STORM_JAR);
         if (stormJarLocation == null) {
-            String jarFindDir = applyReservedPaths(DEFAULT_STORM_JAR_LOCATION_DIR);
+            String jarFindDir = applyReservedPaths(topologyActionsContainer.DEFAULT_JAR_LOCATION_DIR);
             stormJarLocation = findFirstMatchingJarLocation(jarFindDir);
         } else {
             stormJarLocation = applyReservedPaths(stormJarLocation);
@@ -137,7 +133,7 @@ public class StormTopologyActionsConfigImpl implements TopologyActionsConfig {
         // We need to have some local configurations anyway because topology submission can't be done with REST API.
         String stormJarLocation = streamlineConf.get(STREAMLINE_STORM_JAR);
         if (stormJarLocation == null) {
-            String jarFindDir = applyReservedPaths(DEFAULT_STORM_JAR_LOCATION_DIR);
+            String jarFindDir = applyReservedPaths(topologyActionsContainer.DEFAULT_JAR_LOCATION_DIR);
             stormJarLocation = findFirstMatchingJarLocation(jarFindDir);
         } else {
             stormJarLocation = applyReservedPaths(stormJarLocation);
@@ -230,7 +226,7 @@ public class StormTopologyActionsConfigImpl implements TopologyActionsConfig {
     }
 
     private String applyReservedPaths(String stormJarLocation) {
-        return stormJarLocation.replace(RESERVED_PATH_STREAMLINE_HOME, System.getProperty(SYSTEM_PROPERTY_STREAMLINE_HOME, getCWD()));
+        return stormJarLocation.replace(topologyActionsContainer.RESERVED_PATH_STREAMLINE_HOME, System.getProperty(topologyActionsContainer.SYSTEM_PROPERTY_STREAMLINE_HOME, getCWD()));
     }
 
     private String getCWD() {

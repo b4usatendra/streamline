@@ -97,8 +97,9 @@ public class BeamTopologyActionsImpl implements TopologyActions {
 
     private final ConcurrentHashMap<Long, Boolean> forceKillRequests = new ConcurrentHashMap<>();
     private HttpFileDownloader httpFileDownloader;
-    private String stormCliPath = "beam";
+    private String beamCliPath = "beam";
     private String beamArtifactsLocation = "/beam-artifacts";
+    private String serializedTopologyBasePath = "/tmp/";
 
     private String javaJarCommand;
 
@@ -213,7 +214,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
             throws Exception {
 
         //serialize topology
-        String filePath = "/tmp/serialized_object";
+        String filePath = serializedTopologyBasePath + topology.getName();
         Map<String, Object> config = new HashMap<String, Object>();
         Set<Map.Entry<String, Object>> set = conf.entrySet();
 
@@ -236,6 +237,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
 
         commands.add("-jar");
         commands.add(jarToDeploy.toString());
+        commands.add(filePath);
         commands.add("-Dexec.args=\"--runner=DirectRunner\"");
         //commands.addAll(getExtraJarsArg(topology));
         //commands.addAll(getMavenArtifactsRelatedArgs(mavenArtifacts));

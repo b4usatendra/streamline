@@ -1,12 +1,12 @@
 /**
  * Copyright 2017 Hortonworks.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,16 +21,7 @@ import com.hortonworks.streamline.streams.actions.config.mapping.*;
 import com.hortonworks.streamline.streams.actions.container.mapping.*;
 import com.hortonworks.streamline.streams.cluster.catalog.*;
 import com.hortonworks.streamline.streams.cluster.container.*;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.*;
 import com.hortonworks.streamline.streams.cluster.service.*;
-import com.hortonworks.streamline.streams.layout.*;
-
-import javax.security.auth.*;
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
-import java.util.stream.*;
-
 
 import javax.security.auth.*;
 import java.util.*;
@@ -38,21 +29,9 @@ import java.util.*;
 
 public class TopologyActionsContainer extends NamespaceAwareContainer<TopologyActions> {
 
-    private static final String COMPONENT_NAME_STORM_UI_SERVER = ComponentPropertyPattern.STORM_UI_SERVER.name();
-    private static final String COMPONENT_NAME_NIMBUS = ComponentPropertyPattern.NIMBUS.name();
-    private static final String SERVICE_CONFIGURATION_STORM = ServiceConfigurations.STORM.getConfNames()[0];
-    private static final String SERVICE_CONFIGURATION_STORM_ENV = ServiceConfigurations.STORM.getConfNames()[1];
-
-
-    private static final String NIMBUS_SEEDS = "nimbus.seeds";
-    private static final String NIMBUS_PORT = "nimbus.port";
-    public static final String STREAMLINE_STORM_JAR = "streamlineStormJar";
-    public static final String STORM_HOME_DIR = "stormHomeDir";
-
     public static final String RESERVED_PATH_STREAMLINE_HOME = "${STREAMLINE_HOME}";
     public static final String SYSTEM_PROPERTY_STREAMLINE_HOME = "streamline.home";
-    private static final String DEFAULT_STORM_JAR_LOCATION_DIR = "${STREAMLINE_HOME}/libs";
-    private static final String DEFAULT_STORM_JAR_FILE_PREFIX = "streamline-runtime-storm-";
+    public static final String DEFAULT_JAR_LOCATION_DIR = "${STREAMLINE_HOME}/libs";
 
     private final Map<String, String> streamlineConf;
     private final Subject subject;

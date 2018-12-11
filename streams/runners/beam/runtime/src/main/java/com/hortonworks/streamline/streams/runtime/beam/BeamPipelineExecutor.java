@@ -20,10 +20,10 @@ public class BeamPipelineExecutor {
     private String stormArtifactsLocation = "/tmp/storm-artifacts/";
     private TopologyMapper topologyMapper;
 
-    private void initializePipeline() {
+    private void initializePipeline(String filePath) {
         System.setProperty("java.security.auth.login.config", "/Users/satendra.sahu/code/github/streamline/conf/jaas.conf");
 
-        TopologyMapper topologyMapper = deserializeTopologyDag();
+        TopologyMapper topologyMapper = deserializeTopologyDag(filePath);
         TopologyLayout newLayout = topologyMapper.getTopologyLayout();
         LOG.debug("Initial Topology config {}", newLayout.getConfig());
         Map<String, Object> conf = topologyMapper.getConf();
@@ -46,12 +46,12 @@ public class BeamPipelineExecutor {
         return BeamTopologyUtil.generateStormTopologyName(topology.getId(), topology.getName());
     }
 
-    private TopologyMapper deserializeTopologyDag() {
+    private TopologyMapper deserializeTopologyDag(String filePath) {
         // Deserialization
         TopologyMapper topologyMapper = null;
         try {
             // Reading the object from a file
-            FileInputStream file = new FileInputStream("/tmp/serialized_object");
+            FileInputStream file = new FileInputStream(filePath);
             ObjectInputStream in = new ObjectInputStream(file);
 
             // Method for deserialization of object
@@ -73,7 +73,8 @@ public class BeamPipelineExecutor {
 
 
     public static void main(String[] args) {
+        String filePath = args[0];
         BeamPipelineExecutor executor = new BeamPipelineExecutor();
-        executor.initializePipeline();
+        executor.initializePipeline(filePath);
     }
 }
