@@ -17,6 +17,7 @@ package com.hortonworks.streamline.streams.layout.beam;
 
 import com.hortonworks.streamline.streams.*;
 import com.hortonworks.streamline.streams.layout.*;
+import com.hortonworks.streamline.streams.layout.beam.rule.expression.*;
 import com.hortonworks.streamline.streams.layout.component.*;
 import com.hortonworks.streamline.streams.layout.component.impl.*;
 import javassist.bytecode.*;
@@ -37,7 +38,7 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
     static final String SASL_JAAS_CONFIG_KEY = "saslJaasConfig";
     static final String SASL_KERBEROS_SERVICE_NAME = "kafkaServiceName";
     private static final Logger LOG = LoggerFactory.getLogger(BeamKafkaSourceComponent.class);
-    protected PCollection<KV<Object, StreamlineEvent>> outputCollection;
+    protected PCollection<StreamlineEvent> outputCollection;
     private KafkaSource kafkaSource;
     private KafkaSourceComponent kafkaSourceComponent;
 
@@ -66,9 +67,8 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
             kafkaSource.setTopologyComponentBundleId(streamlineSource.getTopologyComponentBundleId());
             kafkaSource.setTransformationClass(streamlineSource.getTransformationClass());
             kafkaSource.addOutputStreams(streamlineSource.getOutputStreams());
-            //kafkaSource = (KafkaSource) conf.get(BeamTopologyLayoutConstants.STREAMLINE_COMPONENT_CONF_KEY);
-            // add the output stream to conf so that the kafka spout declares output stream properly
 
+            // add the output stream to conf so that the kafka spout declares output stream properly
             if (kafkaSource != null && kafkaSource.getOutputStreams().size() == 1) {
                 conf.put(TopologyLayoutConstants.JSON_KEY_OUTPUT_STREAM_ID,
                         kafkaSource.getOutputStreams().iterator().next().getId());
@@ -77,15 +77,12 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
                 LOG.error(msg, kafkaSource);
                 throw new IllegalArgumentException(msg);
             }
+
             validateSSLConfig();
             setSaslJaasConfig();
 
-            String beamSourceId = "beamKafkaSource" + UUID_FOR_COMPONENTS;
-
             String outputStream = (String) conf.get(TopologyLayoutConstants.JSON_KEY_OUTPUT_STREAM_ID);
-            String topic = (String) conf.get(TopologyLayoutConstants.JSON_KEY_TOPIC);
             String sourceId = streamlineSource.getId();
-
 
             kafkaSourceComponent = getComponent();
             initializeComponent();
@@ -96,11 +93,17 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
     //TODO create constansts class for all kafka related constants
     private void initializeComponent() {
 
+        String beamSourceId = "beamKafkaSource" + UUID_FOR_COMPONENTS;
+        String topic = (String) conf.get(TopologyLayoutConstants.JSON_KEY_TOPIC);
         KafkaIO.Read<Object, StreamlineEvent> reader = kafkaSourceComponent
                 .getKafkaSource(conf,
                         (String) conf.get("bootstrapServers"),
-                        (String) conf.get("topic"), addConsumerProperties());
-        outputCollection = this.pipeline.apply(reader.withoutMetadata());
+                        topic, addConsumerProperties());
+
+        outputCollection = this.pipeline
+                .apply(beamSourceId, reader.withoutMetadata())
+                .apply("beamKafkaInputParDo", BeamUtilFunctions.extractStreamlineEvents(beamSourceId));
+
     }
 
 
@@ -127,7 +130,6 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
     }
 
     private Map<String, Object> addConsumerProperties() {
-        String consumerPropertiesComponentId = "consumerProperties" + UUID_FOR_COMPONENTS;
         Map<String, Object> consumerProperties = new HashMap<String, Object>();
 
         String[] propertyNames = {
@@ -137,16 +139,15 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
         };
         String[] fieldNames = {
                 "consumerGroupId", "fetchMinimumBytes", "fetchMaximumBytesPerPartition", "maxRecordsPerPoll", "securityProtocol", "schemaRegistryUrl"
-                ,"readerSchemaVersion"
+                , "readerSchemaVersion"
         };
 
 
-
-        String securityProtocol =  (String)conf.get("securityProtocol");
+        String securityProtocol = (String) conf.get("securityProtocol");
 
         //TODO create JAAS file based on the logged in user
-        if(!Strings.isNullOrEmpty(securityProtocol)){
-            consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,securityProtocol);
+        if (!Strings.isNullOrEmpty(securityProtocol)) {
+            consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, securityProtocol);
             consumerProperties.put("sasl.mechanism", "PLAIN");
             System.setProperty("java.security.auth.login.config", "/Users/satendra.sahu/code/github/streamline/conf/jaas.conf");
         }

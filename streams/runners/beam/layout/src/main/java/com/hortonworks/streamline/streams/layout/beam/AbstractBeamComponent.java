@@ -15,15 +15,12 @@
  **/
 package com.hortonworks.streamline.streams.layout.beam;
 
-import com.hortonworks.streamline.common.exception.ComponentConfigException;
+import com.hortonworks.streamline.common.exception.*;
 import com.hortonworks.streamline.streams.*;
-import com.hortonworks.streamline.streams.beam.common.*;
-import com.hortonworks.streamline.streams.layout.ConfigFieldValidation;
-import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
-import org.apache.beam.sdk.Pipeline;
-import org.apache.beam.sdk.values.KV;
-import org.apache.beam.sdk.values.PCollection;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import com.hortonworks.streamline.streams.layout.*;
+import org.apache.beam.sdk.*;
+import org.apache.beam.sdk.values.*;
+import sun.reflect.generics.reflectiveObjects.*;
 
 import java.util.*;
 
@@ -33,14 +30,13 @@ import java.util.*;
  * components and component variables
  */
 public abstract class AbstractBeamComponent implements BeamComponent {
-    protected final List<Map<String, Object>> referencedComponents = new ArrayList<>();
     protected final UUID UUID_FOR_COMPONENTS = UUID.randomUUID();
     // conf is the map representing the configuration parameters for this
     // storm component picked by the user. For eg kafka component will have
     // zkUrl, topic, etc.
     protected Map<String, Object> conf;
     protected boolean isGenerated;
-    protected Pipeline pipeline;
+    protected transient Pipeline pipeline;
     protected Map<String, Object> component = new LinkedHashMap<>();
 
     @Override
@@ -56,10 +52,10 @@ public abstract class AbstractBeamComponent implements BeamComponent {
     }
 
     @Override
-    public abstract PCollection getOutputCollection();
+    public abstract PCollection<StreamlineEvent> getOutputCollection();
 
     @Override
-    public abstract void unionInputCollection(PCollection<KV<Object, StreamlineEvent>> collection);
+    public abstract void unionInputCollection(PCollection<StreamlineEvent> collection);
 
     @Override
     public void validateConfig()

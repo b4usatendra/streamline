@@ -5,15 +5,17 @@ import com.hortonworks.streamline.streams.layout.beam.kafka.*;
 import javassist.bytecode.*;
 import org.apache.beam.sdk.io.kafka.*;
 
+import java.io.*;
 import java.nio.*;
 import java.util.*;
 
 /**
  * Created by Satendra Sahu on 12/5/18
  */
-public class KafkaSourceComponent<K> {
+public class KafkaSourceComponent<K> implements Serializable {
     private Class<K> type;
 
+    //TODO change event timestamp #withTimestampPolicyFactory()
     public KafkaIO.Read<K, StreamlineEvent> getKafkaSource(Map<String, Object> conf, String bootStrapServers, String topics, Map<String, Object> consumerProperteis) {
         return KafkaIO.<K, ByteBuffer>read()
                 .withBootstrapServers(bootStrapServers)

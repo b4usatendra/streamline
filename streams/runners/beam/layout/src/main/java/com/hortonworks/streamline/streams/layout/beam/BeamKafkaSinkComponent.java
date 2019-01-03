@@ -17,6 +17,7 @@ package com.hortonworks.streamline.streams.layout.beam;
 
 import com.hortonworks.streamline.streams.*;
 import com.hortonworks.streamline.streams.layout.*;
+import com.hortonworks.streamline.streams.layout.beam.rule.expression.*;
 import javassist.bytecode.*;
 import joptsimple.internal.*;
 import org.apache.beam.sdk.io.kafka.*;
@@ -35,35 +36,37 @@ public class BeamKafkaSinkComponent extends AbstractBeamComponent {
     static final String SASL_JAAS_CONFIG_KEY = "saslJaasConfig";
     static final String SASL_KERBEROS_SERVICE_NAME = "kafkaServiceName";
     private static final Logger LOG = LoggerFactory.getLogger(BeamKafkaSinkComponent.class);
-    protected PCollection<KV<Object, StreamlineEvent>> inputCollection;
-    protected PCollection<KV<Object, StreamlineEvent>> outputCollection;
+    protected PCollection<StreamlineEvent> outputCollection;
     private KafkaSinkComponent kafkaSinkComponent;
 
     public BeamKafkaSinkComponent() {
     }
 
     @Override
-    public PCollection getOutputCollection() {
+    public PCollection<StreamlineEvent> getOutputCollection() {
         throw new NotImplementedException();
     }
 
     @Override
-    public void unionInputCollection(PCollection<KV<Object, StreamlineEvent>> collection) {
-        outputCollection = PCollectionList.of(outputCollection).and(collection).apply(Flatten.<KV<Object, StreamlineEvent>>pCollections());
+    public void unionInputCollection(PCollection<StreamlineEvent> collection) {
+        outputCollection = PCollectionList.of(outputCollection).and(collection).apply(Flatten.<StreamlineEvent>pCollections());
     }
 
     @Override
     public void generateComponent(PCollection pCollection) {
         validateSSLConfig();
         setSaslJaasConfig();
-        String sinkId = "beamKafkaSink" + UUID_FOR_COMPONENTS;
-        kafkaSinkComponent = getComponent();
         initializeComponent(pCollection);
     }
 
-    private void initializeComponent(PCollection<KV<Object, StreamlineEvent>> pCollection) {
-        KafkaIO.Write<Object, StreamlineEvent> writer = kafkaSinkComponent.getKafkaSink(conf, (String) conf.get("bootstrapServers"), (String) conf.get("topic"), addProducerProperties());
-        pCollection.apply(writer);
+    private void initializeComponent(PCollection<StreamlineEvent> pCollection) {
+        String sinkId = "beamKafkaSink" + UUID_FOR_COMPONENTS;
+        LOG.info("Generating BeamKafkaSinkComponent with id: ", sinkId);
+        String routingKey = (String) conf.get("routingKey");
+
+        kafkaSinkComponent = getComponent();
+        KafkaIO.Write<byte[], StreamlineEvent> writer = kafkaSinkComponent.getKafkaSink(conf, (String) conf.get("bootstrapServers"), (String) conf.get("topic"), addProducerProperties());
+        pCollection.apply("recordKeyGeneration", BeamUtilFunctions.generateKey(sinkId, routingKey)).apply(writer);
 
         if (outputCollection == null) {
             outputCollection = pCollection;
@@ -113,9 +116,9 @@ public class BeamKafkaSinkComponent extends AbstractBeamComponent {
                 TopologyLayoutConstants.SCHEMA_REGISTRY_URL, "serProtocolVersion", "writerSchemaVersion"
         };
 
-        String securityProtocol =  (String)conf.get("securityProtocol");
-        if(!Strings.isNullOrEmpty(securityProtocol)){
-            producerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,securityProtocol);
+        String securityProtocol = (String) conf.get("securityProtocol");
+        if (!Strings.isNullOrEmpty(securityProtocol)) {
+            producerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, securityProtocol);
             producerProperties.put("sasl.mechanism", "PLAIN");
             System.setProperty("java.security.auth.login.config", "/Users/satendra.sahu/code/github/streamline/conf/jaas.conf");
         }

@@ -1,5 +1,7 @@
 package com.hortonworks.streamline.streams.runtime.beam;
 
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.*;
 import com.hortonworks.streamline.streams.*;
 import com.hortonworks.streamline.streams.layout.beam.kafka.*;
 import org.apache.kafka.clients.*;
@@ -8,13 +10,14 @@ import org.apache.kafka.common.serialization.*;
 
 import java.util.*;
 
-import static org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG;
+import static org.apache.kafka.clients.producer.ProducerConfig.*;
 
 /**
  * Created by Satendra Sahu on 12/7/18
  */
 public class KafkaConsumerTest {
-    KafkaConsumer<String, StreamlineEvent> kafkaConsumer;
+   private KafkaConsumer<String, StreamlineEvent> kafkaConsumer;
+   private ObjectMapper mapper = new ObjectMapper();
 
     private Properties getConsumerProperties() {
         Properties properties = new Properties();
@@ -35,6 +38,7 @@ public class KafkaConsumerTest {
     }
 
     public void init(String topic) {
+
         kafkaConsumer = new KafkaConsumer<String, StreamlineEvent>(getConsumerProperties());
         kafkaConsumer.subscribe(Arrays.asList(topic));
 
@@ -43,7 +47,11 @@ public class KafkaConsumerTest {
     private void printRecord() {
         ConsumerRecords<String, StreamlineEvent> records = kafkaConsumer.poll(1000);
         for (ConsumerRecord<String, StreamlineEvent> record : records) {
-            System.out.println(record.key() + "      " + record.value().getDataSourceId());
+            try {
+                System.out.println(mapper.writeValueAsString(record.value()));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
         }
     }
 

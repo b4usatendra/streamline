@@ -1,17 +1,17 @@
 package com.hortonworks.streamline.streams.layout.beam;
 
-import com.hortonworks.streamline.common.exception.ComponentConfigException;
+import com.hortonworks.streamline.common.exception.*;
 import com.hortonworks.streamline.streams.*;
-import org.apache.beam.sdk.Pipeline;
-import org.apache.beam.sdk.values.KV;
-import org.apache.beam.sdk.values.PCollection;
+import org.apache.beam.sdk.*;
+import org.apache.beam.sdk.values.*;
 
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 /**
  * Created by Satendra Sahu on 10/26/18
  */
-public interface BeamComponent {
+public interface BeamComponent extends Serializable {
     /*
      Initialize the implementation with catalog root url
       */
@@ -45,11 +45,11 @@ public interface BeamComponent {
     constructorArgs:
       - ref: "spoutConfig"
      */
-    PCollection<KV<String, String>> getOutputCollection();
+    PCollection<StreamlineEvent> getOutputCollection();
 
-    public void generateComponent(PCollection pCollection);
+    public void generateComponent(PCollection<StreamlineEvent> pCollection);
 
-    void unionInputCollection(PCollection<KV<Object, StreamlineEvent>> inputCollection);
+    void unionInputCollection(PCollection<StreamlineEvent> inputCollection);
 
     /*
     validate the configuration for this component.

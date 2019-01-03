@@ -24,6 +24,7 @@ import java.util.Map;
  * This can also be referred in the notification to know which events produced
  * the notification.
  */
+
 public interface StreamlineEvent  extends Map<String,Object>, Serializable {
 
     // Default value chosen to be blank and not the default used in storm since wanted to keep it independent of storm.

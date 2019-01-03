@@ -1,17 +1,17 @@
 /**
-  * Copyright 2017 Hortonworks.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-
-  *   http://www.apache.org/licenses/LICENSE-2.0
-
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+ * Copyright 2017 Hortonworks.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  **/
 package com.hortonworks.streamline.streams.layout.beam.kafka;
 
@@ -34,7 +34,7 @@ public class StreamlineEventSerializer implements Serializer<StreamlineEvent> {
     private SchemaRegistryClient schemaRegistryClient;
     private Integer writerSchemaVersion;
 
-    public StreamlineEventSerializer () {
+    public StreamlineEventSerializer() {
         avroSnapshotSerializer = new AvroSnapshotSerializer();
     }
 
@@ -75,7 +75,7 @@ public class StreamlineEventSerializer implements Serializer<StreamlineEvent> {
     }
 
     private SchemaMetadata getSchemaKey(String topic, boolean isKey) {
-        String name = isKey ? topic+":k" : topic;
+        String name = isKey ? topic + ":k" : topic;
         return new SchemaMetadata.Builder(name).type(AvroSchemaProvider.TYPE).schemaGroup("kafka").build();
     }
 
@@ -89,7 +89,7 @@ public class StreamlineEventSerializer implements Serializer<StreamlineEvent> {
     }
 
     //package level access for testing
-    static Object getAvroRecord (StreamlineEvent streamlineEvent, Schema schema) {
+    static Object getAvroRecord(StreamlineEvent streamlineEvent, Schema schema) {
         if (streamlineEvent.containsKey(StreamlineEvent.PRIMITIVE_PAYLOAD_FIELD)) {
             if (streamlineEvent.keySet().size() > 1) {
                 throw new RuntimeException("Invalid schema, primitive schema can contain only one field.");
@@ -98,8 +98,12 @@ public class StreamlineEventSerializer implements Serializer<StreamlineEvent> {
         }
         GenericRecord result;
         result = new GenericData.Record(schema);
-        for (Map.Entry<String, Object> entry: streamlineEvent.entrySet()) {
-            result.put(entry.getKey(), getAvroValue(entry.getValue(), schema.getField(entry.getKey()).schema()));
+        for (Map.Entry<String, Object> entry : streamlineEvent.entrySet()) {
+            try {
+                result.put(entry.getKey(), getAvroValue(entry.getValue(), schema.getField(entry.getKey()).schema()));
+            } catch (NullPointerException e) {
+                LOG.info("Extraneous key: " + entry.getKey());
+            }
         }
         return result;
     }
@@ -110,7 +114,7 @@ public class StreamlineEventSerializer implements Serializer<StreamlineEvent> {
         } else if (input instanceof Map && !((Map) input).isEmpty()) {
             GenericRecord result;
             result = new GenericData.Record(schema);
-            for (Map.Entry<String, Object> entry: ((Map<String, Object>) input).entrySet()) {
+            for (Map.Entry<String, Object> entry : ((Map<String, Object>) input).entrySet()) {
                 result.put(entry.getKey(), getAvroValue(entry.getValue(), schema.getField(entry.getKey()).schema()));
             }
             return result;
@@ -120,7 +124,7 @@ public class StreamlineEventSerializer implements Serializer<StreamlineEvent> {
             // a  streamline Schema Array field to Record in avro. However, with that the issue is that avro Field constructor does not allow a
             // null name. We could potentiall hack it by plugging in a dummy name like arrayfield, but seems hacky so not taking that path
             List<Object> values = new ArrayList<>(((Collection) input).size());
-            for (Object value: (Collection) input) {
+            for (Object value : (Collection) input) {
                 values.add(getAvroValue(value, schema.getElementType()));
             }
             return new GenericData.Array<Object>(schema, values);

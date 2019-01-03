@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.hortonworks.streamline.streams.layout.*;
 import com.hortonworks.streamline.streams.layout.component.impl.RulesProcessor;
 import com.hortonworks.streamline.streams.layout.component.rule.Rule;
 import com.hortonworks.streamline.streams.layout.component.rule.expression.Window;
@@ -42,7 +43,7 @@ public class WindowRuleBoltFluxComponent extends RuleBoltFluxComponent {
 
     @Override
     protected void generateComponent() {
-        rulesProcessor = (RulesProcessor) conf.get(StormTopologyLayoutConstants.STREAMLINE_COMPONENT_CONF_KEY);
+        rulesProcessor = (RulesProcessor) conf.get(TopologyLayoutConstants.STREAMLINE_COMPONENT_CONF_KEY);
         String boltId = "windowruleBolt" + UUID_FOR_COMPONENTS;
         String boltClassName = "com.hortonworks.streamline.streams.runtime.storm.bolt.rules.WindowRulesBolt";
         List<String> boltConstructorArgs = new ArrayList<>();

@@ -19,14 +19,7 @@ package com.hortonworks.streamline.streams.runtime.rule.condition.expression;
 
 import com.google.common.base.Joiner;
 import com.hortonworks.registries.common.Schema;
-import com.hortonworks.streamline.streams.layout.component.rule.expression.Condition;
-import com.hortonworks.streamline.streams.layout.component.rule.expression.Expression;
-import com.hortonworks.streamline.streams.layout.component.rule.expression.ExpressionTranslator;
-import com.hortonworks.streamline.streams.layout.component.rule.expression.FunctionExpression;
-import com.hortonworks.streamline.streams.layout.component.rule.expression.GroupBy;
-import com.hortonworks.streamline.streams.layout.component.rule.expression.Having;
-import com.hortonworks.streamline.streams.layout.component.rule.expression.Operator;
-import com.hortonworks.streamline.streams.layout.component.rule.expression.Projection;
+import com.hortonworks.streamline.streams.layout.component.rule.expression.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

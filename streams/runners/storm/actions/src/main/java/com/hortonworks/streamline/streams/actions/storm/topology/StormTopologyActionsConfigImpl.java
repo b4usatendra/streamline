@@ -98,10 +98,10 @@ public class StormTopologyActionsConfigImpl implements TopologyActionsConfig {
         // We need to have some local configurations anyway because topology submission can't be done with REST API.
         String stormJarLocation = streamlineConf.get(STREAMLINE_STORM_JAR);
         if (stormJarLocation == null) {
-            String jarFindDir = applyReservedPaths(topologyActionsContainer.DEFAULT_JAR_LOCATION_DIR);
-            stormJarLocation = findFirstMatchingJarLocation(jarFindDir);
+            String jarFindDir = TopologyActionsContainer.applyReservedPaths(topologyActionsContainer.DEFAULT_JAR_LOCATION_DIR);
+            stormJarLocation = TopologyActionsContainer.findFirstMatchingJarLocation(jarFindDir, DEFAULT_STORM_JAR_FILE_PREFIX);
         } else {
-            stormJarLocation = applyReservedPaths(stormJarLocation);
+            stormJarLocation = TopologyActionsContainer.applyReservedPaths(stormJarLocation);
         }
 
         conf.put(STREAMLINE_STORM_JAR, stormJarLocation);
@@ -133,10 +133,10 @@ public class StormTopologyActionsConfigImpl implements TopologyActionsConfig {
         // We need to have some local configurations anyway because topology submission can't be done with REST API.
         String stormJarLocation = streamlineConf.get(STREAMLINE_STORM_JAR);
         if (stormJarLocation == null) {
-            String jarFindDir = applyReservedPaths(topologyActionsContainer.DEFAULT_JAR_LOCATION_DIR);
-            stormJarLocation = findFirstMatchingJarLocation(jarFindDir);
+            String jarFindDir = TopologyActionsContainer.applyReservedPaths(topologyActionsContainer.DEFAULT_JAR_LOCATION_DIR);
+            stormJarLocation = TopologyActionsContainer.findFirstMatchingJarLocation(jarFindDir, DEFAULT_STORM_JAR_FILE_PREFIX);
         } else {
-            stormJarLocation = applyReservedPaths(stormJarLocation);
+            stormJarLocation = TopologyActionsContainer.applyReservedPaths(stormJarLocation);
         }
 
         conf.put(STREAMLINE_STORM_JAR, stormJarLocation);
@@ -206,30 +206,9 @@ public class StormTopologyActionsConfigImpl implements TopologyActionsConfig {
         }
     }
 
-    private String findFirstMatchingJarLocation(String jarFindDir) {
-        String[] jars = new File(jarFindDir).list((dir, name) -> {
-            if (name.startsWith(DEFAULT_STORM_JAR_FILE_PREFIX) && name.endsWith(".jar")) {
-                return true;
-            }
-            return false;
-        });
 
-        if (jars == null || jars.length == 0) {
-            return null;
-        } else {
-            return jarFindDir + File.separator + jars[0];
-        }
-    }
 
     private String buildStormRestApiRootUrl(String host, Integer port) {
         return "http://" + host + ":" + port + "/api/v1";
-    }
-
-    private String applyReservedPaths(String stormJarLocation) {
-        return stormJarLocation.replace(topologyActionsContainer.RESERVED_PATH_STREAMLINE_HOME, System.getProperty(topologyActionsContainer.SYSTEM_PROPERTY_STREAMLINE_HOME, getCWD()));
-    }
-
-    private String getCWD() {
-        return Paths.get(".").toAbsolutePath().normalize().toString();
     }
 }

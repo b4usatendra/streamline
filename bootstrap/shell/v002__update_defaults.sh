@@ -159,19 +159,18 @@ function update_bundles {
     # === Processor ===
 
     # === Sink ===
-    #put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/hdfs-sink-topology-component.json HDFS
-    #put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/jdbc-sink-topology-component.json JDBC
-    #put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/hive-sink-topology-component.json HIVE
-    #put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/druid-sink-topology-component.json DRUID
+    put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/hdfs-sink-topology-component.json HDFS
+    put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/jdbc-sink-topology-component.json JDBC
+    put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/hive-sink-topology-component.json HIVE
+    put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/druid-sink-topology-component.json DRUID
     # === Topology ===
-    #put_topology_component_bundle /streams/componentbundles/TOPOLOGY ${component_dir}/topology/storm-topology-component.json TOPOLOGY
+    put_topology_component_bundle /streams/componentbundles/TOPOLOGY ${component_dir}/topology/storm-topology-component.json TOPOLOGY
     # === Service Bundle ===
-    #put_service_bundle /servicebundles/KAFKA ${service_dir}/kafka-bundle.json
-
-    #put_service_bundle /servicebundles/STORM ${service_dir}/storm-bundle.json
-    #put_service_bundle /servicebundles/ZOOKEEPER ${service_dir}/zookeeper-bundle.json
-    #put_service_bundle /servicebundles/BEAM ${service_dir}/beam-bundle.json
-    #post /servicebundles ${service_dir}/druid-bundle.json
+    put_service_bundle /servicebundles/KAFKA ${service_dir}/kafka-bundle.json
+    put_service_bundle /servicebundles/STORM ${service_dir}/storm-bundle.json
+    put_service_bundle /servicebundles/ZOOKEEPER ${service_dir}/zookeeper-bundle.json
+    put_service_bundle /servicebundles/BEAM ${service_dir}/beam-bundle.json
+    post /servicebundles ${service_dir}/druid-bundle.json
 }
 
 function add_udfs {

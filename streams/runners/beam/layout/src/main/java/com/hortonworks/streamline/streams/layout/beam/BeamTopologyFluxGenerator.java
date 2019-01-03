@@ -16,7 +16,9 @@
 package com.hortonworks.streamline.streams.layout.beam;
 
 import com.hortonworks.streamline.common.*;
+import com.hortonworks.streamline.streams.*;
 import com.hortonworks.streamline.streams.beam.common.*;
+import com.hortonworks.streamline.streams.layout.*;
 import com.hortonworks.streamline.streams.layout.component.*;
 import com.hortonworks.streamline.streams.layout.component.impl.*;
 import com.hortonworks.streamline.streams.layout.component.rule.*;
@@ -139,7 +141,7 @@ public class BeamTopologyFluxGenerator extends TopologyDagVisitor {
         Map<String, Object> props = new LinkedHashMap<>();
         props.putAll(config);
         props.putAll(topologyComponent.getConfig().getProperties());
-        props.put(BeamTopologyLayoutConstants.STREAMLINE_COMPONENT_CONF_KEY, topologyComponent);
+        props.put(TopologyLayoutConstants.STREAMLINE_COMPONENT_CONF_KEY, topologyComponent);
         fluxComponent.withConfig(props, pipeline);
     }
 
@@ -212,7 +214,7 @@ public class BeamTopologyFluxGenerator extends TopologyDagVisitor {
         BeamComponent inputBeamComponent = componentMap.get(getFluxId(from));
         BeamComponent outputComponent = componentMap.get(getFluxId(to));
 
-        PCollection<KV<String, String>> outputCollection = inputBeamComponent.getOutputCollection();
+        PCollection<StreamlineEvent> outputCollection = inputBeamComponent.getOutputCollection();
 
         if (outputComponent == null) {
             if (to instanceof StreamlineSink) {

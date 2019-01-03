@@ -3,18 +3,15 @@ package com.hortonworks.streamline.streams.actions.beam.topology;
 import com.hortonworks.streamline.streams.actions.config.*;
 import com.hortonworks.streamline.streams.actions.container.*;
 import com.hortonworks.streamline.streams.cluster.catalog.*;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.*;
 import com.hortonworks.streamline.streams.cluster.service.*;
 import com.hortonworks.streamline.streams.layout.*;
 import org.slf4j.*;
 
 import javax.security.auth.*;
-import java.io.*;
-import java.nio.file.*;
 import java.util.*;
 
 /**
- * @author suman.bn
+ * @author satendra.sahu
  */
 public class BeamTopologyActionsConfigImpl implements TopologyActionsConfig {
 
@@ -53,19 +50,19 @@ public class BeamTopologyActionsConfigImpl implements TopologyActionsConfig {
         // We need to have some local configurations anyway because topology submission can't be done with REST API.
         String beamJarLocation = streamlineConf.get(STREAMLINE_BEAM_JAR);
         if (beamJarLocation == null) {
-            String jarFindDir = applyReservedPaths(topologyActionsContainer.DEFAULT_JAR_LOCATION_DIR);
-            beamJarLocation = findFirstMatchingJarLocation(jarFindDir);
+            String jarFindDir = TopologyActionsContainer.applyReservedPaths(topologyActionsContainer.DEFAULT_JAR_LOCATION_DIR);
+            beamJarLocation = TopologyActionsContainer.findFirstMatchingJarLocation(jarFindDir, DEFAULT_BEAM_JAR_FILE_PREFIX);
         } else {
-            beamJarLocation = applyReservedPaths(beamJarLocation);
+            beamJarLocation = TopologyActionsContainer.applyReservedPaths(beamJarLocation);
         }
 
 
-        conf.put(TopologyLayoutConstants.DEFAULT_ABSOLUTE_JAR_LOCATION_DIR,applyReservedPaths(topologyActionsContainer.DEFAULT_JAR_LOCATION_DIR));
+        conf.put(TopologyLayoutConstants.DEFAULT_ABSOLUTE_JAR_LOCATION_DIR, TopologyActionsContainer.applyReservedPaths(topologyActionsContainer.DEFAULT_JAR_LOCATION_DIR));
         // Since we're loading the class dynamically so we can't rely on any enums or constants from there
         conf.put(STREAMLINE_BEAM_JAR, beamJarLocation);
         conf.put(TopologyLayoutConstants.SUBJECT_OBJECT, subject);
 
-        putStormConfigurations(streamingEngineService, conf);
+        putBeamConfigurations(streamingEngineService, conf);
 
         // Topology during run-time will require few critical configs such as schemaRegistryUrl and catalogRootUrl
         // Hence its important to pass StreamlineConfig to TopologyConfig
@@ -79,23 +76,8 @@ public class BeamTopologyActionsConfigImpl implements TopologyActionsConfig {
         return conf;
     }
 
-    private void putStormConfigurations(Service streamingEngineService, Map<String, Object> conf) {
+    private void putBeamConfigurations(Service streamingEngineService, Map<String, Object> conf) {
 
-    }
-
-    private String findFirstMatchingJarLocation(String jarFindDir) {
-        String[] jars = new File(jarFindDir).list((dir, name) -> {
-            if (name.startsWith(DEFAULT_BEAM_JAR_FILE_PREFIX) && name.endsWith(".jar")) {
-                return true;
-            }
-            return false;
-        });
-
-        if (jars == null || jars.length == 0) {
-            return null;
-        } else {
-            return jarFindDir + File.separator + jars[0];
-        }
     }
 
 
@@ -105,10 +87,10 @@ public class BeamTopologyActionsConfigImpl implements TopologyActionsConfig {
         // We need to have some local configurations anyway because topology submission can't be done with REST API.
         String beamJarLocation = streamlineConf.get(STREAMLINE_BEAM_JAR);
         if (beamJarLocation == null) {
-            String jarFindDir = applyReservedPaths(topologyActionsContainer.DEFAULT_JAR_LOCATION_DIR);
-            beamJarLocation = findFirstMatchingJarLocation(jarFindDir);
+            String jarFindDir = TopologyActionsContainer.applyReservedPaths(topologyActionsContainer.DEFAULT_JAR_LOCATION_DIR);
+            beamJarLocation = TopologyActionsContainer.findFirstMatchingJarLocation(jarFindDir, DEFAULT_BEAM_JAR_FILE_PREFIX);
         } else {
-            beamJarLocation = applyReservedPaths(beamJarLocation);
+            beamJarLocation = TopologyActionsContainer.applyReservedPaths(beamJarLocation);
         }
 
         conf.put(STREAMLINE_BEAM_JAR, beamJarLocation);
@@ -124,11 +106,5 @@ public class BeamTopologyActionsConfigImpl implements TopologyActionsConfig {
         return conf;
     }
 
-    private String applyReservedPaths(String stormJarLocation) {
-        return stormJarLocation.replace(topologyActionsContainer.RESERVED_PATH_STREAMLINE_HOME, System.getProperty(topologyActionsContainer.SYSTEM_PROPERTY_STREAMLINE_HOME, getCWD()));
-    }
 
-    private String getCWD() {
-        return Paths.get(".").toAbsolutePath().normalize().toString();
-    }
 }

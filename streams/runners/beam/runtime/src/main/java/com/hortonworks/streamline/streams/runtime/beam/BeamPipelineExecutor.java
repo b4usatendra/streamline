@@ -36,6 +36,7 @@ public class BeamPipelineExecutor {
         topologyDag.traverse(fluxGenerator);
         Pipeline pipeline = fluxGenerator.getPipeline();
         pipeline.run();
+
     }
 
     public Path getExtraJarsLocation(TopologyLayout topology) {

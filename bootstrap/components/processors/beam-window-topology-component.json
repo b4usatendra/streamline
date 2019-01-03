@@ -1,0 +1,22 @@
+{
+  "type": "PROCESSOR",
+  "name": "Beam-Aggregate",
+  "subType": "WINDOW",
+  "builtin": true,
+  "streamingEngine": "BEAM",
+  "transformationClass": "com.hortonworks.streamline.streams.layout.beam.BeamWindowRuleComponent",
+  "topologyComponentUISpecification": {
+    "fields": [
+      {
+        "uiName": "Parallelism",
+        "fieldName": "parallelism",
+        "isOptional": true,
+        "tooltip": "Parallelism hint for aggregate processor",
+        "type": "number",
+        "defaultValue": 1,
+        "min": 1,
+        "hint": "hidden"
+      }
+    ]
+  }
+}

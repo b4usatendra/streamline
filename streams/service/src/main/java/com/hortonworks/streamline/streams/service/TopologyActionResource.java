@@ -96,7 +96,7 @@ public class TopologyActionResource {
     }
 
     @POST
-    @Path("/topologies/{topologyId}/actions/validate")
+    @Path("/topologies/{topologyId}")
     @Timed
     public Response validateTopology (@PathParam("topologyId") Long topologyId, @Context SecurityContext securityContext) {
         SecurityUtil.checkRoleOrPermissions(authorizer, securityContext, Roles.ROLE_TOPOLOGY_SUPER_ADMIN,

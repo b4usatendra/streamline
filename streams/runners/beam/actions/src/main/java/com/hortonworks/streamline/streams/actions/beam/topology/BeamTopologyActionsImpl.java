@@ -245,8 +245,8 @@ public class BeamTopologyActionsImpl implements TopologyActions {
 
         LOG.info("Deploying Application {}", topology.getName());
         LOG.info(String.join(" ", commands));
-        Process process = executeShellProcess(commands);
-        ShellProcessResult shellProcessResult = waitProcessFor(process);
+        //Process process = executeShellProcess(commands);
+        //ShellProcessResult shellProcessResult = waitProcessFor(process);
         /*
         int exitValue = shellProcessResult.exitValue;
         if (exitValue != 0) {
@@ -475,7 +475,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     @Override
     public String getRuntimeTopologyId(TopologyLayout topology, String asUser) {
         //TODO get the runtime topology id(calls cluster apis)
-        return null;
+        return UUID.randomUUID().toString();
     }
 
  /*   private TopologyLayout copyTopologyLayout(TopologyLayout topology, TopologyDag replacedTopologyDag) {

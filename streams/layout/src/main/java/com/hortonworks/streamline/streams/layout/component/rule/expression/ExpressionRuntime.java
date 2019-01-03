@@ -15,7 +15,7 @@
  **/
 
 
-package com.hortonworks.streamline.streams.runtime.rule.condition.expression;
+package com.hortonworks.streamline.streams.layout.component.rule.expression;
 
 import com.hortonworks.registries.common.Schema.Field;
 import com.hortonworks.streamline.streams.layout.component.rule.expression.Condition;

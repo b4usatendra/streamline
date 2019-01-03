@@ -5,6 +5,4 @@ package com.hortonworks.streamline.streams.layout.beam;
  */
 public class BeamTopologyLayoutConstants {
     public static final String PRINCIPAL_NAME = "principal.name";
-    public static final String STREAMLINE_COMPONENT_CONF_KEY = "streamlineComponent";
-
 }

@@ -954,6 +954,12 @@
 
             <dependency>
                 <groupId>com.hortonworks.streamline</groupId>
+                <artifactId>streamline-runtime-beam</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.hortonworks.streamline</groupId>
                 <artifactId>streamline-runners-beam</artifactId>
                 <version>${project.version}</version>
             </dependency>

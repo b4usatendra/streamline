@@ -5,12 +5,13 @@ import com.hortonworks.streamline.streams.layout.beam.kafka.*;
 import javassist.bytecode.*;
 import org.apache.beam.sdk.io.kafka.*;
 
+import java.io.*;
 import java.util.*;
 
 /**
  * Created by Satendra Sahu on 12/4/18
  */
-public class KafkaSinkComponent<K> {
+public class KafkaSinkComponent<K> implements Serializable {
 
     private Class<K> type;
 
@@ -28,13 +29,13 @@ public class KafkaSinkComponent<K> {
 
     private Class getKeySerializer() {
         //TODO initialize if type is null
-        if ((type == null || type == ByteArray.class)) {
+        if ((type == null || type == Long.class)) {
             return org.apache.kafka.common.serialization.ByteArraySerializer.class;
         } else if (type == String.class) {
             return org.apache.kafka.common.serialization.StringSerializer.class;
         } else if (type == Integer.class) {
             return org.apache.kafka.common.serialization.IntegerSerializer.class;
-        } else if (type == Long.class) {
+        } else if (type == ByteArray.class) {
             return org.apache.kafka.common.serialization.LongSerializer.class;
         } else {
             throw new IllegalArgumentException("Key serializer for kafka sink is not supported: " + type);

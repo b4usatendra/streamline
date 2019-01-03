@@ -24,6 +24,8 @@ import com.hortonworks.streamline.streams.cluster.container.*;
 import com.hortonworks.streamline.streams.cluster.service.*;
 
 import javax.security.auth.*;
+import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 
 
@@ -91,6 +93,29 @@ public class TopologyActionsContainer extends NamespaceAwareContainer<TopologyAc
             return topologyActions;
         } catch (IllegalAccessException | InstantiationException | ClassNotFoundException e) {
             throw new RuntimeException("Can't initialize Topology actions instance - Class Name: " + className, e);
+        }
+    }
+
+    public static String applyReservedPaths(String steamingEngineJarLocation) {
+        return steamingEngineJarLocation.replace(RESERVED_PATH_STREAMLINE_HOME, System.getProperty(SYSTEM_PROPERTY_STREAMLINE_HOME, getCWD()));
+    }
+
+    public static String getCWD() {
+        return Paths.get(".").toAbsolutePath().normalize().toString();
+    }
+
+    public static String findFirstMatchingJarLocation(String jarFindDir, String jarNamePrefix) {
+        String[] jars = new File(jarFindDir).list((dir, name) -> {
+            if (name.startsWith(jarNamePrefix) && name.endsWith(".jar")) {
+                return true;
+            }
+            return false;
+        });
+
+        if (jars == null || jars.length == 0) {
+            return null;
+        } else {
+            return jarFindDir + File.separator + jars[0];
         }
     }
 }

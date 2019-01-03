@@ -24,7 +24,7 @@ import com.hortonworks.streamline.streams.StreamlineEvent;
 import com.hortonworks.streamline.streams.common.StreamlineEventImpl;
 import com.hortonworks.streamline.streams.common.event.correlation.EventCorrelationInjector;
 import com.hortonworks.streamline.streams.layout.component.rule.exception.ConditionEvaluationException;
-import com.hortonworks.streamline.streams.runtime.rule.condition.expression.ExpressionRuntime;
+import com.hortonworks.streamline.streams.layout.component.rule.expression.ExpressionRuntime;
 import com.hortonworks.streamline.streams.runtime.rule.condition.expression.StormSqlExpression;
 import com.hortonworks.streamline.streams.runtime.script.Script;
 import com.hortonworks.streamline.streams.runtime.script.engine.ScriptEngine;
