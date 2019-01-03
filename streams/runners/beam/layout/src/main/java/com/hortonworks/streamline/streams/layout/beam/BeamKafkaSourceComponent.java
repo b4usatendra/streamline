@@ -142,14 +142,14 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
 
 
 
-        String securityProtocol =  (String)conf.get("securityProtocol");
+        /*String securityProtocol =  (String)conf.get("securityProtocol");
 
         //TODO create JAAS file based on the logged in user
         if(!Strings.isNullOrEmpty(securityProtocol)){
             consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,securityProtocol);
             consumerProperties.put("sasl.mechanism", "PLAIN");
             System.setProperty("java.security.auth.login.config", "/Users/satendra.sahu/code/github/streamline/conf/jaas.conf");
-        }
+        }*/
 
         for (int j = 0; j < propertyNames.length; ++j) {
             if (conf.get(fieldNames[j]) != null) {

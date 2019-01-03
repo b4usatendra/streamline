@@ -30,9 +30,8 @@ public final class Constants {
 
     public static class Beam {
         public static final String SERVICE_NAME = "BEAM";
-        public static final String PROPERTY_CONNECTION_ENDPOINT = "connection.endpoint";
+        public static final String PROPERTY_CONNECTION_ENDPOINT = "master.endpoint";
     }
-
 
     public static class HDFS {
         public static final String SERVICE_NAME = "HDFS";

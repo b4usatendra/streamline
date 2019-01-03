@@ -38,6 +38,18 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.beam</groupId>
+            <artifactId>beam-runners-flink_2.11</artifactId>
+            <version>${beam.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>log4j-over-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-layout-beam</artifactId>
             <exclusions>

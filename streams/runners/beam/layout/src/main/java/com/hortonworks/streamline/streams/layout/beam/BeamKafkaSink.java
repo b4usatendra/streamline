@@ -31,15 +31,15 @@ import java.util.*;
 /**
  * Implementation for Beam Kafka Producer
  */
-public class BeamKafkaSinkComponent extends AbstractBeamComponent {
+public class BeamKafkaSink extends AbstractBeamComponent {
     static final String SASL_JAAS_CONFIG_KEY = "saslJaasConfig";
     static final String SASL_KERBEROS_SERVICE_NAME = "kafkaServiceName";
-    private static final Logger LOG = LoggerFactory.getLogger(BeamKafkaSinkComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeamKafkaSink.class);
     protected PCollection<KV<Object, StreamlineEvent>> inputCollection;
     protected PCollection<KV<Object, StreamlineEvent>> outputCollection;
     private KafkaSinkComponent kafkaSinkComponent;
 
-    public BeamKafkaSinkComponent() {
+    public BeamKafkaSink() {
     }
 
     @Override
@@ -113,12 +113,12 @@ public class BeamKafkaSinkComponent extends AbstractBeamComponent {
                 TopologyLayoutConstants.SCHEMA_REGISTRY_URL, "serProtocolVersion", "writerSchemaVersion"
         };
 
-        String securityProtocol =  (String)conf.get("securityProtocol");
+        /*String securityProtocol =  (String)conf.get("securityProtocol");
         if(!Strings.isNullOrEmpty(securityProtocol)){
             producerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,securityProtocol);
             producerProperties.put("sasl.mechanism", "PLAIN");
             System.setProperty("java.security.auth.login.config", "/Users/satendra.sahu/code/github/streamline/conf/jaas.conf");
-        }
+        }*/
 
         for (int j = 0; j < propertyNames.length; ++j) {
             if (conf.get(fieldNames[j]) != null) {

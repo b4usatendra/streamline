@@ -28,7 +28,7 @@ import java.util.*;
 public class BeamServiceRegistrar extends AbstractServiceRegistrar
 {
 
-   public static final String PARAM_CONNECTION_ENDPOINT = "connection.endpoint";
+   public static final String PARAM_CONNECTION_ENDPOINT = "master.endpoint";
 
    private final ObjectMapper objectMapper = new ObjectMapper();
 

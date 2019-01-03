@@ -24,11 +24,11 @@ public class BeamTopologyUtil {
     private BeamTopologyUtil() {
     }
 
-    public static String generateStormTopologyName(Long topologyId, String topologyName) {
+    public static String generateBeamTopologyName(Long topologyId, String topologyName) {
         return "streamline-" + topologyId + "-" + topologyName;
     }
 
-    public static String generateStormComponentId(Long componentId, String componentName) {
+    public static String generateBeamComponentId(Long componentId, String componentName) {
         return String.format("%s-%s", componentId, componentName);
     }
 
@@ -53,7 +53,7 @@ public class BeamTopologyUtil {
     public static String findOrGenerateTopologyName(Long topologyId, String topologyName, String asUser) {
         String actualTopologyName = topologyName + topologyId;
         if (Strings.isNullOrEmpty(actualTopologyName)) {
-            actualTopologyName = generateStormTopologyName(topologyId, topologyName);
+            actualTopologyName = generateBeamTopologyName(topologyId, topologyName);
         }
         return actualTopologyName;
     }

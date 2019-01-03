@@ -48,6 +48,8 @@ import static java.util.stream.Collectors.*;
  */
 public class BeamTopologyActionsImpl implements TopologyActions {
     private static final Logger LOG = LoggerFactory.getLogger(BeamTopologyActionsImpl.class);
+
+    private static final String DEFAULT_BEAM_ARTIFACTS_LOCATION="/tmp/beam-artifacts";
     /* public static final int DEFAULT_WAIT_TIME_SEC = 30;
      public static final int TEST_RUN_TOPOLOGY_DEFAULT_WAIT_MILLIS_FOR_SHUTDOWN = 30_000;
      public static final String ROOT_LOGGER_NAME = "ROOT";
@@ -98,7 +100,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     private final ConcurrentHashMap<Long, Boolean> forceKillRequests = new ConcurrentHashMap<>();
     private HttpFileDownloader httpFileDownloader;
     private String beamCliPath = "beam";
-    private String beamArtifactsLocation = "/beam-artifacts";
+    private String beamArtifactsLocation = DEFAULT_BEAM_ARTIFACTS_LOCATION;
     private String serializedTopologyBasePath = "/tmp/";
 
     private String javaJarCommand;
@@ -115,23 +117,9 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     public void init(Map<String, Object> conf) {
         this.conf = conf;
         if (conf != null) {
-            if (conf.containsKey(TopologyLayoutConstants.DEFAULT_ABSOLUTE_JAR_LOCATION_DIR)) {
-                String defaultArtifactsLocation = (String) conf.get(TopologyLayoutConstants.DEFAULT_ABSOLUTE_JAR_LOCATION_DIR);
-                beamArtifactsLocation = defaultArtifactsLocation + beamArtifactsLocation;
+            if(conf.containsKey(BeamTopologyLayoutConstants.BEAM_ARTIFACTS_LOCATION_KEY)){
+                beamArtifactsLocation = (String) conf.get(BeamTopologyLayoutConstants.BEAM_ARTIFACTS_LOCATION_KEY);
             }
-		 /*
-		 if (conf.containsKey(BeamTopologyLayoutConstants.STORM_HOME_DIR))
-		 {
-			String stormHomeDir = (String) conf.get(BeamTopologyLayoutConstants.STORM_HOME_DIR);
-			if (!stormHomeDir.endsWith(File.separator))
-			{
-			   stormHomeDir += File.separator;
-			}
-			stormCliPath = stormHomeDir + "bin" + File.separator + "storm";
-		 }
-
-*/
-            //catalogRootUrl = (String) conf.get(BeamTopologyLayoutConstants.YAML_KEY_CATALOG_ROOT_URL);
 
             this.beamJarLocation = (String) conf.get(BeamTopologyLayoutConstants.BEAM_PIPELINE_JAR_LOCATION_KEY);
             Map<String, String> env = System.getenv();
@@ -144,24 +132,6 @@ public class BeamTopologyActionsImpl implements TopologyActions {
             } else {
                 javaJarCommand = "jar";
             }
-
-		/* String stormApiRootUrl = (String) conf.get(TopologyLayoutConstants.STORM_API_ROOT_URL_KEY);
-		 Subject subject = (Subject) conf.get(TopologyLayoutConstants.SUBJECT_OBJECT);
-
-		 Client restClient = ClientBuilder.newClient(new ClientConfig());
-
-		 this.client = new StormRestAPIClient(restClient, stormApiRootUrl, subject);
-		 nimbusSeeds = (String) conf.get(NIMBUS_SEEDS);
-		 nimbusPort = Integer.valueOf((String) conf.get(NIMBUS_PORT));
-
-		 if (conf.containsKey(TopologyLayoutConstants.NIMBUS_THRIFT_MAX_BUFFER_SIZE))
-		 {
-			nimbusThriftMaxBufferSize = (Long) conf.get(TopologyLayoutConstants.NIMBUS_THRIFT_MAX_BUFFER_SIZE);
-		 } else
-		 {
-			nimbusThriftMaxBufferSize = DEFAULT_NIMBUS_THRIFT_MAX_BUFFER_SIZE;
-		 }
-*/
             setupSecuredCluster(conf);
 
             EnvironmentService environmentService = (EnvironmentService) conf.get(TopologyLayoutConstants.ENVIRONMENT_SERVICE_OBJECT);
@@ -224,11 +194,12 @@ public class BeamTopologyActionsImpl implements TopologyActions {
             }
         }
         serializeTopologyDag(new TopologyMapper(config, topology), filePath);
-
+        //beamJarLocation="/Users/karthik.k1/olacabs/karthik/streamline/libs/streamline-runtime-beam-0.6.0-SNAPSHOT.jar";
         ctx.setCurrentAction("Adding artifacts to jar");
-        //downloadArtifactsAndCopyJars(mavenArtifacts, getExtraJarsLocation(topology));
-        //Path jarToDeploy = addArtifactsToJar(getExtraJarsLocation(topology));
-        Path jarToDeploy = Paths.get(beamJarLocation);
+        downloadArtifactsAndCopyJars(mavenArtifacts, getExtraJarsLocation(topology));
+        Path jarToDeploy = addArtifactsToJar(getExtraJarsLocation(topology));
+        /*beamJarLocation=filePath;
+        Path jarToDeploy = Paths.get(beamJarLocation);*/
 
         ctx.setCurrentAction("Creating Beam Pipeline from topology");
         ctx.setCurrentAction("Deploying beam topology via 'java jar' command");
@@ -238,7 +209,8 @@ public class BeamTopologyActionsImpl implements TopologyActions {
         commands.add("-jar");
         commands.add(jarToDeploy.toString());
         commands.add(filePath);
-        commands.add("-Dexec.args=\"--runner=DirectRunner\"");
+        commands.add("--flinkMaster="+conf.get("flinkMaster"));
+        commands.add("--runner=FlinkRunner");
         //commands.addAll(getExtraJarsArg(topology));
         //commands.addAll(getMavenArtifactsRelatedArgs(mavenArtifacts));
         //commands.add("--remote");
@@ -293,7 +265,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
                 while ((line = reader.readLine()) != null) {
                     System.out.println(line);
                 }
-                reader.close();
+                //reader.close();
             } catch (final Exception e) {
                 e.printStackTrace();
             }
@@ -571,7 +543,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     }*/
 
     private String generateBeamTopologyName(TopologyLayout topology) {
-        return BeamTopologyUtil.generateStormTopologyName(topology.getId(), topology.getName());
+        return BeamTopologyUtil.generateBeamTopologyName(topology.getId(), topology.getName());
     }
 
     private String getFilePath(TopologyLayout topology) {
