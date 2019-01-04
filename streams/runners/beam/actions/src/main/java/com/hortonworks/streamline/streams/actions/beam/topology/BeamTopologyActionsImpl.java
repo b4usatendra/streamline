@@ -32,6 +32,7 @@ import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
 import org.slf4j.*;
 
+import javax.ws.rs.NotFoundException;
 import java.io.*;
 import java.io.File;
 import java.nio.charset.*;
@@ -49,7 +50,9 @@ import static java.util.stream.Collectors.*;
 public class BeamTopologyActionsImpl implements TopologyActions {
     private static final Logger LOG = LoggerFactory.getLogger(BeamTopologyActionsImpl.class);
 
-    private static final String DEFAULT_BEAM_ARTIFACTS_LOCATION="/tmp/beam-artifacts";
+    public static final String BEAM_CURRENT_RUNNER_KEY = "currentRunner";
+    public static final String BEAM_FLINK_MASTER_KEY = "flinkMaster";
+    private static final String DEFAULT_BEAM_ARTIFACTS_LOCATION = "/tmp/beam-artifacts";
     /* public static final int DEFAULT_WAIT_TIME_SEC = 30;
      public static final int TEST_RUN_TOPOLOGY_DEFAULT_WAIT_MILLIS_FOR_SHUTDOWN = 30_000;
      public static final String ROOT_LOGGER_NAME = "ROOT";
@@ -183,6 +186,10 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     public void deploy(TopologyLayout topology, String mavenArtifacts, TopologyActionContext ctx, String asUser)
             throws Exception {
 
+        //Preconditions before deploying
+        BeamRunner runner = getRunner();
+        String runnerMasterCmd = getRunnerMasterCmd(runner);
+
         //serialize topology
         String filePath = serializedTopologyBasePath + topology.getName();
         Map<String, Object> config = new HashMap<String, Object>();
@@ -209,8 +216,8 @@ public class BeamTopologyActionsImpl implements TopologyActions {
         commands.add("-jar");
         commands.add(jarToDeploy.toString());
         commands.add(filePath);
-        commands.add("--flinkMaster="+conf.get("flinkMaster"));
-        commands.add("--runner=FlinkRunner");
+        commands.add("--runner="+runner);
+        commands.add(runnerMasterCmd);
         //commands.addAll(getExtraJarsArg(topology));
         //commands.addAll(getMavenArtifactsRelatedArgs(mavenArtifacts));
         //commands.add("--remote");
@@ -236,6 +243,27 @@ public class BeamTopologyActionsImpl implements TopologyActions {
             }
         }*/
 
+    }
+
+    private BeamRunner getRunner(){
+        if(!conf.containsKey(BEAM_CURRENT_RUNNER_KEY))
+            throw new NotFoundException(String.format("%s config not found",BEAM_CURRENT_RUNNER_KEY));
+        String runner= ((String) conf.get(BEAM_CURRENT_RUNNER_KEY));
+        if(runner.equalsIgnoreCase("flink"))
+            return BeamRunner.FlinkRunner;
+        else
+            throw new UnsupportedOperationException(String.format("Unsupported runner: %s",runner));
+    }
+
+    private String getRunnerMasterCmd(BeamRunner runner){
+        switch (runner){
+            case FlinkRunner:
+                if(!conf.containsKey(BEAM_FLINK_MASTER_KEY))
+                    throw new NotFoundException(String.format("%s config not found",BEAM_FLINK_MASTER_KEY));
+                return new StringBuffer("--flinkMaster="+conf.get(BEAM_FLINK_MASTER_KEY)).toString();
+            default:
+                return null;
+        }
     }
 
     private static class ShellProcessResult {

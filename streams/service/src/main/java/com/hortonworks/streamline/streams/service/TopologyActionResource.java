@@ -130,15 +130,13 @@ public class TopologyActionResource {
     @POST
     @Path("/topologies/{topologyId}/actions/deploy")
     @Timed
-    @PermitAll
+    //@PermitAll
     public Response deployTopology (@PathParam("topologyId") Long topologyId, @Context SecurityContext securityContext) throws Exception {
-        /*SecurityUtil.checkRoleOrPermissions(authorizer, securityContext, Roles.ROLE_TOPOLOGY_SUPER_ADMIN,
-                NAMESPACE, topologyId, READ, EXECUTE);*/
+        SecurityUtil.checkRoleOrPermissions(authorizer, securityContext, Roles.ROLE_TOPOLOGY_SUPER_ADMIN,
+                NAMESPACE, topologyId, READ, EXECUTE);
         Topology topology = catalogService.getTopology(topologyId);
         if (topology != null) {
-            //return deploy(topology, securityContext);
-            return deploy(topology, null);
-
+            return deploy(topology, securityContext);
         }
         throw EntityNotFoundException.byId(topologyId.toString());
     }
@@ -160,8 +158,7 @@ public class TopologyActionResource {
     }
 
     private Response deploy(Topology topology, SecurityContext securityContext) {
-        //String asUser = WSUtils.getUserFromSecurityContext(securityContext);
-        String asUser="karthik";
+        String asUser = WSUtils.getUserFromSecurityContext(securityContext);
         try {
             ParallelStreamUtil.runAsync(() -> actionsService.deployTopology(topology, asUser), forkJoinPool);
             return WSUtils.respondEntity(topology, OK);

@@ -81,7 +81,11 @@ public class BeamPipelineExecutor {
         String filePath = args[0];
         BeamPipelineExecutor executor = new BeamPipelineExecutor();
         args=Arrays.copyOfRange(args,1,args.length);
-        PipelineOptions options= PipelineOptionsFactory.fromArgs(args).as(FlinkPipelineOptions.class);
+
+        PipelineOptions options= PipelineOptionsFactory.fromArgs(args).withValidation().create();
+        if(options.getRunner().getSimpleName().equalsIgnoreCase(BeamRunner.FlinkRunner.name()))
+            options.as(FlinkPipelineOptions.class);
+
         executor.initializePipeline(filePath,options);
     }
 }

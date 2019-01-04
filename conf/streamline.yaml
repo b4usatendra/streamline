@@ -23,6 +23,7 @@ modules:
       mavenLocalRepositoryDirectory: "/tmp/local-repo"
       streamlineBeamJar: "/Users/karthik.k1/olacabs/karthik/streamline/libs/streamline-runtime-beam-0.6.0-SNAPSHOT.jar"
       beamArtifactsDirectory: "/Users/karthik.k1/olacabs/karthik/streamline/libs/beam-artifacts"
+      currentRunner: flink
       flinkMaster: localhost:8081
 
 catalogRootUrl: "http://localhost:6060/api/v1/catalog"

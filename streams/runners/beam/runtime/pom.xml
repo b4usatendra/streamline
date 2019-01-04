@@ -13,6 +13,7 @@
     <artifactId>streamline-runtime-beam</artifactId>
 
     <dependencies>
+<!--
         <dependency>
             <groupId>org.apache.beam</groupId>
             <artifactId>beam-sdks-java-io-kafka</artifactId>
@@ -24,6 +25,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+-->
         <!-- https://mvnrepository.com/artifact/org.apache.beam/beam-runners-direct-java -->
         <dependency>
             <groupId>org.apache.beam</groupId>
@@ -105,11 +107,11 @@
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
             <version>0.11.0.1</version>
-        </dependency>
+        </dependency>-->
 
 
     </dependencies>
