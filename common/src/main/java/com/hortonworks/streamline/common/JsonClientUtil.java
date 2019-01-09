@@ -18,6 +18,7 @@ package com.hortonworks.streamline.common;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hortonworks.streamline.common.exception.WrappedWebApplicationException;
+import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
@@ -121,5 +122,12 @@ public class JsonClientUtil {
 
     public static <T> T postEntity(WebTarget target, Object entity, MediaType mediaType, Class<T> clazz) {
         return target.request(mediaType).post(Entity.json(entity), clazz);
+    }
+
+    public static Response patchForm(WebTarget target, MultivaluedMap<String, String> form, MediaType mediaType) {
+        return target.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true)
+                .request(mediaType)
+                .build("PATCH",Entity.form(form))
+                .invoke();
     }
 }

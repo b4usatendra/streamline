@@ -12,4 +12,10 @@
     <groupId>com.hortonworks.streamline</groupId>
     <artifactId>streamline-common-beam</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.hortonworks.streamline</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
+    </dependencies>
 </project>
