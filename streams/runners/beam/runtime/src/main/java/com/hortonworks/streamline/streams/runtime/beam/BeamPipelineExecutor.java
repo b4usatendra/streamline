@@ -39,6 +39,7 @@ public class BeamPipelineExecutor {
         Pipeline pipeline = fluxGenerator.getPipeline();
         //pipeline.getOptions().setRunner(FlinkRunner.class);
         //options.setTempLocation("/streamline/libs/beam-artifacts/streamline-4-kafka-example/jars");
+        options.setJobName(topologyMapper.getTopologyLayout().getName());
         PipelineResult result=pipeline.run(options);
         System.out.println(result);
     }

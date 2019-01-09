@@ -30,9 +30,12 @@ import com.hortonworks.streamline.streams.layout.component.impl.testing.*;
 import groovyx.net.http.*;
 import org.apache.commons.io.*;
 import org.apache.commons.lang.*;
+import org.glassfish.jersey.client.ClientConfig;
 import org.slf4j.*;
 
+import javax.security.auth.Subject;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.client.ClientBuilder;
 import java.io.*;
 import java.io.File;
 import java.nio.charset.*;
@@ -97,6 +100,8 @@ public class BeamTopologyActionsImpl implements TopologyActions {
      private long nimbusThriftMaxBufferSize;
 
     */
+    private FlinkRestAPIClient flinkClient;
+
     private String beamJarLocation;
     private Set<String> environmentServiceNames;
 
@@ -120,6 +125,13 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     public void init(Map<String, Object> conf) {
         this.conf = conf;
         if (conf != null) {
+            if(!conf.containsKey(BEAM_FLINK_MASTER_KEY))
+                throw new NotFoundException(String.format("%s config not found", BEAM_FLINK_MASTER_KEY));
+            flinkClient = new FlinkRestAPIClient(
+                    String.format("http://%s", conf.get(BEAM_FLINK_MASTER_KEY)),
+                    (Subject) conf.get(TopologyLayoutConstants.SUBJECT_OBJECT),
+                    ClientBuilder.newClient(new ClientConfig()));
+
             if(conf.containsKey(BeamTopologyLayoutConstants.BEAM_ARTIFACTS_LOCATION_KEY)){
                 beamArtifactsLocation = (String) conf.get(BeamTopologyLayoutConstants.BEAM_ARTIFACTS_LOCATION_KEY);
             }
@@ -187,8 +199,8 @@ public class BeamTopologyActionsImpl implements TopologyActions {
             throws Exception {
 
         //Preconditions before deploying
-        BeamRunner runner = getRunner();
-        String runnerMasterCmd = getRunnerMasterCmd(runner);
+        BeamRunner runner = getRunnerArg();
+        String runnerMasterCmd = getRunnerMaster(runner);
 
         //serialize topology
         String filePath = serializedTopologyBasePath + topology.getName();
@@ -201,12 +213,9 @@ public class BeamTopologyActionsImpl implements TopologyActions {
             }
         }
         serializeTopologyDag(new TopologyMapper(config, topology), filePath);
-        //beamJarLocation="/Users/karthik.k1/olacabs/karthik/streamline/libs/streamline-runtime-beam-0.6.0-SNAPSHOT.jar";
         ctx.setCurrentAction("Adding artifacts to jar");
         downloadArtifactsAndCopyJars(mavenArtifacts, getExtraJarsLocation(topology));
         Path jarToDeploy = addArtifactsToJar(getExtraJarsLocation(topology));
-        /*beamJarLocation=filePath;
-        Path jarToDeploy = Paths.get(beamJarLocation);*/
 
         ctx.setCurrentAction("Creating Beam Pipeline from topology");
         ctx.setCurrentAction("Deploying beam topology via 'java jar' command");
@@ -218,34 +227,22 @@ public class BeamTopologyActionsImpl implements TopologyActions {
         commands.add(filePath);
         commands.add("--runner="+runner);
         commands.add(runnerMasterCmd);
-        //commands.addAll(getExtraJarsArg(topology));
-        //commands.addAll(getMavenArtifactsRelatedArgs(mavenArtifacts));
-        //commands.add("--remote");
 
         LOG.info("Deploying Application {}", topology.getName());
         LOG.info(String.join(" ", commands));
         Process process = executeShellProcess(commands);
         ShellProcessResult shellProcessResult = waitProcessFor(process);
-        /*
-        int exitValue = shellProcessResult.exitValue;
-        if (exitValue != 0) {
-            LOG.error("Topology deploy command failed - exit code: {} / output: {}", exitValue, shellProcessResult.stdout);
+        if(shellProcessResult.exitValue!=0) {
+            LOG.error("Topology deploy command failed - exit code: {} / output: {}", shellProcessResult.exitValue, shellProcessResult.stdout);
             String[] lines = shellProcessResult.stdout.split("\\n");
             String errors = Arrays.stream(lines)
                     .filter(line -> line.startsWith("Exception") || line.startsWith("Caused by"))
                     .collect(Collectors.joining(", "));
-            Pattern pattern = Pattern.compile("Topology with name `(.*)` already exists on cluster");
-            Matcher matcher = pattern.matcher(errors);
-            if (matcher.find()) {
-                throw new TopologyAlreadyExistsOnCluster(matcher.group(1));
-            } else {
-                throw new Exception("Topology could not be deployed successfully: storm deploy command failed with " + errors);
-            }
-        }*/
-
+            throw new Exception("Topology could not be deployed successfully: flink deploy command failed with " + errors);
+        }
     }
 
-    private BeamRunner getRunner(){
+    private BeamRunner getRunnerArg(){
         if(!conf.containsKey(BEAM_CURRENT_RUNNER_KEY))
             throw new NotFoundException(String.format("%s config not found",BEAM_CURRENT_RUNNER_KEY));
         String runner= ((String) conf.get(BEAM_CURRENT_RUNNER_KEY));
@@ -255,11 +252,11 @@ public class BeamTopologyActionsImpl implements TopologyActions {
             throw new UnsupportedOperationException(String.format("Unsupported runner: %s",runner));
     }
 
-    private String getRunnerMasterCmd(BeamRunner runner){
+    private String getRunnerMaster(BeamRunner runner){
         switch (runner){
             case FlinkRunner:
                 if(!conf.containsKey(BEAM_FLINK_MASTER_KEY))
-                    throw new NotFoundException(String.format("%s config not found",BEAM_FLINK_MASTER_KEY));
+                    throw new NotFoundException(String.format("%s config not found", BEAM_FLINK_MASTER_KEY));
                 return new StringBuffer("--flinkMaster="+conf.get(BEAM_FLINK_MASTER_KEY)).toString();
             default:
                 return null;
@@ -285,23 +282,48 @@ public class BeamTopologyActionsImpl implements TopologyActions {
 
     private ShellProcessResult waitProcessFor(Process process) throws IOException, InterruptedException {
         StringWriter sw = new StringWriter();
-        while (process.isAlive()) {
-            try {
-                final BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(process.getInputStream()));
-                String line = null;
-                while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
-                }
-                //reader.close();
-            } catch (final Exception e) {
-                e.printStackTrace();
+        /*while (process.isAlive()) {
+            final BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+
             }
+            reader.close();
+        }*/
+        int exitValue = 0;
+        process.waitFor(10,TimeUnit.SECONDS);
+        if(!process.isAlive() && process.exitValue()==-1){
+            exitValue = -1;
+            IOUtils.copy(process.getInputStream(),sw,Charset.defaultCharset());
         }
-        IOUtils.copy(process.getInputStream(), sw, Charset.defaultCharset());
+        else {
+            final BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                LOG.info(line);
+                sw.append(line);
+                if(line.contains("Submitting job"))
+                    break;
+            }
+
+
+            /*int len = process.getInputStream().read(buffer);
+            byte[] buffer = new byte[2048];
+            while (len!=-1){
+                log = IOUtils.toString(buffer,Charset.defaultCharset());
+                IOUtils.buffer(buffer,sw,Charset.defaultCharset());
+                if(stopStreamCopy)
+                    break;
+                if(sw.toString().toLowerCase().contains("Submitting job"))
+                    stopStreamCopy = true;
+                len = process.getInputStream().read(buffer);
+            }
+            LOG.info(sw.toString());*/
+        }
+        //IOUtils.copy(process.getInputStream(), sw, Charset.defaultCharset());
         String stdout = sw.toString();
-        //process.waitFor();
-        int exitValue = process.exitValue();
         LOG.debug("Command output: {}", stdout);
         LOG.debug("Command exit status: {}", exitValue);
         return new ShellProcessResult(exitValue, stdout);
@@ -420,7 +442,10 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     @Override
     public void kill(TopologyLayout topology, String asUser)
             throws Exception {
-
+        String jobId = flinkClient.getJobId(topology.getName());
+        if(jobId==null)
+            throw new NotFoundException(String.format("Topology [%s] not found",topology.getName()));
+        flinkClient.stopJob(jobId);
     }
 
     @Override

@@ -32,20 +32,20 @@ public class BeamTopologyUtil {
         return String.format("%s-%s", componentId, componentName);
     }
 
-    public static String generateUniqueStormTopologyNamePrefix(Long topologyId) {
+    public static String generateUniqueBeamTopologyNamePrefix(Long topologyId) {
         return "streamline-" + topologyId + "-";
     }
 
     //TODO add beam client
     public static String findStormTopologyId(Long topologyId, String asUser) {
-        String topologyNamePrefix = generateUniqueStormTopologyNamePrefix(topologyId);
+        String topologyNamePrefix = generateUniqueBeamTopologyNamePrefix(topologyId);
         String beamTopologyId = topologyNamePrefix;
 
         return beamTopologyId;
     }
 
     public static String findStormCompleteTopologyName(Long topologyId, String asUser) {
-        String topologyNamePrefix = generateUniqueStormTopologyNamePrefix(topologyId);
+        String topologyNamePrefix = generateUniqueBeamTopologyNamePrefix(topologyId);
 
         return topologyNamePrefix;
     }
