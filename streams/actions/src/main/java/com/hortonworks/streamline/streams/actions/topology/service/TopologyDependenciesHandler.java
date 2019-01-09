@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,17 +45,18 @@ import java.util.Set;
 /**
  * This visitor collects all the dependencies like extra jars, maven-artifacts etc for a topology.
  */
-public class StormTopologyDependenciesHandler extends TopologyDagVisitor {
-    private static final Logger LOG = LoggerFactory.getLogger(StormTopologyDependenciesHandler.class);
+public class TopologyDependenciesHandler extends TopologyDagVisitor {
+    private static final Logger LOG = LoggerFactory.getLogger(TopologyDependenciesHandler.class);
     public static final String COMPONENT_CONFIG_KEY_MAVEN_ARTIFACTS = "mavenArtifacts";
     private final Set<String> extraJars = new HashSet<>();
     private final Set<String> resourceNames = new HashSet<>();
     private Set<TopologyComponentBundle> topologyComponentBundleSet = new HashSet<>();
     private List<String> mavenArtifacts = new ArrayList<>();
-
+    private String streamingEngine;
     private final StreamCatalogService catalogService;
 
-    StormTopologyDependenciesHandler(StreamCatalogService catalogService) {
+    TopologyDependenciesHandler(String streamingEngine, StreamCatalogService catalogService) {
+        this.streamingEngine = streamingEngine;
         this.catalogService = catalogService;
     }
 
@@ -66,6 +66,9 @@ public class StormTopologyDependenciesHandler extends TopologyDagVisitor {
         for (Rule rule : rulesProcessor.getRules()) {
             for (Udf udf : rule.getReferredUdfs()) {
                 List<QueryParam> qps = QueryParam.params(UDF.NAME, udf.getName());
+
+                //Add streamingEngine
+                qps.add(new QueryParam(UDF.STREAMINGENGINE, streamingEngine));
                 // The null check for backward compatibility
                 if (udf.getClassName() != null) {
                     qps.add(new QueryParam(UDF.CLASSNAME, udf.getClassName()));
@@ -138,7 +141,7 @@ public class StormTopologyDependenciesHandler extends TopologyDagVisitor {
         TopologyComponentBundle topologyComponentBundle = catalogService.getTopologyComponentBundle(Long.parseLong(streamlineComponent.
                 getTopologyComponentBundleId()));
         if (topologyComponentBundle == null) {
-            throw new RuntimeException("Likely to run in to issues while deployging topology since TopologyComponentBundle not found for id " +
+            throw new RuntimeException("Likely to run in to issues while deploying topology since TopologyComponentBundle not found for id " +
                     streamlineComponent.getTopologyComponentBundleId());
         }
         if (!topologyComponentBundle.getBuiltin()) {

@@ -12,6 +12,9 @@ buildNumber.properties
 # Versions
 streamline-dist/VERSION
 
+srgwert.puml 
+common/*
+
 # Mac
 .DS_Store
 

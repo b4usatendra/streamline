@@ -32,7 +32,7 @@ public class BeamPipelineExecutor {
         //System.setProperty("runner", "DirectRunner");
         TopologyDag topologyDag = newLayout.getTopologyDag();
 
-        BeamTopologyFluxGenerator fluxGenerator = new BeamTopologyFluxGenerator(newLayout, conf, getExtraJarsLocation(newLayout));
+        BeamTopologyComponentGenerator fluxGenerator = new BeamTopologyComponentGenerator(newLayout, conf, getExtraJarsLocation(newLayout));
         topologyDag.traverse(fluxGenerator);
         Pipeline pipeline = fluxGenerator.getPipeline();
         pipeline.run();

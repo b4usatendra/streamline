@@ -127,6 +127,7 @@ public class UDFCatalogResource {
     @GET
     @Path("/udfs")
     @Timed
+    //TODO list udfs based on the streamingEngine
     public Response listUDFs(@Context UriInfo uriInfo,
                              @Context SecurityContext securityContext) {
         List<QueryParam> queryParams = new ArrayList<>();
@@ -443,7 +444,7 @@ public class UDFCatalogResource {
 
     private void checkDuplicate(UDF udf) {
         List<QueryParam> qps = QueryParam.params(UDF.NAME, udf.getName(), UDF.CLASSNAME, udf.getClassName(),
-                UDF.TYPE, udf.getType().toString());
+                UDF.TYPE, udf.getType().toString(), UDF.STREAMINGENGINE,udf.getStreamingEngine());
         Collection<UDF> existing = catalogService.listUDFs(qps);
         if (!existing.isEmpty()) {
             LOG.warn("UDF with same (name, classname, type) already exists, udf: {}", udf);

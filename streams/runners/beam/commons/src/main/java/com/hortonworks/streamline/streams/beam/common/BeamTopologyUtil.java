@@ -15,61 +15,35 @@
  **/
 package com.hortonworks.streamline.streams.beam.common;
 
-import org.apache.beam.repackaged.beam_sdks_java_core.com.google.common.base.*;
+import com.hortonworks.streamline.streams.common.utils.TopologyUtil;
+import org.apache.beam.repackaged.beam_sdks_java_core.com.google.common.base.Strings;
 
-import java.util.Arrays;
-import java.util.List;
+public class BeamTopologyUtil extends TopologyUtil {
 
-public class BeamTopologyUtil {
-    private BeamTopologyUtil() {
+  private BeamTopologyUtil() {
+    super();
+  }
+
+  //TODO add beam client
+  public static String findBeamTopologyId(Long topologyId, String asUser) {
+    String topologyNamePrefix = generateUniqueStormTopologyNamePrefix(topologyId);
+    String beamTopologyId = topologyNamePrefix;
+
+    return beamTopologyId;
+  }
+
+  public static String findStormCompleteTopologyName(Long topologyId, String asUser) {
+    String topologyNamePrefix = generateUniqueStormTopologyNamePrefix(topologyId);
+
+    return topologyNamePrefix;
+  }
+
+  public static String findOrGenerateTopologyName(Long topologyId, String topologyName, String asUser) {
+    String actualTopologyName = topologyName + topologyId;
+    if (Strings.isNullOrEmpty(actualTopologyName)) {
+      actualTopologyName = generateStormTopologyName(topologyId, topologyName);
     }
+    return actualTopologyName;
+  }
 
-    public static String generateStormTopologyName(Long topologyId, String topologyName) {
-        return "streamline-" + topologyId + "-" + topologyName;
-    }
-
-    public static String generateStormComponentId(Long componentId, String componentName) {
-        return String.format("%s-%s", componentId, componentName);
-    }
-
-    public static String generateUniqueStormTopologyNamePrefix(Long topologyId) {
-        return "streamline-" + topologyId + "-";
-    }
-
-    //TODO add beam client
-    public static String findStormTopologyId(Long topologyId, String asUser) {
-        String topologyNamePrefix = generateUniqueStormTopologyNamePrefix(topologyId);
-        String beamTopologyId = topologyNamePrefix;
-
-        return beamTopologyId;
-    }
-
-    public static String findStormCompleteTopologyName(Long topologyId, String asUser) {
-        String topologyNamePrefix = generateUniqueStormTopologyNamePrefix(topologyId);
-
-        return topologyNamePrefix;
-    }
-
-    public static String findOrGenerateTopologyName(Long topologyId, String topologyName, String asUser) {
-        String actualTopologyName = topologyName + topologyId;
-        if (Strings.isNullOrEmpty(actualTopologyName)) {
-            actualTopologyName = generateStormTopologyName(topologyId, topologyName);
-        }
-        return actualTopologyName;
-    }
-
-    public static String extractStreamlineComponentName(String stormComponentId) {
-        String[] splitted = stormComponentId.split("-");
-        if (splitted.length <= 1) {
-            throw new IllegalArgumentException("Invalid Beam component ID for Streamline: " + stormComponentId);
-        }
-
-        List<String> splittedList = Arrays.asList(splitted);
-        return String.join("-", splittedList.subList(1, splittedList.size()));
-    }
-
-    public static String extractStreamlineComponentId(String stormComponentId) {
-        // removes all starting from first '-'
-        return stormComponentId.substring(0, stormComponentId.indexOf('-'));
-    }
 }

@@ -13,27 +13,26 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
  **/
-package com.hortonworks.streamline.streams.runtime.storm.bolt.kafka;
+package com.hortonworks.streamline.streams.runtime.event.sedes.kafka;
 
+import com.hortonworks.registries.schemaregistry.SchemaMetadata;
 import com.hortonworks.registries.schemaregistry.SchemaVersionInfo;
 import com.hortonworks.registries.schemaregistry.SchemaVersionKey;
 import com.hortonworks.registries.schemaregistry.avro.AvroSchemaProvider;
 import com.hortonworks.registries.schemaregistry.client.SchemaRegistryClient;
 import com.hortonworks.registries.schemaregistry.errors.SchemaNotFoundException;
-import org.apache.avro.Schema;
-import org.apache.avro.generic.GenericData;
-import org.apache.avro.generic.GenericRecord;
-import org.apache.kafka.common.serialization.Serializer;
-import com.hortonworks.registries.schemaregistry.SchemaMetadata;
 import com.hortonworks.registries.schemaregistry.serdes.avro.AvroSnapshotSerializer;
 import com.hortonworks.streamline.streams.StreamlineEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.kafka.common.serialization.Serializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StreamlineEventSerializer implements Serializer<StreamlineEvent> {
     protected static final Logger LOG = LoggerFactory.getLogger(StreamlineEventSerializer.class);
@@ -41,7 +40,7 @@ public class StreamlineEventSerializer implements Serializer<StreamlineEvent> {
     private SchemaRegistryClient schemaRegistryClient;
     private Integer writerSchemaVersion;
 
-    public StreamlineEventSerializer () {
+    public StreamlineEventSerializer() {
         avroSnapshotSerializer = new AvroSnapshotSerializer();
     }
 

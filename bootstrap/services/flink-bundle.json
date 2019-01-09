@@ -1,6 +1,6 @@
 {
-  "name": "BEAM",
-  "registerClass": "com.hortonworks.streamline.streams.cluster.register.impl.BeamServiceRegistrar",
+  "name": "FLINK",
+  "registerClass": "com.hortonworks.streamline.streams.cluster.register.impl.FlinkServiceRegistrar",
   "serviceUISpecification": {
     "fields": [
       {

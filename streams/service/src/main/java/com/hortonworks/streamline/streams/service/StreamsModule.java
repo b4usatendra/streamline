@@ -1,65 +1,45 @@
 /**
-  * Copyright 2017 Hortonworks.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-
-  *   http://www.apache.org/licenses/LICENSE-2.0
-
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+ * Copyright 2017 Hortonworks.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  **/
 package com.hortonworks.streamline.streams.service;
 
-import com.hortonworks.registries.common.transaction.TransactionIsolation;
-import com.hortonworks.registries.schemaregistry.client.SchemaRegistryClient;
-import com.hortonworks.registries.storage.StorageManagerAware;
-import com.hortonworks.registries.storage.TransactionManager;
-import com.hortonworks.registries.storage.TransactionManagerAware;
-import com.hortonworks.registries.storage.transaction.ManagedTransaction;
-import com.hortonworks.streamline.common.Constants;
-import com.hortonworks.streamline.common.FileEventHandler;
-import com.hortonworks.streamline.common.FileWatcher;
-import com.hortonworks.streamline.common.ModuleRegistration;
-import com.hortonworks.registries.common.util.FileStorage;
-import com.hortonworks.streamline.registries.model.client.MLModelRegistryClient;
-import com.hortonworks.streamline.registries.tag.client.TagClient;
-import com.hortonworks.registries.storage.StorageManager;
-import com.hortonworks.streamline.streams.actions.container.mapping.MappedTopologyActionsImpl;
-import com.hortonworks.streamline.streams.actions.topology.service.TopologyActionsService;
-import com.hortonworks.streamline.streams.catalog.TopologyVersion;
-import com.hortonworks.streamline.streams.catalog.service.CatalogService;
-import com.hortonworks.streamline.streams.catalog.service.StreamCatalogService;
-import com.hortonworks.streamline.streams.cluster.catalog.Namespace;
-import com.hortonworks.streamline.streams.cluster.resource.ClusterCatalogResource;
-import com.hortonworks.streamline.streams.cluster.resource.ComponentCatalogResource;
-import com.hortonworks.streamline.streams.cluster.resource.ServiceBundleResource;
-import com.hortonworks.streamline.streams.cluster.resource.ServiceCatalogResource;
-import com.hortonworks.streamline.streams.cluster.resource.ServiceConfigurationCatalogResource;
-import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
-import com.hortonworks.streamline.streams.logsearch.topology.service.TopologyLogSearchService;
-import com.hortonworks.streamline.streams.metrics.topology.service.TopologyMetricsService;
-import com.hortonworks.streamline.streams.notification.service.NotificationServiceImpl;
-import com.hortonworks.streamline.streams.sampling.service.TopologySamplingService;
-import com.hortonworks.streamline.streams.security.StreamlineAuthorizer;
-import com.hortonworks.streamline.streams.security.service.SecurityCatalogResource;
-import com.hortonworks.streamline.streams.security.service.SecurityCatalogService;
-import com.hortonworks.streamline.streams.service.metadata.HBaseMetadataResource;
-import com.hortonworks.streamline.streams.service.metadata.HiveMetadataResource;
-import com.hortonworks.streamline.streams.service.metadata.KafkaMetadataResource;
-import com.hortonworks.streamline.streams.service.metadata.StormMetadataResource;
+import com.hortonworks.registries.common.transaction.*;
+import com.hortonworks.registries.common.util.*;
+import com.hortonworks.registries.schemaregistry.client.*;
+import com.hortonworks.registries.storage.*;
+import com.hortonworks.registries.storage.transaction.*;
+import com.hortonworks.streamline.common.*;
+import com.hortonworks.streamline.registries.model.client.*;
+import com.hortonworks.streamline.registries.tag.client.*;
+import com.hortonworks.streamline.streams.actions.container.mapping.*;
+import com.hortonworks.streamline.streams.actions.topology.service.*;
+import com.hortonworks.streamline.streams.catalog.*;
+import com.hortonworks.streamline.streams.catalog.service.*;
+import com.hortonworks.streamline.streams.cluster.catalog.*;
+import com.hortonworks.streamline.streams.cluster.resource.*;
+import com.hortonworks.streamline.streams.cluster.service.*;
+import com.hortonworks.streamline.streams.logsearch.topology.service.*;
+import com.hortonworks.streamline.streams.metrics.topology.service.*;
+import com.hortonworks.streamline.streams.notification.service.*;
+import com.hortonworks.streamline.streams.sampling.service.*;
+import com.hortonworks.streamline.streams.security.*;
+import com.hortonworks.streamline.streams.security.service.*;
+import com.hortonworks.streamline.streams.service.metadata.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.security.auth.Subject;
+import javax.security.auth.*;
+import java.util.*;
 
 /**
  * Implementation for the streams module for registration with web service module
@@ -123,7 +103,7 @@ public class StreamsModule implements ModuleRegistration, StorageManagerAware, T
 
     private SchemaRegistryClient createSchemaRegistryClient() {
         Map<String, ?> conf = Collections.singletonMap(SchemaRegistryClient.Configuration.SCHEMA_REGISTRY_URL.name(),
-                                                       config.get("schemaRegistryUrl"));
+                config.get("schemaRegistryUrl"));
         return new SchemaRegistryClient(conf);
     }
 
@@ -197,7 +177,7 @@ public class StreamsModule implements ModuleRegistration, StorageManagerAware, T
             return;
         }
         FileEventHandler customProcessorUploadHandler = new CustomProcessorUploadHandler(customProcessorWatchPath, customProcessorUploadFailPath,
-                                                                                         customProcessorUploadSuccessPath, catalogService);
+                customProcessorUploadSuccessPath, catalogService);
         List<FileEventHandler> fileEventHandlers = new ArrayList<>();
         fileEventHandlers.add(customProcessorUploadHandler);
         final FileWatcher fileWatcher = new FileWatcher(fileEventHandlers);

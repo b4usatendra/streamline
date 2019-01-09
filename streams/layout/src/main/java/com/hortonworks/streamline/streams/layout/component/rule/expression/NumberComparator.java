@@ -5,7 +5,7 @@ import java.io.*;
 /**
  * Created by Satendra Sahu on 12/26/18
  */
-public class NumberComparator<T extends Comparable<T>> implements Serializable {
+public class NumberComparator<T extends Number & Comparable<T>> implements Serializable {
     public T firstValue;
     private T maxValue;
 

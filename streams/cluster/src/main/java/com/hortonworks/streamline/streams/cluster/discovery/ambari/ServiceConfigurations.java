@@ -36,7 +36,8 @@ public enum ServiceConfigurations {
   AMBARI_METRICS("ams-env", "ams-site"),
   DRUID("druid-common", "druid-overlord"),
   AMBARI_INFRA_SOLR("infra-solr-env"),
-  ATLAS("application-properties");
+  ATLAS("application-properties"),
+  FLINK("flink", "flink-env");
 
   private final String[] confNames;
 

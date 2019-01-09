@@ -1,22 +1,21 @@
 /**
-  * Copyright 2017 Hortonworks.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-
-  *   http://www.apache.org/licenses/LICENSE-2.0
-
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+ * Copyright 2017 Hortonworks.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  **/
 
 package com.hortonworks.streamline.streams.layout.component.rule.sql;
 
-import org.apache.calcite.sql.type.SqlTypeName;
 import com.hortonworks.registries.common.Schema;
 import com.hortonworks.streamline.streams.layout.component.Stream;
 import com.hortonworks.streamline.streams.layout.component.rule.expression.AggregateFunctionExpression;
@@ -59,6 +58,7 @@ public class ExpressionGenerator extends SqlBasicVisitor<Expression> {
     private final Map<String, Schema> streamIdToSchema = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     private final Map<String, Udf> catalogUdfs;
     private final Set<Udf> referredUdfs = new HashSet<>();
+
     public ExpressionGenerator(List<Stream> streams, Map<String, Udf> catalogUdfs) {
         if (streams.isEmpty()) {
             throw new IllegalArgumentException("Empty stream");
@@ -113,9 +113,15 @@ public class ExpressionGenerator extends SqlBasicVisitor<Expression> {
                 if (catalogUdfs.containsKey(udfName)) {
                     Udf udfInfo = catalogUdfs.get(udfName);
                     if (udfInfo.isAggregate()) {
-                        return visitUserDefinedAggregateFunction(udfInfo, call.getOperandList());
+                        if (udfInfo.getClassName().equals("builtin"))
+                            return visitAggregateFunction(udfInfo.getName(), call.getOperandList());
+                        else
+                            return visitUserDefinedAggregateFunction(udfInfo, call.getOperandList());
                     } else {
-                        return visitUserDefinedFunction(udfInfo, call.getOperandList());
+                        if (udfInfo.getClassName().equals("builtin"))
+                            return visitAggregateFunction(udfInfo.getName(), call.getOperandList());
+                        else
+                            return visitFunction(udfInfo.getName(), call.getOperandList());
                     }
                 } else {
                     throw new UnsupportedOperationException("Unknown built-in or User defined function '" + udfName + "'");
@@ -152,7 +158,7 @@ public class ExpressionGenerator extends SqlBasicVisitor<Expression> {
 
     private List<Expression> getOperandExprs(List<SqlNode> operands) {
         List<Expression> operandExprs = new ArrayList<>();
-        for (SqlNode sqlNode: operands) {
+        for (SqlNode sqlNode : operands) {
             operandExprs.add(sqlNode.accept(this));
         }
         return operandExprs;

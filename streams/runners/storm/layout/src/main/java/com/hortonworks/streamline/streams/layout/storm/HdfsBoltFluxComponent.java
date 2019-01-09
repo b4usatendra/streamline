@@ -190,7 +190,7 @@ public class HdfsBoltFluxComponent extends AbstractFluxComponent {
         String[] requiredFields = {
             TopologyLayoutConstants.JSON_KEY_ROTATION_INTERVAL
         };
-        validateFloatOrDoubleFields(requiredFields, true);
+        this.validateFloatOrDoubleFields(requiredFields, true);
     }
 
 }
