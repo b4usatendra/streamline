@@ -21,6 +21,7 @@ import com.google.common.collect.*;
 import com.hortonworks.streamline.common.*;
 import com.hortonworks.streamline.streams.cluster.Constants;
 import com.hortonworks.streamline.streams.cluster.catalog.*;
+import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
 import org.apache.commons.math3.util.*;
 
 import java.util.*;
@@ -29,6 +30,10 @@ public class BeamServiceRegistrar extends AbstractServiceRegistrar
 {
 
    public static final String PARAM_CONNECTION_ENDPOINT = "master.endpoint";
+
+
+   public static final String CONF_BEAM = ServiceConfigurations.BEAM.getConfNames()[0];
+   public static final String CONF_BEAM_ENV = ServiceConfigurations.BEAM.getConfNames()[1];
 
    private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -53,8 +58,8 @@ public class BeamServiceRegistrar extends AbstractServiceRegistrar
    protected List<ServiceConfiguration> createServiceConfigurations(Config config)
    {
 	  ServiceConfiguration serverProperties = buildServerPropertiesServiceConfiguration(config);
-	  ServiceConfiguration kafkaEnvProperties = buildKafkaEnvServiceConfiguration(config);
-	  return Lists.newArrayList(serverProperties, kafkaEnvProperties);
+	  ServiceConfiguration beamEnvProperties = buildBeamEnvServiceConfiguration(config);
+	  return Lists.newArrayList(serverProperties, beamEnvProperties);
    }
 
    @Override
@@ -79,7 +84,7 @@ public class BeamServiceRegistrar extends AbstractServiceRegistrar
    private ServiceConfiguration buildServerPropertiesServiceConfiguration(Config config)
    {
 	  ServiceConfiguration serverProperties = new ServiceConfiguration();
-	  serverProperties.setName("Beam Cluster");
+	  serverProperties.setName(CONF_BEAM);
 
 	  Map<String, String> confMap = new HashMap<>();
 
@@ -100,10 +105,10 @@ public class BeamServiceRegistrar extends AbstractServiceRegistrar
 	  return serverProperties;
    }
 
-   private ServiceConfiguration buildKafkaEnvServiceConfiguration(Config config)
+   private ServiceConfiguration buildBeamEnvServiceConfiguration(Config config)
    {
 	  ServiceConfiguration serverProperties = new ServiceConfiguration();
-	  serverProperties.setName("Test");
+	  serverProperties.setName(CONF_BEAM_ENV);
 
 	  Map<String, String> confMap = new HashMap<>();
 

@@ -21,7 +21,6 @@ import com.hortonworks.streamline.streams.actions.topology.service.*;
 import com.hortonworks.streamline.streams.beam.common.BeamTopologyLayoutConstants;
 import com.hortonworks.streamline.streams.beam.common.*;
 import com.hortonworks.streamline.streams.catalog.*;
-import com.hortonworks.streamline.streams.cluster.catalog.*;
 import com.hortonworks.streamline.streams.cluster.service.*;
 import com.hortonworks.streamline.streams.layout.*;
 import com.hortonworks.streamline.streams.layout.beam.*;
@@ -53,9 +52,8 @@ import static java.util.stream.Collectors.*;
 public class BeamTopologyActionsImpl implements TopologyActions {
     private static final Logger LOG = LoggerFactory.getLogger(BeamTopologyActionsImpl.class);
 
-    public static final String BEAM_CURRENT_RUNNER_KEY = "currentRunner";
-    public static final String BEAM_FLINK_MASTER_KEY = "flinkMaster";
     private static final String DEFAULT_BEAM_ARTIFACTS_LOCATION = "/tmp/beam-artifacts";
+    private static final String FLINK_MASTER_KEY = "master.endpoint";
     /* public static final int DEFAULT_WAIT_TIME_SEC = 30;
      public static final int TEST_RUN_TOPOLOGY_DEFAULT_WAIT_MILLIS_FOR_SHUTDOWN = 30_000;
      public static final String ROOT_LOGGER_NAME = "ROOT";
@@ -112,7 +110,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     private String serializedTopologyBasePath = "/tmp/";
 
     private String javaJarCommand;
-
+    private BeamServiceConfigurationReader serviceConfigurationReader;
 
     private Map<String, Object> conf;
     private Optional<String> jaasFilePath;
@@ -125,13 +123,6 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     public void init(Map<String, Object> conf) {
         this.conf = conf;
         if (conf != null) {
-            if(!conf.containsKey(BEAM_FLINK_MASTER_KEY))
-                throw new NotFoundException(String.format("%s config not found", BEAM_FLINK_MASTER_KEY));
-            flinkClient = new FlinkRestAPIClient(
-                    String.format("http://%s", conf.get(BEAM_FLINK_MASTER_KEY)),
-                    (Subject) conf.get(TopologyLayoutConstants.SUBJECT_OBJECT),
-                    ClientBuilder.newClient(new ClientConfig()));
-
             if(conf.containsKey(BeamTopologyLayoutConstants.BEAM_ARTIFACTS_LOCATION_KEY)){
                 beamArtifactsLocation = (String) conf.get(BeamTopologyLayoutConstants.BEAM_ARTIFACTS_LOCATION_KEY);
             }
@@ -151,20 +142,28 @@ public class BeamTopologyActionsImpl implements TopologyActions {
 
             EnvironmentService environmentService = (EnvironmentService) conf.get(TopologyLayoutConstants.ENVIRONMENT_SERVICE_OBJECT);
             Number namespaceId = (Number) conf.get(TopologyLayoutConstants.NAMESPACE_ID);
-		 /*this.serviceConfigurationReader = new AutoCredsServiceConfigurationReader(environmentService,
-				 namespaceId.longValue());*/
-            this.environmentServiceNames = environmentService.listServiceClusterMapping(namespaceId.longValue())
-                    .stream()
-                    .map(NamespaceServiceClusterMap::getServiceName)
-                    .collect(Collectors.toSet());
-        }
 
-        try {
-            httpFileDownloader = new HttpFileDownloader("tmp");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            serviceConfigurationReader = new BeamServiceConfigurationReader(environmentService,namespaceId.longValue());
 
+            Map<String,String> runnerConfig = serviceConfigurationReader.getConfig();
+            if(!runnerConfig.containsKey(FLINK_MASTER_KEY))
+                throw new RuntimeException(String.format("%s config not found", FLINK_MASTER_KEY));
+            flinkClient = new FlinkRestAPIClient(
+                    String.format("http://%s", runnerConfig.get(FLINK_MASTER_KEY)),
+                    (Subject) conf.get(TopologyLayoutConstants.SUBJECT_OBJECT),
+                    ClientBuilder.newClient(new ClientConfig()));
+
+            try {
+                httpFileDownloader = new HttpFileDownloader("tmp");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            File f = new File (beamArtifactsLocation);
+            if (!f.exists() && !f.mkdirs()) {
+                throw new RuntimeException("Could not create directory " + f.getAbsolutePath());
+            }
+        }
     }
 
     private void setupSecuredCluster(Map<String, Object> conf) {
@@ -243,21 +242,23 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     }
 
     private BeamRunner getRunnerArg(){
-        if(!conf.containsKey(BEAM_CURRENT_RUNNER_KEY))
-            throw new NotFoundException(String.format("%s config not found",BEAM_CURRENT_RUNNER_KEY));
-        String runner= ((String) conf.get(BEAM_CURRENT_RUNNER_KEY));
-        if(runner.equalsIgnoreCase("flink"))
-            return BeamRunner.FlinkRunner;
-        else
-            throw new UnsupportedOperationException(String.format("Unsupported runner: %s",runner));
+        String runner = serviceConfigurationReader.getStreamingEngine();
+        switch (runner.toLowerCase()){
+            // TODO : change this to flink
+            case "beam":
+                return BeamRunner.FlinkRunner;
+            default:
+                throw new UnsupportedOperationException(String.format("Unsupported runner: %s",runner));
+        }
     }
 
     private String getRunnerMaster(BeamRunner runner){
+        Map<String,String> runnerConfig = serviceConfigurationReader.getConfig();
         switch (runner){
             case FlinkRunner:
-                if(!conf.containsKey(BEAM_FLINK_MASTER_KEY))
-                    throw new NotFoundException(String.format("%s config not found", BEAM_FLINK_MASTER_KEY));
-                return new StringBuffer("--flinkMaster="+conf.get(BEAM_FLINK_MASTER_KEY)).toString();
+                if(!runnerConfig.containsKey(FLINK_MASTER_KEY))
+                    throw new RuntimeException(String.format("%s config not found", FLINK_MASTER_KEY));
+                return new StringBuffer("--flinkMaster=").append(runnerConfig.get(FLINK_MASTER_KEY)).toString();
             default:
                 return null;
         }
