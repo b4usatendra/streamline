@@ -28,8 +28,8 @@ public final class Constants {
         public static final String PROPERTY_KEY_ZOOKEEPER_CONNECT = "zookeeper.connect";
     }
 
-    public static class Beam {
-        public static final String SERVICE_NAME = "BEAM";
+    public static class Flink {
+        public static final String SERVICE_NAME = "FLINK";
         public static final String PROPERTY_CONNECTION_ENDPOINT = "master.endpoint";
     }
 

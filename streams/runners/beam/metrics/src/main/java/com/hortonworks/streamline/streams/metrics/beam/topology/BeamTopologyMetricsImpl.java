@@ -31,13 +31,13 @@ import java.util.*;
 import java.util.concurrent.*;
 
 /**
- * Beam implementation of the TopologyMetrics interface
+ * Flink implementation of the TopologyMetrics interface
  */
 public class BeamTopologyMetricsImpl implements TopologyMetrics
 {
    private static final Logger LOG = LoggerFactory.getLogger(BeamTopologyMetricsImpl.class);
 
-   private static final String FRAMEWORK = "BEAM";
+   private static final String FRAMEWORK = "FLINK";
    private static final int MAX_SIZE_TOPOLOGY_CACHE = 10;
    private static final int MAX_SIZE_COMPONENT_CACHE = 50;
    private static final int CACHE_DURATION_SECS = 5;

@@ -1,0 +1,15 @@
+{
+  "name": "FLINK",
+  "registerClass": "com.hortonworks.streamline.streams.cluster.register.impl.FlinkServiceRegistrar",
+  "serviceUISpecification": {
+    "fields": [
+      {
+        "uiName": "Master Endpoint",
+        "fieldName": "master.endpoint",
+        "isOptional": false,
+        "tooltip": "flink cluster URI",
+        "type": "string"
+      }
+    ]
+  }
+}

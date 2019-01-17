@@ -19,7 +19,7 @@ public class BeamServiceConfigurationReader{
     private long namespaceId;
 
     enum BeamServiceConfigurations {
-        BEAM("beam","beam-env");
+        FLINK("flink","flink-env");
 
         private final String[] confs;
 
@@ -45,9 +45,9 @@ public class BeamServiceConfigurationReader{
 
         Arrays.stream(confNames).forEach(conf->{
             try {
-                ServiceConfiguration beamConf = environmentService.getServiceConfigurationByName(serviceId,conf);
-                if(beamConf!=null)
-                    flattenConfig.putAll(beamConf.getConfigurationMap());
+                ServiceConfiguration serviceConf = environmentService.getServiceConfigurationByName(serviceId,conf);
+                if(serviceConf!=null)
+                    flattenConfig.putAll(serviceConf.getConfigurationMap());
             } catch (IOException e) {
                 throw new RuntimeException(String.format("Can't read configuration from serviceId: %d conf: %d",serviceId,conf));
             }

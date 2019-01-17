@@ -101,11 +101,9 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     private FlinkRestAPIClient flinkClient;
 
     private String beamJarLocation;
-    private Set<String> environmentServiceNames;
 
     private final ConcurrentHashMap<Long, Boolean> forceKillRequests = new ConcurrentHashMap<>();
     private HttpFileDownloader httpFileDownloader;
-    private String beamCliPath = "beam";
     private String beamArtifactsLocation = DEFAULT_BEAM_ARTIFACTS_LOCATION;
     private String serializedTopologyBasePath = "/tmp/";
 
@@ -216,7 +214,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
         downloadArtifactsAndCopyJars(mavenArtifacts, getExtraJarsLocation(topology));
         Path jarToDeploy = addArtifactsToJar(getExtraJarsLocation(topology));
 
-        ctx.setCurrentAction("Creating Beam Pipeline from topology");
+        ctx.setCurrentAction("Creating Flink Pipeline from topology");
         ctx.setCurrentAction("Deploying beam topology via 'java jar' command");
         List<String> commands = new ArrayList<String>();
         commands.add("java");
@@ -244,8 +242,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     private BeamRunner getRunnerArg(){
         String runner = serviceConfigurationReader.getStreamingEngine();
         switch (runner.toLowerCase()){
-            // TODO : change this to flink
-            case "beam":
+            case "flink":
                 return BeamRunner.FlinkRunner;
             default:
                 throw new UnsupportedOperationException(String.format("Unsupported runner: %s",runner));

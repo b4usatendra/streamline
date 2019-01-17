@@ -26,21 +26,21 @@ import org.apache.commons.math3.util.*;
 
 import java.util.*;
 
-public class BeamServiceRegistrar extends AbstractServiceRegistrar
+public class FlinkServiceRegistrar extends AbstractServiceRegistrar
 {
 
    public static final String PARAM_CONNECTION_ENDPOINT = "master.endpoint";
 
 
-   public static final String CONF_BEAM = ServiceConfigurations.BEAM.getConfNames()[0];
-   public static final String CONF_BEAM_ENV = ServiceConfigurations.BEAM.getConfNames()[1];
+   public static final String CONF_FLINK = ServiceConfigurations.FLINK.getConfNames()[0];
+   public static final String CONF_FLINK_ENV = ServiceConfigurations.FLINK.getConfNames()[1];
 
    private final ObjectMapper objectMapper = new ObjectMapper();
 
    @Override
    protected String getServiceName()
    {
-	  return Constants.Beam.SERVICE_NAME;
+	  return Constants.Flink.SERVICE_NAME;
    }
 
    @Override
@@ -48,7 +48,7 @@ public class BeamServiceRegistrar extends AbstractServiceRegistrar
    {
 	  Map<Component, List<ComponentProcess>> components = new HashMap<>();
 
-	  Pair<Component, List<ComponentProcess>> kafkaBroker = createBeamComponent(config, flattenConfigMap);
+	  Pair<Component, List<ComponentProcess>> kafkaBroker = createFlinkComponent(config, flattenConfigMap);
 	  components.put(kafkaBroker.getFirst(), kafkaBroker.getSecond());
 
 	  return components;
@@ -58,8 +58,8 @@ public class BeamServiceRegistrar extends AbstractServiceRegistrar
    protected List<ServiceConfiguration> createServiceConfigurations(Config config)
    {
 	  ServiceConfiguration serverProperties = buildServerPropertiesServiceConfiguration(config);
-	  ServiceConfiguration beamEnvProperties = buildBeamEnvServiceConfiguration(config);
-	  return Lists.newArrayList(serverProperties, beamEnvProperties);
+	  ServiceConfiguration flinkEnvProperties = buildFlinkEnvServiceConfiguration(config);
+	  return Lists.newArrayList(serverProperties, flinkEnvProperties);
    }
 
    @Override
@@ -84,13 +84,13 @@ public class BeamServiceRegistrar extends AbstractServiceRegistrar
    private ServiceConfiguration buildServerPropertiesServiceConfiguration(Config config)
    {
 	  ServiceConfiguration serverProperties = new ServiceConfiguration();
-	  serverProperties.setName(CONF_BEAM);
+	  serverProperties.setName(CONF_FLINK);
 
 	  Map<String, String> confMap = new HashMap<>();
 
-	  if (config.contains(Constants.Beam.PROPERTY_CONNECTION_ENDPOINT))
+	  if (config.contains(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT))
 	  {
-		 confMap.put(Constants.Beam.PROPERTY_CONNECTION_ENDPOINT, config.getString(Constants.Beam.PROPERTY_CONNECTION_ENDPOINT));
+		 confMap.put(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT, config.getString(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT));
 	  }
 
 	  try
@@ -105,10 +105,10 @@ public class BeamServiceRegistrar extends AbstractServiceRegistrar
 	  return serverProperties;
    }
 
-   private ServiceConfiguration buildBeamEnvServiceConfiguration(Config config)
+   private ServiceConfiguration buildFlinkEnvServiceConfiguration(Config config)
    {
 	  ServiceConfiguration serverProperties = new ServiceConfiguration();
-	  serverProperties.setName(CONF_BEAM_ENV);
+	  serverProperties.setName(CONF_FLINK_ENV);
 
 	  Map<String, String> confMap = new HashMap<>();
 
@@ -124,17 +124,17 @@ public class BeamServiceRegistrar extends AbstractServiceRegistrar
 	  return serverProperties;
    }
 
-   private Pair<Component, List<ComponentProcess>> createBeamComponent(Config config, Map<String, String> flattenConfigMap)
+   private Pair<Component, List<ComponentProcess>> createFlinkComponent(Config config, Map<String, String> flattenConfigMap)
    {
 	  if (!config.contains(PARAM_CONNECTION_ENDPOINT))
 	  {
 		 throw new IllegalArgumentException("Required parameter " + PARAM_CONNECTION_ENDPOINT + " not present.");
 	  }
-	  Component beamComponent = new Component();
-	  beamComponent.setName(Constants.Beam.PROPERTY_CONNECTION_ENDPOINT);
+	  Component flinkComponent = new Component();
+	  flinkComponent.setName(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT);
 
 	  List<ComponentProcess> componentProcesses = new ArrayList<>();
 
-	  return new Pair<>(beamComponent, componentProcesses);
+	  return new Pair<>(flinkComponent, componentProcesses);
    }
 }
