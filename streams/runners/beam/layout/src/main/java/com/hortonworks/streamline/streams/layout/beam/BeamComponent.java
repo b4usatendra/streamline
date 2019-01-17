@@ -1,26 +1,26 @@
 package com.hortonworks.streamline.streams.layout.beam;
 
 import com.hortonworks.streamline.common.exception.ComponentConfigException;
-import com.hortonworks.streamline.streams.*;
-import org.apache.beam.sdk.Pipeline;
-import org.apache.beam.sdk.values.KV;
-import org.apache.beam.sdk.values.PCollection;
-
+import com.hortonworks.streamline.streams.StreamlineEvent;
+import java.io.Serializable;
 import java.util.Map;
+import org.apache.beam.sdk.Pipeline;
+import org.apache.beam.sdk.values.PCollection;
 
 /**
  * Created by Satendra Sahu on 10/26/18
  */
-public interface BeamComponent {
-    /*
-     Initialize the implementation with catalog root url
-      */
-    void withCatalogRootUrl(String catalogRootUrl);
+public interface BeamComponent extends Serializable {
 
-    /*
-    Method to initialize the implementation with a configuration
-     */
-    void withConfig(Map<String, Object> config, Pipeline pipeline);
+  /*
+   Initialize the implementation with catalog root url
+    */
+  void withCatalogRootUrl(String catalogRootUrl);
+
+  /*
+  Method to initialize the implementation with a configuration
+   */
+  void withConfig(Map<String, Object> config, Pipeline pipeline);
 
    /*
    Get yaml maps of all the components referenced by this component
@@ -36,25 +36,25 @@ public interface BeamComponent {
 	 - ref: "zkHosts"
 	*/
 
-    /*
-    Get yaml map for this component. Note that the id field will be
-    overwritten and hence is optional.
-    Expected to return equivalent of something like below
-    - id: "KafkaSpout"
-    className: "org.apache.storm.kafka.KafkaSpout"
-    constructorArgs:
-      - ref: "spoutConfig"
-     */
-    PCollection<KV<String, String>> getOutputCollection();
+  /*
+  Get yaml map for this component. Note that the id field will be
+  overwritten and hence is optional.
+  Expected to return equivalent of something like below
+  - id: "KafkaSpout"
+  className: "org.apache.storm.kafka.KafkaSpout"
+  constructorArgs:
+    - ref: "spoutConfig"
+   */
+  PCollection<StreamlineEvent> getOutputCollection();
 
-    public void generateComponent(PCollection pCollection);
+  public void generateComponent(PCollection<StreamlineEvent> pCollection);
 
-    void unionInputCollection(PCollection<KV<Object, StreamlineEvent>> inputCollection);
+  void unionInputCollection(PCollection<StreamlineEvent> inputCollection);
 
-    /*
-    validate the configuration for this component.
-    throw ComponentConfigException if configuration is not correct
-     */
-    void validateConfig()
-            throws ComponentConfigException;
+  /*
+  validate the configuration for this component.
+  throw ComponentConfigException if configuration is not correct
+   */
+  void validateConfig()
+      throws ComponentConfigException;
 }

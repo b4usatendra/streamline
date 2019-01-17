@@ -43,6 +43,7 @@ public class TopologyWindow extends BaseTopologyRule {
     public static final String NAMESPACE = "topology_window";
 
     public static final String ID = "id";
+    public static final String STREAMING_ENGINE = "streamingEngine";
     public static final String VERSIONID = "versionId";
     public static final String TOPOLOGY_ID = "topologyId";
     public static final String NAME = "name";

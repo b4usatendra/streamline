@@ -1,40 +1,34 @@
 /**
-  * Copyright 2017 Hortonworks.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-
-  *   http://www.apache.org/licenses/LICENSE-2.0
-
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+ * Copyright 2017 Hortonworks.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  **/
 
 package com.hortonworks.streamline.streams.catalog;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hortonworks.registries.common.Schema;
-import com.hortonworks.registries.storage.annotation.StorableEntity;
-import com.hortonworks.registries.storage.PrimaryKey;
-import com.hortonworks.registries.storage.Storable;
-import com.hortonworks.registries.storage.catalog.AbstractStorable;
-import org.apache.commons.lang3.StringUtils;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.core.type.*;
+import com.fasterxml.jackson.databind.*;
+import com.hortonworks.registries.common.*;
+import com.hortonworks.registries.storage.*;
+import com.hortonworks.registries.storage.annotation.*;
+import com.hortonworks.registries.storage.catalog.*;
+import org.apache.commons.lang3.*;
 
+import java.io.*;
+import java.util.*;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static com.hortonworks.streamline.streams.layout.component.rule.expression.Udf.Type;
+import static com.hortonworks.streamline.streams.layout.component.rule.expression.Udf.*;
 
 @StorableEntity
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -48,6 +42,7 @@ public class UDF extends AbstractStorable {
     public static final String CLASSNAME = "className";
     public static final String JARSTORAGEPATH = "jarStoragePath";
     public static final String TYPE = "type";
+    public static final String STREAMINGENGINE = "streamingEngine";
     public static final String DIGEST = "digest";
     public static final String ARGTYPES = "argTypes";
     public static final String RETURNTYPE = "returnType";
@@ -58,6 +53,7 @@ public class UDF extends AbstractStorable {
     private String displayName;
     private String description;
     private Type type;
+    private String streamingEngine;
     private String className;
     private String jarStoragePath;
     private List<String> argTypes;
@@ -116,6 +112,7 @@ public class UDF extends AbstractStorable {
     /**
      * Should be fqdn class name - If canonical form of an inner-class name was provided at
      * upload time, it will be converted to the fqdn name (with '$') during upload processing.
+     *
      * @return class name
      */
     public String getClassName() {
@@ -192,6 +189,14 @@ public class UDF extends AbstractStorable {
         this.builtin = builtin;
     }
 
+    public String getStreamingEngine() {
+        return streamingEngine;
+    }
+
+    public void setStreamingEngine(String streamingEngine) {
+        this.streamingEngine = streamingEngine;
+    }
+
     @JsonIgnore
     @Override
     public Schema getSchema() {
@@ -201,13 +206,14 @@ public class UDF extends AbstractStorable {
                 Schema.Field.of(DISPLAYNAME, Schema.Type.STRING),
                 Schema.Field.of(DESCRIPTION, Schema.Type.STRING),
                 Schema.Field.of(TYPE, Schema.Type.STRING),
+                Schema.Field.of(STREAMINGENGINE, Schema.Type.STRING),
                 Schema.Field.of(CLASSNAME, Schema.Type.STRING),
                 Schema.Field.of(JARSTORAGEPATH, Schema.Type.STRING),
                 Schema.Field.of(DIGEST, Schema.Type.STRING),
                 Schema.Field.of(ARGTYPES, Schema.Type.STRING),
                 Schema.Field.of(RETURNTYPE, Schema.Type.STRING),
                 Schema.Field.of(BUILTIN, Schema.Type.STRING)
-                );
+        );
     }
 
     @Override
@@ -231,6 +237,7 @@ public class UDF extends AbstractStorable {
         ObjectMapper mapper = new ObjectMapper();
         setId((Long) map.get(ID));
         setName((String) map.get(NAME));
+        setStreamingEngine((String) map.get(STREAMINGENGINE));
         setDisplayName((String) map.get(DISPLAYNAME));
         setDescription((String) map.get(DESCRIPTION));
         setClassName((String) map.get(CLASSNAME));
@@ -287,6 +294,7 @@ public class UDF extends AbstractStorable {
                 ", displayName='" + displayName + '\'' +
                 ", description='" + description + '\'' +
                 ", type=" + type +
+                ", streamingEngine=" + streamingEngine +
                 ", className='" + className + '\'' +
                 ", jarStoragePath='" + jarStoragePath + '\'' +
                 ", argTypes=" + argTypes +

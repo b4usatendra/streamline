@@ -15,25 +15,13 @@
  **/
 package com.hortonworks.streamline.streams.storm.common;
 
+import com.hortonworks.streamline.streams.common.utils.TopologyUtil;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class StormTopologyUtil {
-    private StormTopologyUtil() {
-    }
-
-    public static String generateStormTopologyName(Long topologyId, String topologyName) {
-        return "streamline-" + topologyId + "-" + topologyName;
-    }
-
-    public static String generateStormComponentId(Long componentId, String componentName) {
-        return String.format("%s-%s", componentId, componentName);
-    }
-
-    public static String generateUniqueStormTopologyNamePrefix(Long topologyId) {
-        return "streamline-" + topologyId + "-";
-    }
+public class StormTopologyUtil extends TopologyUtil {
 
     public static String findStormTopologyId(StormRestAPIClient client, Long topologyId, String asUser) {
         String topologyNamePrefix = generateUniqueStormTopologyNamePrefix(topologyId);
@@ -73,20 +61,5 @@ public class StormTopologyUtil {
             actualTopologyName = generateStormTopologyName(topologyId, topologyName);
         }
         return actualTopologyName;
-    }
-    
-    public static String extractStreamlineComponentName(String stormComponentId) {
-        String[] splitted = stormComponentId.split("-");
-        if (splitted.length <= 1) {
-            throw new IllegalArgumentException("Invalid Storm component ID for Streamline: " + stormComponentId);
-        }
-
-        List<String> splittedList = Arrays.asList(splitted);
-        return String.join("-", splittedList.subList(1, splittedList.size()));
-    }
-
-    public static String extractStreamlineComponentId(String stormComponentId) {
-        // removes all starting from first '-'
-        return stormComponentId.substring(0, stormComponentId.indexOf('-'));
     }
 }

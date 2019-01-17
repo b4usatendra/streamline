@@ -37,7 +37,8 @@ public enum ServiceConfigurations {
   DRUID("druid-common", "druid-overlord"),
   AMBARI_INFRA_SOLR("infra-solr-env"),
   ATLAS("application-properties"),
-  FLINK("flink","flink-env");
+  FLINK("flink", "flink-env");
+
   private final String[] confNames;
 
   ServiceConfigurations(String... confNames) {

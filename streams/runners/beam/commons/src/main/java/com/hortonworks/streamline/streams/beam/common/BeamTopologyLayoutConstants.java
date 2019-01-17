@@ -20,7 +20,6 @@ public final class BeamTopologyLayoutConstants {
     // artifact
     public static final String BEAM_HOME_DIR = "beamHomeDir";
     public static final String TOPOLOGY_MESSAGE_TIMEOUT_SECS = "topology.message.timeout.secs";
-    public static final String STREAMLINE_COMPONENT_CONF_KEY = "streamlineComponent";
     public static final String BEAM_ARTIFACTS_LOCATION_KEY = "beamArtifactsDirectory";
     public static final String BEAM_PIPELINE_JAR_LOCATION_KEY = "streamlineBeamJar";
 

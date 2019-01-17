@@ -15,10 +15,12 @@
  **/
 package com.hortonworks.streamline.streams.layout.component.rule.expression;
 
+import java.io.*;
+
 /**
  * For visiting the Condition expression tree.
  */
-interface ExpressionVisitor {
+public interface ExpressionVisitor extends Serializable {
     void visit(BinaryExpression binaryExpression);
     void visit(FieldExpression fieldExpression);
     void visit(ArrayFieldExpression arrayFieldExpression);

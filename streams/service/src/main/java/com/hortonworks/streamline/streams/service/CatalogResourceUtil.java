@@ -152,7 +152,7 @@ public final class CatalogResourceUtil
 			TopologyMetrics.TopologyMetric topologyMetric = metricsService.getTopologyMetric(topology, asUser);
 
 			//TODO make topology state configurable
-			detailedResponse = new TopologyDashboardResponse(topology, TopologyRunningStatus.NOT_RUNNING, namespaceName);
+			detailedResponse = new TopologyDashboardResponse(topology, TopologyRunningStatus.RUNNING, namespaceName);
 
 			if (!namespace.getStreamingEngine().equalsIgnoreCase("beam")) {
 			   List<Pair<String, Double>> latenciesTopN = metricsService.getTopNAndOtherComponentsLatency(topology, asUser, latencyTopN);

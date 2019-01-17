@@ -2,7 +2,6 @@ package com.hortonworks.streamline.streams.runtime.beam;
 
 import com.hortonworks.streamline.streams.*;
 import com.hortonworks.streamline.streams.common.*;
-import com.hortonworks.streamline.streams.layout.*;
 import com.hortonworks.streamline.streams.runtime.beam.kafka.*;
 import org.apache.kafka.clients.*;
 import org.apache.kafka.clients.producer.*;
@@ -18,6 +17,7 @@ import static org.apache.kafka.clients.producer.ProducerConfig.*;
 public class KafkaProducerTest {
 
     Producer<String, StreamlineEvent> producer;
+    Random random;
 
     private Properties getProducerProperties() {
         Properties properties = new Properties();
@@ -44,16 +44,16 @@ public class KafkaProducerTest {
 
     public void init() {
         producer = new KafkaProducer<String, StreamlineEvent>(getProducerProperties());
-
+        random = new Random();
     }
 
     private ProducerRecord<String, StreamlineEvent> getRecord() {
         StreamlineEventImpl event = StreamlineEventImpl.builder().dataSourceId("1").sourceStream("testProducer")
                 .put("machine", "testMachine")
-                .put("machine_COUNT", 10l)
-                .put("building_MAX","MAX")
+                .put("machine_COUNT", random.nextLong())
+                .put("building_MAX", "MAX")
                 .build();
-        return new ProducerRecord<>("beam_test_input","testMsgKey", event);
+        return new ProducerRecord<>("beam_test_input", "testMsgKey", event);
     }
 
     public void send() {
@@ -63,7 +63,7 @@ public class KafkaProducerTest {
     public static void main(String[] args) throws InterruptedException {
         KafkaProducerTest kafkaProducerTest = new KafkaProducerTest();
         kafkaProducerTest.init();
-        while(true){
+        while (true) {
             kafkaProducerTest.send();
             Thread.sleep(1000);
         }

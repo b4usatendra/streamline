@@ -178,7 +178,7 @@ class AddEnvironment extends Component {
         if (o.serviceName.toLowerCase() === 'storm') {
           missingStorm = false;
         }else if (o.serviceName.toLowerCase() === 'beam') {
-             missingStorm = false;
+          missingStorm = false;
         }
       });
     });

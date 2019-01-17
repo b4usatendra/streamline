@@ -335,11 +335,12 @@ public class BeamTopologyActionsImpl implements TopologyActions {
         Set<String> isDownloadedSet = new HashSet<>();
         for (String url : mavenRepositories) {
             url = url.split("\\^")[1];
+            ArtifactoryJarPathResolver artifactoryJarPathResolver = new ArtifactoryJarPathResolver(url);
             for (String dependency : mavenDependencies) {
                 if (!isDownloadedSet.contains(dependency)) {
                     String[] dependencyArray = dependency.split(":");
                     try {
-                        String downloadUrl = ArtifactoryJarPathResolver.resolve(url, dependencyArray[0], dependencyArray[1], dependencyArray[2]);
+                        String downloadUrl = artifactoryJarPathResolver.resolve(dependencyArray[0], dependencyArray[1], dependencyArray[2]);
                         Path path = httpFileDownloader.download(downloadUrl);
                         FileUtils.copyFileToDirectory(new File(path.toAbsolutePath().toString()), new File(destinationPath.toAbsolutePath().toString()));
                         isDownloadedSet.add(dependency);

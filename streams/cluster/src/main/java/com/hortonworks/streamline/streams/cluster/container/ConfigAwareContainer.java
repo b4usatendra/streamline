@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * @author suman.bn
  */
-public interface ConfigAwareContainer<T> {
+public interface ConfigAwareContainer<T extends NamespaceAwareContainer> {
 
     Map<String, Object> buildConfig(T t, Map<String, String> streamlineConf, Subject subject,
                                     Namespace namespace);

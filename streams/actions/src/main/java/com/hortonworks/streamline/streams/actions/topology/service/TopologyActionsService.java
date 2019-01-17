@@ -45,7 +45,7 @@ import com.hortonworks.streamline.streams.cluster.catalog.ServiceConfiguration;
 import com.hortonworks.streamline.streams.cluster.container.ContainingNamespaceAwareContainer;
 import com.hortonworks.streamline.streams.cluster.container.NamespaceAwareContainer;
 import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
-import com.hortonworks.streamline.streams.layout.*;
+import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
 import com.hortonworks.streamline.streams.layout.component.Edge;
 import com.hortonworks.streamline.streams.layout.component.OutputComponent;
 import com.hortonworks.streamline.streams.layout.component.StreamlineProcessor;
@@ -59,11 +59,19 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.Subject;
 import java.io.File;
-import java.io.*;
-import java.nio.file.*;
-import java.util.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
-import static com.hortonworks.streamline.streams.actions.topology.state.TopologyStates.*;
+import static com.hortonworks.streamline.streams.actions.topology.state.TopologyStates.TOPOLOGY_STATE_INITIAL;
 
 public class TopologyActionsService implements ContainingNamespaceAwareContainer {
     private static final Logger LOG = LoggerFactory.getLogger(TopologyActionsService.class);
@@ -80,9 +88,12 @@ public class TopologyActionsService implements ContainingNamespaceAwareContainer
     private final TopologyTestRunner topologyTestRunner;
     private final ManagedTransaction managedTransaction;
 
+
     public TopologyActionsService(StreamCatalogService catalogService, EnvironmentService environmentService,
                                   FileStorage fileStorage, MLModelRegistryClient modelRegistryClient,
                                   Map<String, Object> configuration, Subject subject, TransactionManager transactionManager) {
+
+
         this.catalogService = catalogService;
         this.environmentService = environmentService;
         this.fileStorage = fileStorage;
@@ -190,11 +201,11 @@ public class TopologyActionsService implements ContainingNamespaceAwareContainer
         if (dag.getComponents().isEmpty()) {
             throw new IllegalStateException("Empty topology");
         }
-        java.util.Optional<OutputComponent> processor = dag.getOutputComponents().stream()
+        Optional<OutputComponent> processor = dag.getOutputComponents().stream()
                 .filter(x -> x instanceof StreamlineProcessor)
                 .findFirst();
         if (!processor.isPresent()) {
-            java.util.Optional<OutputComponent> sourceWithOutgoingEdge = dag.getOutputComponents().stream()
+            Optional<OutputComponent> sourceWithOutgoingEdge = dag.getOutputComponents().stream()
                     .filter(x -> x instanceof StreamlineSource && !dag.getEdgesFrom(x).isEmpty())
                     .findFirst();
             if (!sourceWithOutgoingEdge.isPresent()) {
@@ -216,7 +227,8 @@ public class TopologyActionsService implements ContainingNamespaceAwareContainer
     // a string representing all additional maven modules needed for deploying the topology
     public String setUpExtraJars(Topology topology, TopologyActions topologyActions) throws IOException {
 
-        StormTopologyDependenciesHandler extraJarsHandler = new StormTopologyDependenciesHandler(catalogService);
+        String streamingEngine = environmentService.getNamespace(topology.getNamespaceId()).getStreamingEngine();
+        TopologyDependenciesHandler extraJarsHandler = new TopologyDependenciesHandler(streamingEngine, catalogService);
         topology.getTopologyDag().traverse(extraJarsHandler);
         Path extraJarsLocation = topologyActions.getExtraJarsLocation(CatalogToLayoutConverter.getTopologyLayout(topology));
         makeEmptyDir(extraJarsLocation);
@@ -224,14 +236,6 @@ public class TopologyActionsService implements ContainingNamespaceAwareContainer
         extraJars.addAll(extraJarsHandler.getExtraJars());
         extraJars.addAll(getBundleJars(extraJarsHandler.getTopologyComponentBundleSet()));
         downloadAndCopyJars(extraJars, extraJarsLocation);
-
-
-        Namespace namespace = environmentService.getNamespace(topology.getNamespaceId());
-        if (namespace.getStreamingEngine().equalsIgnoreCase(TopologyLayoutConstants.STORM_STREAMING_ENGINE)) {
-
-        } else if (namespace.getStreamingEngine().equalsIgnoreCase(TopologyLayoutConstants.BEAM_STREAMING_ENGINE)) {
-
-        }
 
         return extraJarsHandler.getMavenDeps();
     }
@@ -243,7 +247,6 @@ public class TopologyActionsService implements ContainingNamespaceAwareContainer
         }
         return bundleJars;
     }
-
 
 
     private void downloadAndCopyJars(Set<String> jarsToDownload, Path destinationPath) throws IOException {

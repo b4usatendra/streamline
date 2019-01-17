@@ -15,14 +15,15 @@
  **/
 package com.hortonworks.streamline.streams.beam.common;
 
-import org.apache.beam.repackaged.beam_sdks_java_core.com.google.common.base.*;
+import com.hortonworks.streamline.streams.common.utils.TopologyUtil;
+import org.apache.beam.repackaged.beam_sdks_java_core.com.google.common.base.Strings;
 
-import java.util.Arrays;
-import java.util.List;
+public class BeamTopologyUtil extends TopologyUtil {
 
-public class BeamTopologyUtil {
-    private BeamTopologyUtil() {
-    }
+  private BeamTopologyUtil() {
+    super();
+  }
+
 
     public static String generateBeamTopologyName(Long topologyId, String topologyName) {
         return "streamline-" + topologyId + "-" + topologyName;
@@ -46,7 +47,6 @@ public class BeamTopologyUtil {
 
     public static String findStormCompleteTopologyName(Long topologyId, String asUser) {
         String topologyNamePrefix = generateUniqueBeamTopologyNamePrefix(topologyId);
-
         return topologyNamePrefix;
     }
 
@@ -56,20 +56,5 @@ public class BeamTopologyUtil {
             actualTopologyName = generateBeamTopologyName(topologyId, topologyName);
         }
         return actualTopologyName;
-    }
-
-    public static String extractStreamlineComponentName(String stormComponentId) {
-        String[] splitted = stormComponentId.split("-");
-        if (splitted.length <= 1) {
-            throw new IllegalArgumentException("Invalid Beam component ID for Streamline: " + stormComponentId);
-        }
-
-        List<String> splittedList = Arrays.asList(splitted);
-        return String.join("-", splittedList.subList(1, splittedList.size()));
-    }
-
-    public static String extractStreamlineComponentId(String stormComponentId) {
-        // removes all starting from first '-'
-        return stormComponentId.substring(0, stormComponentId.indexOf('-'));
     }
 }

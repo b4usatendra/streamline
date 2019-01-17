@@ -16,15 +16,18 @@
 package com.hortonworks.streamline.streams.actions.container;
 
 
-import com.hortonworks.streamline.streams.actions.*;
-import com.hortonworks.streamline.streams.actions.config.mapping.*;
-import com.hortonworks.streamline.streams.actions.container.mapping.*;
-import com.hortonworks.streamline.streams.cluster.catalog.*;
-import com.hortonworks.streamline.streams.cluster.container.*;
-import com.hortonworks.streamline.streams.cluster.service.*;
+import com.hortonworks.streamline.streams.actions.TopologyActions;
+import com.hortonworks.streamline.streams.actions.config.mapping.MappedTopologyActionsConfigImpl;
+import com.hortonworks.streamline.streams.actions.container.mapping.MappedTopologyActionsImpl;
+import com.hortonworks.streamline.streams.cluster.catalog.Namespace;
+import com.hortonworks.streamline.streams.cluster.container.ConfigAwareContainer;
+import com.hortonworks.streamline.streams.cluster.container.NamespaceAwareContainer;
+import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
 
-import javax.security.auth.*;
-import java.util.*;
+import javax.security.auth.Subject;
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.Map;
 
 
 public class TopologyActionsContainer extends NamespaceAwareContainer<TopologyActions> {
@@ -67,7 +70,6 @@ public class TopologyActionsContainer extends NamespaceAwareContainer<TopologyAc
         return initTopologyActions(conf, className);
     }
 
-
     private ConfigAwareContainer initActionsConfig(String streamingEngine) {
         MappedTopologyActionsConfigImpl actionsConfigImpl;
         try {
@@ -91,6 +93,29 @@ public class TopologyActionsContainer extends NamespaceAwareContainer<TopologyAc
             return topologyActions;
         } catch (IllegalAccessException | InstantiationException | ClassNotFoundException e) {
             throw new RuntimeException("Can't initialize Topology actions instance - Class Name: " + className, e);
+        }
+    }
+
+    public static String applyReservedPaths(String steamingEngineJarLocation) {
+        return steamingEngineJarLocation.replace(RESERVED_PATH_STREAMLINE_HOME, System.getProperty(SYSTEM_PROPERTY_STREAMLINE_HOME, getCWD()));
+    }
+
+    public static String getCWD() {
+        return Paths.get(".").toAbsolutePath().normalize().toString();
+    }
+
+    public static String findFirstMatchingJarLocation(String jarFindDir, String jarNamePrefix) {
+        String[] jars = new File(jarFindDir).list((dir, name) -> {
+            if (name.startsWith(jarNamePrefix) && name.endsWith(".jar")) {
+                return true;
+            }
+            return false;
+        });
+
+        if (jars == null || jars.length == 0) {
+            return null;
+        } else {
+            return jarFindDir + File.separator + jars[0];
         }
     }
 }

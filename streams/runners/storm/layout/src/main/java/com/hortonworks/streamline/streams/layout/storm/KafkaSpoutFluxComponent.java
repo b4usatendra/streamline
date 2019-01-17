@@ -172,6 +172,7 @@ public class KafkaSpoutFluxComponent extends AbstractFluxComponent {
                 "sslEnabledProtocols", "sslKeystoreType", "sslTruststoreType", "sslProtocol", "sslProvider", "sslCipherSuites", "sslEndpointIdAlgo",
                 "sslKeyManagerAlgo", "sslSecureRandomImpl", "sslTrustManagerAlgo"
         };
+
         List<String> methodNames = new ArrayList<>();
         List<Object> args = new ArrayList<>();
         methodNames.add(methodName);

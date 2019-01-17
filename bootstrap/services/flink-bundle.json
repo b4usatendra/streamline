@@ -4,10 +4,10 @@
   "serviceUISpecification": {
     "fields": [
       {
-        "uiName": "Master Endpoint",
-        "fieldName": "master.endpoint",
-        "isOptional": false,
-        "tooltip": "flink cluster URI",
+        "uiName": "Connection Endpoint",
+        "fieldName": "connection.endpoint",
+        "isOptional": true,
+        "tooltip": "Beam cluster URI",
         "type": "string"
       }
     ]

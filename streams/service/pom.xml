@@ -21,7 +21,10 @@
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-catalog</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.hortonworks.streamline</groupId>
+            <artifactId>streamline-common</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-cluster</artifactId>
@@ -60,7 +63,6 @@
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-metrics-beam</artifactId>
         </dependency>
-
 
         <dependency>
             <groupId>com.hortonworks.streamline</groupId>

@@ -34,14 +34,15 @@ public class BeamPipelineExecutor {
         //System.setProperty("runner", "DirectRunner");
         TopologyDag topologyDag = newLayout.getTopologyDag();
 
-        BeamTopologyFluxGenerator fluxGenerator = new BeamTopologyFluxGenerator(newLayout, conf, getExtraJarsLocation(newLayout));
+        BeamTopologyComponentGenerator fluxGenerator = new BeamTopologyComponentGenerator(newLayout, conf, getExtraJarsLocation(newLayout));
         topologyDag.traverse(fluxGenerator);
         Pipeline pipeline = fluxGenerator.getPipeline();
+
         //pipeline.getOptions().setRunner(FlinkRunner.class);
         //options.setTempLocation("/streamline/libs/beam-artifacts/streamline-4-kafka-example/jars");
         options.setJobName(topologyMapper.getTopologyLayout().getName());
-        PipelineResult result=pipeline.run(options);
-        System.out.println(result);
+        pipeline.run(options);
+
     }
 
     public Path getExtraJarsLocation(TopologyLayout topology) {
