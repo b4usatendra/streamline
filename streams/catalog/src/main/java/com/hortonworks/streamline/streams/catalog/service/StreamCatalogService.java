@@ -2768,7 +2768,7 @@ public class StreamCatalogService {
             }
             //TODO add logic for beam streamEngine
         } else if (topologyComponentBundle.getStreamingEngine().equals(TopologyLayoutConstants.BEAM_STREAMING_ENGINE)) {
-           throw new NotImplementedException("Logic is not implemented for BEAM StreamingEngine");
+
         }
     }
 

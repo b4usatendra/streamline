@@ -41,7 +41,7 @@ public class FlinkServiceRegistrar extends AbstractServiceRegistrar {
 
   @Override
   protected String getServiceName() {
-    return Constants.Beam.SERVICE_NAME;
+    return Constants.Flink.SERVICE_NAME;
   }
 
   @Override
@@ -83,8 +83,8 @@ public class FlinkServiceRegistrar extends AbstractServiceRegistrar {
 
     Map<String, String> confMap = new HashMap<>();
 
-    if (config.contains(Constants.Beam.PROPERTY_CONNECTION_ENDPOINT)) {
-      confMap.put(Constants.Beam.PROPERTY_CONNECTION_ENDPOINT, config.getString(Constants.Beam.PROPERTY_CONNECTION_ENDPOINT));
+    if (config.contains(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT)) {
+      confMap.put(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT, config.getString(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT));
     }
 
     try {
@@ -97,11 +97,11 @@ public class FlinkServiceRegistrar extends AbstractServiceRegistrar {
   }
 
   private Pair<Component, List<ComponentProcess>> createBeamComponent(Config config, Map<String, String> flattenConfigMap) {
-    if (!config.contains(Constants.Beam.PROPERTY_CONNECTION_ENDPOINT)) {
-      throw new IllegalArgumentException("Required parameter " + Constants.Beam.PROPERTY_CONNECTION_ENDPOINT + " not present.");
+    if (!config.contains(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT)) {
+      throw new IllegalArgumentException("Required parameter " + Constants.Flink.PROPERTY_CONNECTION_ENDPOINT + " not present.");
     }
     Component beamComponent = new Component();
-    beamComponent.setName(Constants.Beam.PROPERTY_CONNECTION_ENDPOINT);
+    beamComponent.setName(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT);
 
     List<ComponentProcess> componentProcesses = new ArrayList<>();
 

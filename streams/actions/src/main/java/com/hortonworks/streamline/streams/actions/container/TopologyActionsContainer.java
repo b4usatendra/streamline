@@ -96,8 +96,8 @@ public class TopologyActionsContainer extends NamespaceAwareContainer<TopologyAc
         }
     }
 
-    public static String applyReservedPaths(String steamingEngineJarLocation) {
-        return steamingEngineJarLocation.replace(RESERVED_PATH_STREAMLINE_HOME, System.getProperty(SYSTEM_PROPERTY_STREAMLINE_HOME, getCWD()));
+    public static String applyReservedPaths(String location) {
+        return location.replace(RESERVED_PATH_STREAMLINE_HOME, System.getProperty(SYSTEM_PROPERTY_STREAMLINE_HOME, getCWD()));
     }
 
     public static String getCWD() {

@@ -157,23 +157,25 @@ echo "User/Role bundle Root dir: ${user_role_dir}"
 
 function update_bundles {
     # === Source ===
-    put_topology_component_bundle /streams/componentbundles/SOURCE ${component_dir}/sources/kafka-source-topology-component.json KAFKA STORM
+    #put_topology_component_bundle /streams/componentbundles/SOURCE ${component_dir}/sources/kafka-source-topology-component.json KAFKA STORM
     put_topology_component_bundle /streams/componentbundles/SOURCE ${component_dir}/sources/beam-kafka-source-topology-component.json KAFKA BEAM
     # === Processor ===
 
     # === Sink ===
-    put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/hdfs-sink-topology-component.json HDFS STORM
-    put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/jdbc-sink-topology-component.json JDBC STORM
-    put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/hive-sink-topology-component.json HIVE STORM
-    put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/druid-sink-topology-component.json DRUID STORM
+    put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/beam-kafka-sink-topology-component.json KAFKA BEAM
+    #put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/hdfs-sink-topology-component.json HDFS STORM
+    #put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/jdbc-sink-topology-component.json JDBC STORM
+    #put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/hive-sink-topology-component.json HIVE STORM
+    #put_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/druid-sink-topology-component.json DRUID STORM
     # === Topology ===
-    put_topology_component_bundle /streams/componentbundles/TOPOLOGY ${component_dir}/topology/storm-topology-component.json TOPOLOGY STORM
+    #put_topology_component_bundle /streams/componentbundles/TOPOLOGY ${component_dir}/topology/storm-topology-component.json TOPOLOGY STORM
+
     # === Service Bundle ===
-    put_service_bundle /servicebundles/KAFKA ${service_dir}/kafka-bundle.json
-    put_service_bundle /servicebundles/STORM ${service_dir}/storm-bundle.json
-    put_service_bundle /servicebundles/ZOOKEEPER ${service_dir}/zookeeper-bundle.json
-    put_service_bundle /servicebundles/BEAM ${service_dir}/beam-bundle.json
-    post /servicebundles ${service_dir}/druid-bundle.json
+    #put_service_bundle /servicebundles/KAFKA ${service_dir}/kafka-bundle.json
+    #put_service_bundle /servicebundles/STORM ${service_dir}/storm-bundle.json
+    #put_service_bundle /servicebundles/ZOOKEEPER ${service_dir}/zookeeper-bundle.json
+    #put_service_bundle /servicebundles/BEAM ${service_dir}/beam-bundle.json
+    #post /servicebundles ${service_dir}/druid-bundle.json
 }
 
 function add_udfs {
@@ -293,8 +295,8 @@ function main {
     echo "===================================================================================="
     echo "Running bootstrap.sh will create streamline default components, notifiers, udfs and roles"
 
-    #update_bundles
-    add_udfs
+    update_bundles
+    #add_udfs
     #update_custom_processors_with_digest
 }
 

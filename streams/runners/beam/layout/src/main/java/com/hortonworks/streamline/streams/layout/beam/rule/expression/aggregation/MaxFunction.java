@@ -8,7 +8,6 @@ import com.hortonworks.streamline.streams.layout.component.rule.expression.Numbe
  */
 public class MaxFunction extends BeamAggregationFunction {
 
-
   public MaxFunction(String fieldName) {
     super(fieldName);
     value = Long.MIN_VALUE;
@@ -24,7 +23,7 @@ public class MaxFunction extends BeamAggregationFunction {
       if ((streamlineEvent.get(fieldName) instanceof Number) && (streamlineEvent
           .get(fieldName) instanceof Comparable)) {
         comparator = new NumberComparator((Number) streamlineEvent.get(fieldName));
-        result = comparator.maxValue(maxValue.intValue());
+        result = comparator.maxValue(maxValue);
         if (result >= 0) {
           value = comparator.firstValue;
           event = streamlineEvent;

@@ -2,9 +2,12 @@ package com.hortonworks.streamline.streams.actions.beam.topology;
 
 import com.hortonworks.streamline.streams.actions.config.TopologyActionsConfig;
 import com.hortonworks.streamline.streams.actions.container.TopologyActionsContainer;
+import com.hortonworks.streamline.streams.beam.common.BeamTopologyLayoutConstants;
 import com.hortonworks.streamline.streams.cluster.catalog.Namespace;
 import com.hortonworks.streamline.streams.cluster.catalog.Service;
 import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
+import org.apache.beam.sdk.options.PipelineOptions;
+import org.apache.beam.sdk.options.PipelineOptionsFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,7 +88,8 @@ public class BeamTopologyActionsConfigImpl extends TopologyActionsConfig {
     } else {
       beamJarLocation = TopologyActionsContainer.applyReservedPaths(beamJarLocation);
     }
-
+    PipelineOptions options = PipelineOptionsFactory.create();
+    conf.put(BeamTopologyLayoutConstants.BEAM_PIPELINE_OPTIONS, options);
     conf.put(STREAMLINE_BEAM_JAR, beamJarLocation);
     // Topology during run-time will require few critical configs such as schemaRegistryUrl and catalogRootUrl
     // Hence its important to pass StreamlineConfig to TopologyConfigA

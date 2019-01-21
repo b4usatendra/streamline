@@ -12,7 +12,7 @@
  * the License.
  **/
 
-package com.hortonworks.streamline.streams.runtime.event.sedes.kafka;
+package com.hortonworks.streamline.streams.common.event.sedes.kafka;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;

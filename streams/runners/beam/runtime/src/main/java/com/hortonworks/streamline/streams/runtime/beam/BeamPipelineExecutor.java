@@ -15,13 +15,11 @@ import java.util.*;
  */
 public class BeamPipelineExecutor {
 
-    private Pipeline pipeline;
     private static final Logger LOG = LoggerFactory.getLogger(BeamPipelineExecutor.class);
     private String stormArtifactsLocation = "/tmp/storm-artifacts/";
-    private TopologyMapper topologyMapper;
 
     private void initializePipeline(String filePath) {
-        System.setProperty("java.security.auth.login.config", "/Users/satendra.sahu/code/github/streamline/conf/jaas.conf");
+
 
         TopologyMapper topologyMapper = deserializeTopologyDag(filePath);
         TopologyLayout newLayout = topologyMapper.getTopologyLayout();

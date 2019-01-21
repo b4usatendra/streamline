@@ -1,19 +1,16 @@
 /**
  * Copyright 2017 Hortonworks.
  * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing permissions and limitations under the License.
  **/
 package com.hortonworks.streamline.streams.actions.beam.topology;
+
+import static java.util.stream.Collectors.toList;
 
 import com.google.common.base.Joiner;
 import com.hortonworks.streamline.streams.actions.TopologyActionContext;
@@ -34,12 +31,6 @@ import com.hortonworks.streamline.streams.layout.component.impl.testing.TestRunR
 import com.hortonworks.streamline.streams.layout.component.impl.testing.TestRunSink;
 import com.hortonworks.streamline.streams.layout.component.impl.testing.TestRunSource;
 import groovyx.net.http.HttpResponseException;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -59,16 +50,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Storm implementation of the TopologyActions interface
+ * Beam implementation of the TopologyActions interface
  */
 public class BeamTopologyActionsImpl implements TopologyActions {
+
   private static final Logger LOG = LoggerFactory.getLogger(BeamTopologyActionsImpl.class);
 
   private String beamJarLocation;
@@ -77,7 +71,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
   private final ConcurrentHashMap<Long, Boolean> forceKillRequests = new ConcurrentHashMap<>();
   private HttpFileDownloader httpFileDownloader;
   private String beamArtifactsLocation = "/beam-artifacts";
-  private String serializedTopologyBasePath = "/tmp/";
+  private final String tempTopologyPath = "/tmp/topology/%s/%s/";
 
   private String javaJarCommand;
 
@@ -92,6 +86,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
   @Override
   public void init(Map<String, Object> conf) {
     this.conf = conf;
+
     if (conf != null) {
       if (conf.containsKey(TopologyLayoutConstants.DEFAULT_ABSOLUTE_JAR_LOCATION_DIR)) {
         String defaultArtifactsLocation = (String) conf.get(TopologyLayoutConstants.DEFAULT_ABSOLUTE_JAR_LOCATION_DIR);
@@ -191,9 +186,16 @@ public class BeamTopologyActionsImpl implements TopologyActions {
   public void deploy(TopologyLayout topology, String mavenArtifacts, TopologyActionContext ctx, String asUser)
       throws Exception {
 
-    //serialize topology
-    String filePath = serializedTopologyBasePath + topology.getName();
     Map<String, Object> config = new HashMap<String, Object>();
+    File file = new File(getTopologyTempPath(topology.getName(), "jaas"));
+    file.mkdirs();
+    conf.put(BeamTopologyLayoutConstants.JAAS_CONF_PATH, file.getAbsolutePath() + "/jaas.conf");
+
+    //serialize topology
+    file = new File(getTopologyTempPath(topology.getName(), "serialization"));
+    file.mkdirs();
+    String filePath = file.getAbsolutePath()+"/serializedObject";
+
     Set<Map.Entry<String, Object>> set = conf.entrySet();
 
     for (Map.Entry<String, Object> entry : set) {
@@ -245,6 +247,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
   }
 
   private static class ShellProcessResult {
+
     private final int exitValue;
     private final String stdout;
 
@@ -375,10 +378,10 @@ public class BeamTopologyActionsImpl implements TopologyActions {
 
   @Override
   public void runTest(TopologyLayout topology, TopologyTestRunHistory testRunHistory, String mavenArtifacts,
-                      Map<String, TestRunSource> testRunSourcesForEachSource,
-                      Map<String, TestRunProcessor> testRunProcessorsForEachProcessor,
-                      Map<String, TestRunRulesProcessor> testRunRulesProcessorsForEachProcessor,
-                      Map<String, TestRunSink> testRunSinksForEachSink, Optional<Long> durationSecs)
+      Map<String, TestRunSource> testRunSourcesForEachSource,
+      Map<String, TestRunProcessor> testRunProcessorsForEachProcessor,
+      Map<String, TestRunRulesProcessor> testRunRulesProcessorsForEachProcessor,
+      Map<String, TestRunSink> testRunSinksForEachSink, Optional<Long> durationSecs)
       throws Exception {
     TopologyDag originalTopologyDag = topology.getTopologyDag();
 
@@ -454,7 +457,9 @@ public class BeamTopologyActionsImpl implements TopologyActions {
   @Override
   public String getRuntimeTopologyId(TopologyLayout topology, String asUser) {
     //TODO get the runtime topology id(calls cluster apis)
-    return UUID.randomUUID().toString();
+    //return UUID.randomUUID().toString();
+    return null;
+
   }
 
  /*   private TopologyLayout copyTopologyLayout(TopologyLayout topology, TopologyDag replacedTopologyDag) {
@@ -551,6 +556,10 @@ public class BeamTopologyActionsImpl implements TopologyActions {
 
   private String generateBeamTopologyName(TopologyLayout topology) {
     return BeamTopologyUtil.generateStormTopologyName(topology.getId(), topology.getName());
+  }
+
+  private String getTopologyTempPath(String topologyName, String subDir) {
+    return String.format(tempTopologyPath, topologyName, subDir);
   }
 
   private String getFilePath(TopologyLayout topology) {

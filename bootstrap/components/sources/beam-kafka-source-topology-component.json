@@ -51,6 +51,20 @@
         "type": "string"
       },
       {
+        "uiName": "Key Deserializer",
+        "fieldName": "keyDeserializer",
+        "isOptional": false,
+        "tooltip": "Type of de-serialization used to read record key",
+        "type": "string"
+      },
+      {
+        "uiName": "Value Deserializer",
+        "fieldName": "valueDeserializer",
+        "isOptional": false,
+        "tooltip": "Type of de-serialization used to read record",
+        "type": "string"
+      },
+      {
         "uiName": "Fetch minimum bytes",
         "fieldName": "fetchMinimumBytes",
         "isOptional": true,

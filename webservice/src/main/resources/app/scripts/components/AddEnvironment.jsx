@@ -172,22 +172,22 @@ class AddEnvironment extends Component {
       this.descRef.setAttribute('class', "form-control");
     }
 
-    let missingStorm = true;
+    let missingStreamingEngine = true;
     _.keys(this.selectionList).map(key => {
       this.selectionList[key].map((o) => {
         if (o.serviceName.toLowerCase() === 'storm') {
-          missingStorm = false;
-        }else if (o.serviceName.toLowerCase() === 'beam') {
-          missingStorm = false;
+          missingStreamingEngine = false;
+        }else if (o.serviceName.toLowerCase() === 'flink') {
+          missingStreamingEngine = false;
         }
       });
     });
-    if (this.refs.missingStorm != undefined) {
-      if (missingStorm) {
-        this.refs.missingStorm.className = 'text-danger';
+    if (this.refs.missingStreamingEngine != undefined) {
+      if (missingStreamingEngine) {
+        this.refs.missingStreamingEngine.className = 'text-danger';
         errArr.push("error");
       } else {
-        this.refs.missingStorm.className = '';
+        this.refs.missingStreamingEngine.className = '';
       }
     } else {
       errArr.push("error");
@@ -362,8 +362,8 @@ class AddEnvironment extends Component {
           </div>
           <h4 className="environment-modal-title" data-stest="selectServicesLabel">Select Services</h4>
           {entities.length !== 0
-            ? <small ref="missingStorm">
-                (Atleast one streaming engine (eg: STORM, BEAM) must be selected.)</small>
+            ? <small ref="missingStreamingEngine">
+                (Atleast one streaming engine (eg: STORM, FLINK) must be selected.)</small>
             : ''
 }
           {
