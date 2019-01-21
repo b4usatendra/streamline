@@ -22,7 +22,6 @@ import com.hortonworks.streamline.streams.cluster.catalog.Component;
 import com.hortonworks.streamline.streams.cluster.catalog.ComponentProcess;
 import com.hortonworks.streamline.streams.cluster.catalog.ServiceConfiguration;
 import com.hortonworks.streamline.streams.cluster.Constants;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
 
 import java.util.Collections;
 import java.util.HashMap;

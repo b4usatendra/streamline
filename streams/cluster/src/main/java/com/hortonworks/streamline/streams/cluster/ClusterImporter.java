@@ -25,7 +25,7 @@ import com.hortonworks.streamline.streams.cluster.discovery.ServiceNodeDiscovere
 import com.hortonworks.streamline.streams.cluster.discovery.ambari.ComponentPropertyPattern;
 import com.hortonworks.streamline.streams.cluster.discovery.ambari.SerivceConfigurationFilter;
 import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurationFilters;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
+import com.hortonworks.streamline.streams.common.ServiceConfigurations;
 import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
 import com.hortonworks.streamline.streams.cluster.service.metadata.json.KafkaBrokerListeners;
 import org.jooq.lambda.Unchecked;

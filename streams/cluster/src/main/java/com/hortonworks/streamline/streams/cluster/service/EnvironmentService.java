@@ -453,7 +453,6 @@ public class EnvironmentService {
         if (namespace.getTimestamp() == null) {
             namespace.setTimestamp(System.currentTimeMillis());
         }
-
         this.dao.add(namespace);
         return namespace;
     }

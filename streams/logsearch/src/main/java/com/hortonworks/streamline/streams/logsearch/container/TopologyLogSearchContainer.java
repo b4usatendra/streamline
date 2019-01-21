@@ -19,7 +19,7 @@ import com.hortonworks.streamline.common.exception.ConfigException;
 import com.hortonworks.streamline.streams.cluster.catalog.*;
 import com.hortonworks.streamline.streams.cluster.container.NamespaceAwareContainer;
 import com.hortonworks.streamline.streams.cluster.discovery.ambari.ComponentPropertyPattern;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
+import com.hortonworks.streamline.streams.common.ServiceConfigurations;
 import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
 import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
 import com.hortonworks.streamline.streams.logsearch.DefaultTopologyLogSearch;

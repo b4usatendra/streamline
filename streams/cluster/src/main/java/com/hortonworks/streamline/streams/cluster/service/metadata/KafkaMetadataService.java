@@ -23,6 +23,7 @@ import com.hortonworks.streamline.streams.cluster.service.*;
 import com.hortonworks.streamline.streams.cluster.service.metadata.common.*;
 import com.hortonworks.streamline.streams.cluster.service.metadata.json.*;
 import com.hortonworks.streamline.streams.cluster.service.metadata.json.Security;
+import com.hortonworks.streamline.streams.common.ServiceConfigurations;
 import org.apache.commons.lang3.*;
 import org.apache.commons.math3.util.*;
 

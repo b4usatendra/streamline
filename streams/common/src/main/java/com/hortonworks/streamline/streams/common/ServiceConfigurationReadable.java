@@ -1,4 +1,4 @@
-package com.hortonworks.streamline.streams.storm.common;
+package com.hortonworks.streamline.streams.common;
 
 import java.util.Map;
 

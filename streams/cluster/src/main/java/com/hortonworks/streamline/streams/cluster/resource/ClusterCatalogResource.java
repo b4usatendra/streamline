@@ -31,7 +31,7 @@ import com.hortonworks.streamline.streams.cluster.catalog.NamespaceServiceCluste
 import com.hortonworks.streamline.streams.cluster.catalog.Service;
 import com.hortonworks.streamline.streams.cluster.catalog.ServiceConfiguration;
 import com.hortonworks.streamline.streams.cluster.discovery.ambari.AmbariServiceNodeDiscoverer;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
+import com.hortonworks.streamline.streams.common.ServiceConfigurations;
 import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
 import com.hortonworks.streamline.streams.cluster.service.metadata.StormMetadataService;
 import com.hortonworks.streamline.streams.security.Permission;

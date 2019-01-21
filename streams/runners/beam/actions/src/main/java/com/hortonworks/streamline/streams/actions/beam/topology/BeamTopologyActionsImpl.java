@@ -143,7 +143,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
 
             serviceConfigurationReader = new BeamServiceConfigurationReader(environmentService,namespaceId.longValue());
 
-            Map<String,String> runnerConfig = serviceConfigurationReader.getConfig();
+            Map<String,String> runnerConfig = serviceConfigurationReader.getRunnerConfig();
             if(!runnerConfig.containsKey(FLINK_MASTER_KEY))
                 throw new RuntimeException(String.format("%s config not found", FLINK_MASTER_KEY));
             flinkClient = new FlinkRestAPIClient(
@@ -250,7 +250,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     }
 
     private String getRunnerMaster(BeamRunner runner){
-        Map<String,String> runnerConfig = serviceConfigurationReader.getConfig();
+        Map<String,String> runnerConfig = serviceConfigurationReader.getRunnerConfig();
         switch (runner){
             case FlinkRunner:
                 if(!runnerConfig.containsKey(FLINK_MASTER_KEY))
