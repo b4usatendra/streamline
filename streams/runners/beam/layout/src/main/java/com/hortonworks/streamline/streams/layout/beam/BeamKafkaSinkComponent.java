@@ -41,7 +41,6 @@ public class BeamKafkaSinkComponent extends AbstractBeamComponent {
   static final String SASL_KERBEROS_SERVICE_NAME = "kafkaServiceName";
   private static final Logger LOG = LoggerFactory.getLogger(BeamKafkaSinkComponent.class);
 
-  private KafkaSinkComponent kafkaSinkComponent;
 
   public BeamKafkaSinkComponent() {
   }

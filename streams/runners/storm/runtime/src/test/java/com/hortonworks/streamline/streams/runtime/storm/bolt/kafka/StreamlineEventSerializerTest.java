@@ -17,6 +17,7 @@ package com.hortonworks.streamline.streams.runtime.storm.bolt.kafka;
 
 import com.hortonworks.streamline.streams.StreamlineEvent;
 import com.hortonworks.streamline.streams.common.StreamlineEventImpl;
+import com.hortonworks.streamline.streams.common.event.sedes.kafka.StreamlineEventSerializer;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
