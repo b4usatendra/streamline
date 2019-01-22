@@ -15,13 +15,13 @@
  **/
 package com.hortonworks.streamline.streams.layout.component;
 
-import com.fasterxml.jackson.core.type.*;
-import com.fasterxml.jackson.databind.*;
-import com.hortonworks.streamline.common.*;
-import org.apache.commons.lang3.*;
-
-import java.io.*;
-import java.util.*;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hortonworks.streamline.common.Config;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 public class TopologyLayout implements Serializable {
     private final Long id;

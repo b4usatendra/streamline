@@ -16,13 +16,19 @@
 package com.hortonworks.streamline.streams.actions.beam.topology;
 
 import com.hortonworks.streamline.common.Config;
-import com.hortonworks.streamline.streams.layout.component.*;
+import com.hortonworks.streamline.streams.layout.component.Edge;
+import com.hortonworks.streamline.streams.layout.component.InputComponent;
+import com.hortonworks.streamline.streams.layout.component.OutputComponent;
+import com.hortonworks.streamline.streams.layout.component.StreamlineProcessor;
+import com.hortonworks.streamline.streams.layout.component.StreamlineSink;
+import com.hortonworks.streamline.streams.layout.component.StreamlineSource;
+import com.hortonworks.streamline.streams.layout.component.TopologyDag;
+import com.hortonworks.streamline.streams.layout.component.TopologyDagVisitor;
 import com.hortonworks.streamline.streams.layout.component.impl.RulesProcessor;
 import com.hortonworks.streamline.streams.layout.component.impl.testing.TestRunProcessor;
 import com.hortonworks.streamline.streams.layout.component.impl.testing.TestRunRulesProcessor;
 import com.hortonworks.streamline.streams.layout.component.impl.testing.TestRunSink;
 import com.hortonworks.streamline.streams.layout.component.impl.testing.TestRunSource;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

@@ -1,9 +1,7 @@
 package com.hortonworks.streamline.streams.actions.beam.topology;
 
-import org.apache.beam.sdk.*;
-
-import java.io.*;
-import java.nio.channels.*;
+import java.io.Serializable;
+import org.apache.beam.sdk.Pipeline;
 
 /**
  * Created by Satendra Sahu on 11/22/18
