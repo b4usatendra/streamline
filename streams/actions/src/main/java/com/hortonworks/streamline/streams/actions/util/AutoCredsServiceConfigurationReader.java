@@ -19,8 +19,8 @@ import java.util.stream.Collectors;
 
 public class AutoCredsServiceConfigurationReader implements ServiceConfigurationReadable {
 
-    private final EnvironmentService environmentService;
-    private final long namespaceId;
+    protected final EnvironmentService environmentService;
+    protected final long namespaceId;
 
     public AutoCredsServiceConfigurationReader(EnvironmentService environmentService, long namespaceId) {
         this.environmentService = environmentService;

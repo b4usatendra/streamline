@@ -25,11 +25,11 @@
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.beam/beam-sdks-java-io-amazon-web-services -->
-        <dependency>
+        <!--<dependency>
             <groupId>org.apache.beam</groupId>
             <artifactId>beam-sdks-java-io-amazon-web-services</artifactId>
             <version>2.7.0</version>
-        </dependency>
+        </dependency>-->
 
 
         <dependency>

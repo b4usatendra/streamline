@@ -46,7 +46,7 @@ public class BeamPipelineExecutor {
     }
 
     public Path getExtraJarsLocation(TopologyLayout topology) {
-        return Paths.get(beamArtifactsLocation, generateBeamTopologyName(topology), "jars");
+        return Paths.get(beamArtifactsLocation, generateBeamTopologyName(topology), BeamTopologyLayoutConstants.BEAM_JAR_FILE_TYPE_KEY);
     }
 
     private String generateBeamTopologyName(TopologyLayout topology) {

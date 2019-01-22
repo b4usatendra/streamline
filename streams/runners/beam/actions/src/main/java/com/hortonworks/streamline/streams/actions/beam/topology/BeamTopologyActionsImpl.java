@@ -16,7 +16,6 @@ package com.hortonworks.streamline.streams.actions.beam.topology;
 import static java.util.stream.Collectors.toList;
 
 import com.google.common.base.Joiner;
-import com.hortonworks.streamline.common.exception.service.exception.request.TopologyAlreadyExistsOnCluster;
 import com.hortonworks.streamline.streams.actions.TopologyActionContext;
 import com.hortonworks.streamline.streams.actions.TopologyActions;
 import com.hortonworks.streamline.streams.actions.topology.service.ArtifactoryJarPathResolver;

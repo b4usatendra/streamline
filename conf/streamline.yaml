@@ -21,7 +21,6 @@ modules:
       # directory (absolute path) to use for maven local repository (optional)
       # in practice it should not be under "/tmp" and the account which runs 'streamline' should have read/write permission
       mavenLocalRepositoryDirectory: "/tmp/local-repo"
-      streamlineBeamJar: "/Users/karthik.k1/olacabs/karthik/streamline/libs/streamline-runtime-beam-0.6.0-SNAPSHOT.jar"
       beamArtifactsDirectory: "/Users/karthik.k1/olacabs/karthik/streamline/libs/beam-artifacts"
 
 catalogRootUrl: "http://localhost:6060/api/v1/catalog"

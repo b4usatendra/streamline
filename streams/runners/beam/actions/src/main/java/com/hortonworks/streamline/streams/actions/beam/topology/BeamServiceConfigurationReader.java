@@ -11,9 +11,6 @@ import java.util.Map;
  */
 public class BeamServiceConfigurationReader extends AutoCredsServiceConfigurationReader {
 
-    private EnvironmentService environmentService;
-    private long namespaceId;
-
     public BeamServiceConfigurationReader(EnvironmentService environmentService,long namespaceId){
         super(environmentService,namespaceId);
     }
