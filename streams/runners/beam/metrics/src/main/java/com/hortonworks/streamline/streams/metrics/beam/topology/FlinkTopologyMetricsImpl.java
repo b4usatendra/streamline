@@ -29,9 +29,9 @@ import org.slf4j.LoggerFactory;
 /**
  * @Author satendra.sahu Beam implementation of the TopologyMetrics interface
  */
-public class BeamTopologyMetricsImpl implements TopologyMetrics {
+public class FlinkTopologyMetricsImpl implements TopologyMetrics {
 
-  private static final Logger LOG = LoggerFactory.getLogger(BeamTopologyMetricsImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(FlinkTopologyMetricsImpl.class);
 
   private static final String FRAMEWORK = "BEAM";
   private static final int MAX_SIZE_TOPOLOGY_CACHE = 10;
@@ -48,7 +48,7 @@ public class BeamTopologyMetricsImpl implements TopologyMetrics {
   private LoadingCache<Pair<String, String>, Map<String, ?>> topologyRetrieveCache;
   private LoadingCache<Pair<Pair<String, String>, String>, Map<String, ?>> componentRetrieveCache;
 
-  public BeamTopologyMetricsImpl() {
+  public FlinkTopologyMetricsImpl() {
   }
 
   /**

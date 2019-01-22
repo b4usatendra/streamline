@@ -13,6 +13,7 @@ package com.hortonworks.streamline.streams.actions.beam.topology;
 import static java.util.stream.Collectors.toList;
 
 import com.google.common.base.Joiner;
+import com.hortonworks.streamline.common.exception.service.exception.request.TopologyAlreadyExistsOnCluster;
 import com.hortonworks.streamline.streams.actions.TopologyActionContext;
 import com.hortonworks.streamline.streams.actions.TopologyActions;
 import com.hortonworks.streamline.streams.actions.topology.service.ArtifactoryJarPathResolver;
@@ -51,6 +52,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -225,9 +228,9 @@ public class BeamTopologyActionsImpl implements TopologyActions {
 
     LOG.info("Deploying Application {}", topology.getName());
     LOG.info(String.join(" ", commands));
-    //Process process = executeShellProcess(commands);
-    //ShellProcessResult shellProcessResult = waitProcessFor(process);
-        /*
+    Process process = executeShellProcess(commands);
+    ShellProcessResult shellProcessResult = waitProcessFor(process);
+
         int exitValue = shellProcessResult.exitValue;
         if (exitValue != 0) {
             LOG.error("Topology deploy command failed - exit code: {} / output: {}", exitValue, shellProcessResult.stdout);
@@ -242,7 +245,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
             } else {
                 throw new Exception("Topology could not be deployed successfully: storm deploy command failed with " + errors);
             }
-        }*/
+        }
 
   }
 

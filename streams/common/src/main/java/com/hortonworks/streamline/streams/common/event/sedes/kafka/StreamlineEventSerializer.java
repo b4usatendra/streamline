@@ -95,7 +95,7 @@ public class StreamlineEventSerializer implements Serializer<StreamlineEvent> {
     }
 
     //package level access for testing
-    static Object getAvroRecord (StreamlineEvent streamlineEvent, Schema schema) {
+    public static Object getAvroRecord (StreamlineEvent streamlineEvent, Schema schema) {
         if (streamlineEvent.containsKey(StreamlineEvent.PRIMITIVE_PAYLOAD_FIELD)) {
             if (streamlineEvent.keySet().size() > 1) {
                 throw new RuntimeException("Invalid schema, primitive schema can contain only one field.");

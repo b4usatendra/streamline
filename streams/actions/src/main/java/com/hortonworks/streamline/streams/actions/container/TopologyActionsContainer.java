@@ -56,7 +56,7 @@ public class TopologyActionsContainer extends NamespaceAwareContainer<TopologyAc
         try {
             actionsImpl = MappedTopologyActionsImpl.valueOf(streamingEngine);
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Unsupported streaming engine: " + streamingEngine, e);
+            throw new RuntimeException("missingStreamingEngine: " + streamingEngine, e);
         }
 
 
