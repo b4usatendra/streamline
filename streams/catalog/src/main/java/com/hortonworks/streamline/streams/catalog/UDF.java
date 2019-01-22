@@ -16,19 +16,23 @@
 
 package com.hortonworks.streamline.streams.catalog;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.core.type.*;
-import com.fasterxml.jackson.databind.*;
-import com.hortonworks.registries.common.*;
-import com.hortonworks.registries.storage.*;
-import com.hortonworks.registries.storage.annotation.*;
-import com.hortonworks.registries.storage.catalog.*;
-import org.apache.commons.lang3.*;
+import static com.hortonworks.streamline.streams.layout.component.rule.expression.Udf.Type;
 
-import java.io.*;
-import java.util.*;
-
-import static com.hortonworks.streamline.streams.layout.component.rule.expression.Udf.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hortonworks.registries.common.Schema;
+import com.hortonworks.registries.storage.PrimaryKey;
+import com.hortonworks.registries.storage.Storable;
+import com.hortonworks.registries.storage.annotation.StorableEntity;
+import com.hortonworks.registries.storage.catalog.AbstractStorable;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 @StorableEntity
 @JsonInclude(JsonInclude.Include.NON_NULL)

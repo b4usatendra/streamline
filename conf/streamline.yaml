@@ -133,14 +133,14 @@ dashboardConfiguration:
 # Logging settings.
 logging:
   # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
-  level: DEBUG
+  level: INFO
   # Logger-specific levels.
   loggers:
     # Sets the level for 'com.example.app' to DEBUG.
     com.hortonworks.streamline: INFO
   appenders:
     - type: file
-      threshold: INFO
+      threshold: DEBUG
       logFormat: "%-6level [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg %n"
       currentLogFilename: ./logs/streamline.log
       archivedLogFilenamePattern: ./logs/streamline-%d{yyyy-MM-dd}-%i.log.gz

@@ -160,7 +160,7 @@ function add_sink_bundles {
     add_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/kafka-sink-topology-component.json
     add_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/beam-kafka-sink-topology-component.json
     add_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/hive-sink-topology-component.json
-    add_topology_component_bundle /streams/componentbundles/PROCESSOR $component_dir/processors/split-topology-component
+    add_topology_component_bundle /streams/componentbundles/PROCESSOR $component_dir/processors/split-topology-component.json
     add_topology_component_bundle /streams/componentbundles/PROCESSOR $component_dir/processors/normalization-processor-topology-component.json
     add_topology_component_bundle /streams/componentbundles/PROCESSOR $component_dir/processors/multilang-topology-component.json
     post /streams/componentbundles/PROCESSOR $component_dir/sinks/stage-topology-component

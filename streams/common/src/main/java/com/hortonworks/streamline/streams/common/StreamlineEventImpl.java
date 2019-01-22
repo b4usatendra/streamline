@@ -15,17 +15,24 @@
  **/
 package com.hortonworks.streamline.streams.common;
 
-import com.fasterxml.jackson.core.*;
-import com.fasterxml.jackson.core.type.*;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.annotation.*;
-import com.google.common.base.*;
-import com.google.common.collect.*;
-import com.hortonworks.streamline.streams.*;
-
-import java.io.*;
-import java.util.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ForwardingMap;
+import com.google.common.collect.ImmutableMap;
+import com.hortonworks.streamline.streams.StreamlineEvent;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * A default implementation of StreamlineEvent.
@@ -83,8 +90,7 @@ public final class StreamlineEventImpl extends ForwardingMap<String, Object> imp
         private String sourceStream = DEFAULT_SOURCE_STREAM;
         private String dataSourceId = "";
 
-        private Builder() {
-        }
+      private Builder() { }
 
         public Builder from(StreamlineEvent other) {
             return this.header(other.getHeader())
