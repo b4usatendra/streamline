@@ -11,12 +11,11 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  **/
-package com.hortonworks.streamline.streams.runtime.event.sedes.kafka;
+package com.hortonworks.streamline.streams.common.event.sedes.kafka;
 
 import com.google.common.base.Preconditions;
 import com.hortonworks.registries.schemaregistry.SchemaMetadata;
 import com.hortonworks.registries.schemaregistry.avro.AvroSchemaProvider;
-import com.hortonworks.registries.schemaregistry.client.SchemaRegistryClient;
 import com.hortonworks.streamline.streams.StreamlineEvent;
 import com.hortonworks.streamline.streams.common.StreamlineEventImpl;
 import java.io.IOException;
@@ -36,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class StreamlineEventDeserializer implements Deserializer<StreamlineEvent> {
 
   protected static final Logger LOG = LoggerFactory.getLogger(StreamlineEventDeserializer.class);
-  private SchemaRegistryClient schemaRegistryClient;
+
   private final AvroStreamsSnapshotDeserializer avroStreamsSnapshotDeserializer;
   private Integer readerSchemaVersion;
   private Map<String, ?> configs;
@@ -50,7 +49,6 @@ public class StreamlineEventDeserializer implements Deserializer<StreamlineEvent
     // ignoring the isKey since this class is expected to be used only as a value serializer for now, value being StreamlineEvent
     this.configs = configs;
     avroStreamsSnapshotDeserializer.init(configs);
-    schemaRegistryClient = new SchemaRegistryClient(configs);
     String readerSchemaVersion = (String) configs.get("reader.schema.version");
     if (readerSchemaVersion != null && !readerSchemaVersion.isEmpty()) {
       this.readerSchemaVersion = Integer.parseInt(readerSchemaVersion);

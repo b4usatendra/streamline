@@ -15,6 +15,7 @@ package com.hortonworks.streamline.streams.layout.beam;
 
 import com.hortonworks.streamline.common.Config;
 import com.hortonworks.streamline.streams.StreamlineEvent;
+import com.hortonworks.streamline.streams.beam.common.BeamTopologyLayoutConstants;
 import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
 import com.hortonworks.streamline.streams.layout.component.Component;
 import com.hortonworks.streamline.streams.layout.component.Edge;
@@ -40,6 +41,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ws.rs.NotSupportedException;
 import org.apache.beam.sdk.Pipeline;
+import org.apache.beam.sdk.options.PipelineOptions;
 import org.apache.beam.sdk.values.PCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +56,7 @@ public class BeamTopologyComponentGenerator extends TopologyDagVisitor {
   private final Map<String, Object> config;
   private final Config topologyConfig;
   private final Set<String> edgeAlreadyAddedComponents = new HashSet<>();
-  private Pipeline pipeline = Pipeline.create();
+  private Pipeline pipeline;
 
   private Map<String, BeamComponent> componentMap = new HashMap<String, BeamComponent>();
   private Set<String> visitedComponent = new HashSet<>();
@@ -65,6 +67,18 @@ public class BeamTopologyComponentGenerator extends TopologyDagVisitor {
     this.topologyConfig = topologyLayout.getConfig();
     this.config = config;
     fluxComponentFactory = new BeamComponentFactory(extraJarsLocation);
+    initializeBeamPipeline(config);
+  }
+
+  private void initializeBeamPipeline(Map<String, Object> conf) {
+    if (conf.containsKey(BeamTopologyLayoutConstants.BEAM_PIPELINE_OPTIONS)) {
+      PipelineOptions options = (PipelineOptions) conf
+          .get(BeamTopologyLayoutConstants.BEAM_PIPELINE_OPTIONS);
+
+      pipeline = Pipeline.create(options);
+    } else {
+      pipeline = Pipeline.create();
+    }
   }
 
   //TODO add stage to the pipeline

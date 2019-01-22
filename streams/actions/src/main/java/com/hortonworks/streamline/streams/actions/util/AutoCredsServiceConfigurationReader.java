@@ -6,7 +6,6 @@ import com.hortonworks.streamline.streams.cluster.catalog.NamespaceServiceCluste
 import com.hortonworks.streamline.streams.cluster.catalog.ServiceConfiguration;
 import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
 import com.hortonworks.streamline.streams.common.ServiceConfigurations;
-import com.hortonworks.streamline.streams.common.ServiceConfigurationReadable;
 
 import java.io.IOException;
 import java.util.Arrays;

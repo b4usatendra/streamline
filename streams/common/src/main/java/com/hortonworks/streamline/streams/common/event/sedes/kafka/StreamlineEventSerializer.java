@@ -13,7 +13,7 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
  **/
-package com.hortonworks.streamline.streams.runtime.event.sedes.kafka;
+package com.hortonworks.streamline.streams.common.event.sedes.kafka;
 
 import com.hortonworks.registries.schemaregistry.SchemaMetadata;
 import com.hortonworks.registries.schemaregistry.SchemaVersionInfo;

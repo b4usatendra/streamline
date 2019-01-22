@@ -7,7 +7,7 @@
         "uiName": "Connection Endpoint",
         "fieldName": "connection.endpoint",
         "isOptional": true,
-        "tooltip": "Beam cluster URI",
+        "tooltip": "Flink master URI",
         "type": "string"
       }
     ]

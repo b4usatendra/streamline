@@ -23,7 +23,7 @@ public class BeamServiceConfigurationReader extends AutoCredsServiceConfiguratio
         NamespaceServiceClusterMap streamingEngine = (NamespaceServiceClusterMap) environmentService.listServiceClusterMapping(namespaceId).stream().filter((clusterMap)->clusterMap.getServiceName().equalsIgnoreCase(namespace.getStreamingEngine())).findAny().orElse(null);
         if(streamingEngine==null)
             return null;
-        return read(streamingEngine.getClusterId(),streamingEngine.getServiceName());
+        return super.read(streamingEngine.getClusterId(),streamingEngine.getServiceName());
     }
 
     public String getStreamingEngine(){

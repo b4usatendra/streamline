@@ -15,12 +15,16 @@ package com.hortonworks.streamline.streams.layout.beam;
 
 import com.hortonworks.streamline.common.exception.ComponentConfigException;
 import com.hortonworks.streamline.streams.StreamlineEvent;
+import com.hortonworks.streamline.streams.beam.common.BeamTopologyLayoutConstants;
 import com.hortonworks.streamline.streams.layout.component.ComponentUtils;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 import org.apache.beam.sdk.Pipeline;
+import org.apache.beam.sdk.options.PipelineOptions;
+import org.apache.beam.sdk.transforms.Flatten;
 import org.apache.beam.sdk.values.PCollection;
+import org.apache.beam.sdk.values.PCollectionList;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
@@ -35,6 +39,7 @@ public abstract class AbstractBeamComponent extends ComponentUtils implements Be
   // zkUrl, topic, etc.
   protected Map<String, Object> conf;
   protected boolean isGenerated;
+  protected transient PCollection<StreamlineEvent> outputCollection;
   protected transient Pipeline pipeline;
   protected Map<String, Object> component = new LinkedHashMap<>();
 
@@ -54,7 +59,10 @@ public abstract class AbstractBeamComponent extends ComponentUtils implements Be
   public abstract PCollection<StreamlineEvent> getOutputCollection();
 
   @Override
-  public abstract void unionInputCollection(PCollection<StreamlineEvent> collection);
+  public void unionInputCollection(PCollection<StreamlineEvent> collection) {
+    outputCollection = PCollectionList.of(outputCollection).and(collection)
+        .apply(Flatten.<StreamlineEvent>pCollections());
+  }
 
 
   // validate boolean fields based on if they are required or not. Meant to

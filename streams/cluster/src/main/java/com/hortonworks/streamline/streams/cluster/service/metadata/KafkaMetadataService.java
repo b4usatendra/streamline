@@ -16,23 +16,40 @@
 package com.hortonworks.streamline.streams.cluster.service.metadata;
 
 
-import com.hortonworks.streamline.streams.cluster.catalog.*;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.*;
-import com.hortonworks.streamline.streams.cluster.exception.*;
-import com.hortonworks.streamline.streams.cluster.service.*;
-import com.hortonworks.streamline.streams.cluster.service.metadata.common.*;
-import com.hortonworks.streamline.streams.cluster.service.metadata.json.*;
+import static java.util.stream.Collectors.toList;
+
+import com.hortonworks.streamline.streams.cluster.catalog.Component;
+import com.hortonworks.streamline.streams.cluster.catalog.ComponentProcess;
+import com.hortonworks.streamline.streams.cluster.catalog.ServiceConfiguration;
+import com.hortonworks.streamline.streams.cluster.discovery.ambari.ComponentPropertyPattern;
+import com.hortonworks.streamline.streams.cluster.exception.ServiceComponentNotFoundException;
+import com.hortonworks.streamline.streams.cluster.exception.ServiceConfigurationNotFoundException;
+import com.hortonworks.streamline.streams.cluster.exception.ServiceNotFoundException;
+import com.hortonworks.streamline.streams.cluster.exception.ZookeeperClientException;
+import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
+import com.hortonworks.streamline.streams.cluster.service.metadata.common.EnvironmentServiceUtil;
+import com.hortonworks.streamline.streams.cluster.service.metadata.common.HostPort;
+import com.hortonworks.streamline.streams.cluster.service.metadata.json.Authorizer;
+import com.hortonworks.streamline.streams.cluster.service.metadata.json.KafkaBrokerListeners;
+import com.hortonworks.streamline.streams.cluster.service.metadata.json.KafkaBrokersInfo;
+import com.hortonworks.streamline.streams.cluster.service.metadata.json.KafkaTopics;
+import com.hortonworks.streamline.streams.cluster.service.metadata.json.Keytabs;
+import com.hortonworks.streamline.streams.cluster.service.metadata.json.Principals;
 import com.hortonworks.streamline.streams.cluster.service.metadata.json.Security;
+import com.hortonworks.streamline.streams.cluster.service.metadata.json.ServicePrincipal;
 import com.hortonworks.streamline.streams.common.ServiceConfigurations;
-import org.apache.commons.lang3.*;
-import org.apache.commons.math3.util.*;
-
-import javax.ws.rs.core.*;
-import java.io.*;
-import java.security.*;
-import java.util.*;
-
-import static java.util.stream.Collectors.*;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.ws.rs.core.SecurityContext;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.math3.util.Pair;
 
 /**
  * This class opens zookeeper client connections which must be closed either by calling the {@link KafkaMetadataService#close()}'

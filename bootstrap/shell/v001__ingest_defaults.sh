@@ -126,13 +126,15 @@ echo "Component bundle Root dir: ${component_dir}"
 echo "Service bundle Root dir: ${service_dir}"
 echo "User/Role bundle Root dir: ${user_role_dir}"
 
-function add_all_bundles {
-    # === Source ===
+function add_source_bundles {
+ # === Source ===
     add_topology_component_bundle /streams/componentbundles/SOURCE ${component_dir}/sources/kafka-source-topology-component.json
     add_topology_component_bundle /streams/componentbundles/SOURCE ${component_dir}/sources/beam-kafka-source-topology-component.json
     add_topology_component_bundle /streams/componentbundles/SOURCE ${component_dir}/sources/hdfs-source-topology-component.json
     add_topology_component_bundle /streams/componentbundles/SOURCE ${component_dir}/sources/eventhubs-source-topology-component.json
+}
 
+function add_processor_bundles {
     # === Processor ===
     add_topology_component_bundle /streams/componentbundles/PROCESSOR ${component_dir}/processors/beam-rule-topology-component.json
 
@@ -143,7 +145,9 @@ function add_all_bundles {
     add_topology_component_bundle /streams/componentbundles/PROCESSOR ${component_dir}/processors/join-bolt-topology-component.json
     add_topology_component_bundle /streams/componentbundles/PROCESSOR ${component_dir}/processors/model-topology-component.json
     add_topology_component_bundle /streams/componentbundles/PROCESSOR ${component_dir}/processors/projection-topology-component.json
+}
 
+function add_sink_bundles {
     # === Sink ===
     add_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/hdfs-sink-topology-component.json
     add_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/hbase-sink-topology-component.json
@@ -156,12 +160,15 @@ function add_all_bundles {
     add_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/kafka-sink-topology-component.json
     add_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/beam-kafka-sink-topology-component.json
     add_topology_component_bundle /streams/componentbundles/SINK ${component_dir}/sinks/hive-sink-topology-component.json
-
-
     add_topology_component_bundle /streams/componentbundles/PROCESSOR $component_dir/processors/split-topology-component
     add_topology_component_bundle /streams/componentbundles/PROCESSOR $component_dir/processors/normalization-processor-topology-component.json
     add_topology_component_bundle /streams/componentbundles/PROCESSOR $component_dir/processors/multilang-topology-component.json
     post /streams/componentbundles/PROCESSOR $component_dir/sinks/stage-topology-component
+
+
+}
+
+function add_other_bundles {
     post /streams/componentbundles/ACTION $component_dir/sinks/transform-action-topology-component
     post /streams/componentbundles/TRANSFORM $component_dir/sinks/projection-transform-topology-component
     post /streams/componentbundles/TRANSFORM $component_dir/sinks/enrichment-transform-topology-component
@@ -177,7 +184,7 @@ function add_topology_bundles {
 function add_service_bundles {
 
  # === service bundles ===
-    post /servicebundles ${service_dir}/beam-bundle.json
+    post /servicebundles ${service_dir}/flink-bundle.json
     post /servicebundles ${service_dir}/zookeeper-bundle.json
     post /servicebundles ${service_dir}/storm-bundle.json
     post /servicebundles ${service_dir}/kafka-bundle.json
@@ -185,7 +192,6 @@ function add_service_bundles {
     post /servicebundles ${service_dir}/hbase-bundle.json
     post /servicebundles ${service_dir}/hive-bundle.json
     post /servicebundles ${service_dir}/email-bundle.json
-    post /servicebundles ${service_dir}/beam-bundle.json
 }
 
 function add_roles_and_users {
@@ -283,11 +289,14 @@ function main {
     echo "===================================================================================="
     echo "Running bootstrap.sh will create streamline default components, notifiers, udfs and roles"
     skip_migration_if_not_needed
-    #add_all_bundles
+    add_source_bundles
+    add_processor_bundles
+    add_sink_bundles
+    add_other_bundles
     add_topology_bundles
-    #add_service_bundles
-    #add_roles_and_users
-    #add_udfs
+    add_service_bundles
+    add_roles_and_users
+    add_udfs
 
     echo "Executing ${bootstrap_dir}/bootstrap-notifiers.sh ${CATALOG_ROOT_URL}"
     ${bootstrap_dir}/bootstrap-notifiers.sh ${CATALOG_ROOT_URL}

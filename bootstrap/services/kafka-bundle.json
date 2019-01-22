@@ -23,6 +23,20 @@
         "isOptional": true,
         "tooltip": "Protocol used for inter-broker communication in secure environment",
         "type": "string"
+      },
+      {
+        "uiName": "Zookeeper Client User",
+        "fieldName": "zk.client.user",
+        "isOptional": true,
+        "tooltip": "Zk Client user used to authenticate",
+        "type": "string"
+      },
+      {
+        "uiName": "Zookeeper Client Password",
+        "fieldName": "zk.client.password",
+        "isOptional": true,
+        "tooltip": "Zk Client password to authenticate",
+        "type": "string"
       }
     ]
   }

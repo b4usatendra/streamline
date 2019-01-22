@@ -82,8 +82,7 @@ public class FlinkServiceRegistrar extends AbstractServiceRegistrar {
     Map<String, String> confMap = new HashMap<>();
 
     if (config.contains(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT)) {
-      confMap.put(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT,
-          config.getString(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT));
+      confMap.put(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT, config.getString(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT));
     }
 
     try {
