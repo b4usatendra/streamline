@@ -42,9 +42,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.StringWriter;
-import java.nio.charset.*;
-import java.nio.file.*;
-import java.util.*;
+
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -70,65 +78,16 @@ public class BeamTopologyActionsImpl implements TopologyActions {
   private static final String DEFAULT_BEAM_ARTIFACTS_LOCATION = "/tmp/beam-artifacts";
   private static final String FLINK_MASTER_KEY = "master.endpoint";
   private static final String TOPOLOGY_SERIALIZED_OBJECT_PATH = "/serializedObject";
-  /* public static final int DEFAULT_WAIT_TIME_SEC = 30;
-   public static final int TEST_RUN_TOPOLOGY_DEFAULT_WAIT_MILLIS_FOR_SHUTDOWN = 30_000;
-   public static final String ROOT_LOGGER_NAME = "ROOT";
-   public static final String STREAMLINE_TOPOLOGY_CONFIG_CLUSTER_SECURITY_CONFIG = "clustersSecurityConfig";
-   public static final String STREAMLINE_TOPOLOGY_CONFIG_CLUSTER_ID = "clusterId";
-   public static final String STREAMLINE_TOPOLOGY_CONFIG_PRINCIPAL = "principal";
-   public static final String STREAMLINE_TOPOLOGY_CONFIG_KEYTAB_PATH = "keytabPath";
-   public static final String STORM_TOPOLOGY_CONFIG_AUTO_CREDENTIALS = "topology.auto-credentials";
-   public static final String TOPOLOGY_CONFIG_KEY_CLUSTER_KEY_PREFIX_HDFS = "hdfs_";
-   public static final String TOPOLOGY_CONFIG_KEY_CLUSTER_KEY_PREFIX_HBASE = "hbase_";
-   public static final String TOPOLOGY_CONFIG_KEY_CLUSTER_KEY_PREFIX_HIVE = "hive_";
-   public static final String TOPOLOGY_CONFIG_KEY_HDFS_KEYTAB_FILE = "hdfs.keytab.file";
-   public static final String TOPOLOGY_CONFIG_KEY_HBASE_KEYTAB_FILE = "hbase.keytab.file";
-   public static final String TOPOLOGY_CONFIG_KEY_HIVE_KEYTAB_FILE = "hive.keytab.file";
-   public static final String TOPOLOGY_CONFIG_KEY_HDFS_KERBEROS_PRINCIPAL = "hdfs.kerberos.principal";
-   public static final String TOPOLOGY_CONFIG_KEY_HBASE_KERBEROS_PRINCIPAL = "hbase.kerberos.principal";
-   public static final String TOPOLOGY_CONFIG_KEY_HIVE_KERBEROS_PRINCIPAL = "hive.kerberos.principal";
-   public static final String TOPOLOGY_CONFIG_KEY_HDFS_CREDENTIALS_CONFIG_KEYS = "hdfsCredentialsConfigKeys";
-   public static final String TOPOLOGY_CONFIG_KEY_HBASE_CREDENTIALS_CONFIG_KEYS = "hbaseCredentialsConfigKeys";
-   public static final String TOPOLOGY_CONFIG_KEY_HIVE_CREDENTIALS_CONFIG_KEYS = "hiveCredentialsConfigKeys";
-   public static final String TOPOLOGY_CONFIG_KEY_NOTIFIER_PLUGIN = "storm.topology.submission.notifier.plugin.class";
-   public static final String TOPOLOGY_AUTO_CREDENTIAL_CLASSNAME_HDFS = "org.apache.storm.hdfs.security.AutoHDFS";
-   public static final String TOPOLOGY_AUTO_CREDENTIAL_CLASSNAME_HBASE = "org.apache.storm.hbase.security.AutoHBase";
-   public static final String TOPOLOGY_AUTO_CREDENTIAL_CLASSNAME_HIVE = "org.apache.storm.hive.security.AutoHive";
-   public static final String TOPOLOGY_NOTIFIER_PLUGIN_CLASSNAME_ATLAS = "org.apache.atlas.storm.hook.StormAtlasHook";
-   public static final String TOPOLOGY_EVENTLOGGER_REGISTER = "topology.event.logger.register";
-   public static final String TOPOLOGY_EVENTLOGGER_CLASSNAME_STREAMLINE = "com.hortonworks.streamline.streams.runtime.storm.event.sample.StreamlineEventLogger";
-   private static final String DEFAULT_THRIFT_TRANSPORT_PLUGIN = "org.apache.storm.security.auth.SimpleTransportPlugin";
-   private static final String DEFAULT_PRINCIPAL_TO_LOCAL = "org.apache.storm.security.auth.DefaultPrincipalToLocal";
-   private static final String NON_SECURED_THRIFT_TRANSPORT_PLUGIN = "org.apache.storm.security.auth.SimpleTransportPlugin";
-   private static final String NON_SECURED_PRINCIPAL_TO_LOCAL = "org.apache.storm.security.auth.DefaultPrincipalToLocal";
-   private static final String NON_SECURED_NIMBUS_AUTHORIZER = "org.apache.storm.security.auth.authorizer.NoopAuthorizer";
-   private static final String NON_SECURED_NIMBUS_IMPERSONATION_AUTHORIZER = "org.apache.storm.security.auth.authorizer.NoopAuthorizer";
-   private static final String NIMBUS_SEEDS = "nimbus.seeds";
-   private static final String NIMBUS_PORT = "nimbus.port";
-   private static final Long DEFAULT_NIMBUS_THRIFT_MAX_BUFFER_SIZE = 1048576L;
-   private String catalogRootUrl;
-   private String nimbusSeeds;
-   private Integer nimbusPort;
-   private String thriftTransport;
-   private String principalToLocal;
-   private long nimbusThriftMaxBufferSize;
-
-  */
   private FlinkRestAPIClient flinkClient;
-
   private String beamJarLocation;
-
   private final ConcurrentHashMap<Long, Boolean> forceKillRequests = new ConcurrentHashMap<>();
   private HttpFileDownloader httpFileDownloader;
   private String beamArtifactsLocation = DEFAULT_BEAM_ARTIFACTS_LOCATION;
   private final String tempTopologyPath = "/tmp/topology/%s/%s/";
-
   private String javaJarCommand;
   private BeamServiceConfigurationReader serviceConfigurationReader;
-
   private Map<String, Object> conf;
   private Optional<String> jaasFilePath;
-
 
   public BeamTopologyActionsImpl() {
   }

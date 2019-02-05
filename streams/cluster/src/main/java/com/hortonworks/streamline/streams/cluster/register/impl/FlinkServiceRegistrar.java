@@ -13,16 +13,21 @@
  **/
 package com.hortonworks.streamline.streams.cluster.register.impl;
 
-import com.fasterxml.jackson.core.*;
-import com.fasterxml.jackson.databind.*;
-import com.google.common.collect.*;
-import com.hortonworks.streamline.common.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+import com.hortonworks.streamline.common.Config;
 import com.hortonworks.streamline.streams.cluster.Constants;
-import com.hortonworks.streamline.streams.cluster.catalog.*;
+import com.hortonworks.streamline.streams.cluster.catalog.Component;
+import com.hortonworks.streamline.streams.cluster.catalog.ComponentProcess;
+import com.hortonworks.streamline.streams.cluster.catalog.ServiceConfiguration;
 import com.hortonworks.streamline.streams.common.ServiceConfigurations;
-import org.apache.commons.math3.util.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.math3.util.Pair;
 
 public class FlinkServiceRegistrar extends AbstractServiceRegistrar {
 
@@ -82,7 +87,8 @@ public class FlinkServiceRegistrar extends AbstractServiceRegistrar {
     Map<String, String> confMap = new HashMap<>();
 
     if (config.contains(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT)) {
-      confMap.put(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT, config.getString(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT));
+      confMap.put(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT,
+          config.getString(Constants.Flink.PROPERTY_CONNECTION_ENDPOINT));
     }
 
     try {

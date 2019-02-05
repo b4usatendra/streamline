@@ -11,19 +11,23 @@ import java.util.Map;
  */
 public class BeamServiceConfigurationReader extends AutoCredsServiceConfigurationReader {
 
-    public BeamServiceConfigurationReader(EnvironmentService environmentService,long namespaceId){
-        super(environmentService,namespaceId);
-    }
+  public BeamServiceConfigurationReader(EnvironmentService environmentService, long namespaceId) {
+    super(environmentService, namespaceId);
+  }
 
-    public Map<String,String> getRunnerConfig(){
-        Namespace namespace = environmentService.getNamespace(namespaceId);
-        NamespaceServiceClusterMap streamingEngine = (NamespaceServiceClusterMap) environmentService.listServiceClusterMapping(namespaceId).stream().filter((clusterMap)->clusterMap.getServiceName().equalsIgnoreCase(namespace.getStreamingEngine())).findAny().orElse(null);
-        if(streamingEngine==null)
-            return null;
-        return super.read(streamingEngine.getClusterId(),streamingEngine.getServiceName());
+  public Map<String, String> getRunnerConfig() {
+    Namespace namespace = environmentService.getNamespace(namespaceId);
+    NamespaceServiceClusterMap streamingEngine = (NamespaceServiceClusterMap) environmentService
+        .listServiceClusterMapping(namespaceId).stream().filter(
+            (clusterMap) -> clusterMap.getServiceName()
+                .equalsIgnoreCase(namespace.getStreamingEngine())).findAny().orElse(null);
+    if (streamingEngine == null) {
+      return null;
     }
+    return super.read(streamingEngine.getClusterId(), streamingEngine.getServiceName());
+  }
 
-    public String getStreamingEngine(){
-        return environmentService.getNamespace(namespaceId).getStreamingEngine();
-    }
+  public String getStreamingEngine() {
+    return environmentService.getNamespace(namespaceId).getStreamingEngine();
+  }
 }
