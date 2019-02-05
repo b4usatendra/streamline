@@ -65,6 +65,20 @@
         "type": "string"
       },
       {
+        "uiName": "Kafka Client User",
+        "fieldName": "kafka.client.user",
+        "isOptional": true,
+        "tooltip": "Kafka Client user/principal/object used to authenticate",
+        "type": "string"
+      },
+      {
+        "uiName": "Kafka Client Password",
+        "fieldName": "kafka.client.password",
+        "isOptional": true,
+        "tooltip": "Kafka Client pasword used to authenticate",
+        "type": "string"
+      },
+      {
         "uiName": "Fetch minimum bytes",
         "fieldName": "fetchMinimumBytes",
         "isOptional": true,

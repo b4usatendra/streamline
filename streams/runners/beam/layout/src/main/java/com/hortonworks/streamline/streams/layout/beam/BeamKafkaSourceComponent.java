@@ -129,7 +129,7 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
           .apply(beamSourceId, reader.withoutMetadata())
           .apply("beamKafkaInputParDo", BeamUtilFunctions.extractStreamlineEvents(beamSourceId));
     } catch (Exception e) {
-      throw new RuntimeException("Class not found");
+      throw new RuntimeException("Class not found: " + e.getMessage());
     }
 
 
