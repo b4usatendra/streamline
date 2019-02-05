@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import com.hortonworks.streamline.streams.cluster.catalog.Cluster;
 import com.hortonworks.streamline.streams.cluster.exception.ServiceNotFoundException;
 import com.hortonworks.streamline.streams.cluster.bundle.AbstractKafkaBundleHintProvider;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
+import com.hortonworks.streamline.streams.common.ServiceConfigurations;
 import com.hortonworks.streamline.streams.cluster.service.metadata.KafkaMetadataService;
 import com.hortonworks.streamline.streams.cluster.service.metadata.ZookeeperMetadataService;
 import com.hortonworks.streamline.streams.cluster.service.metadata.common.HostPort;

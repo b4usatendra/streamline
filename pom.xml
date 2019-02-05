@@ -195,7 +195,7 @@
         <streamline-findbugs.version>0.3</streamline-findbugs.version>
 
         <!-- Beam version-->
-        <beam.version>2.6.0</beam.version>
+        <beam.version>2.7.0</beam.version>
     </properties>
 
     <distributionManagement>

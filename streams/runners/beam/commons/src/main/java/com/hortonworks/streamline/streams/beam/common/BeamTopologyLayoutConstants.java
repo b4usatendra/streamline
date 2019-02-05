@@ -21,7 +21,7 @@ public final class BeamTopologyLayoutConstants {
   public static final String BEAM_ARTIFACTS_LOCATION_KEY = "beamArtifactsDirectory";
   public static final String BEAM_PIPELINE_JAR_LOCATION_KEY = "streamlineBeamJar";
   public static final String BEAM_PIPELINE_OPTIONS = "beamPipelineOptions";
-
+  public static final String BEAM_JAR_FILE_TYPE_KEY = "jars";
   // yaml key constants
 
   // TODO: add hbase conf to topology config when processing data sinks

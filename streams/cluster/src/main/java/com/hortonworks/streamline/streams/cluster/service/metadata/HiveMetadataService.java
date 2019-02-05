@@ -24,7 +24,7 @@ import com.hortonworks.streamline.streams.cluster.exception.EntityNotFoundExcept
 import com.hortonworks.streamline.streams.cluster.exception.ServiceComponentNotFoundException;
 import com.hortonworks.streamline.streams.cluster.exception.ServiceNotFoundException;
 import com.hortonworks.streamline.streams.cluster.discovery.ambari.ComponentPropertyPattern;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
+import com.hortonworks.streamline.streams.common.ServiceConfigurations;
 import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
 import com.hortonworks.streamline.streams.cluster.service.metadata.common.EnvironmentServiceUtil;
 import com.hortonworks.streamline.streams.cluster.service.metadata.common.OverrideHadoopConfiguration;

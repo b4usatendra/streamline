@@ -24,26 +24,37 @@ public class BeamTopologyUtil extends TopologyUtil {
     super();
   }
 
-  //TODO add beam client
-  public static String findBeamTopologyId(Long topologyId, String asUser) {
-    String topologyNamePrefix = generateUniqueStormTopologyNamePrefix(topologyId);
-    String beamTopologyId = topologyNamePrefix;
 
-    return beamTopologyId;
-  }
-
-  public static String findStormCompleteTopologyName(Long topologyId, String asUser) {
-    String topologyNamePrefix = generateUniqueStormTopologyNamePrefix(topologyId);
-
-    return topologyNamePrefix;
-  }
-
-  public static String findOrGenerateTopologyName(Long topologyId, String topologyName, String asUser) {
-    String actualTopologyName = topologyName + topologyId;
-    if (Strings.isNullOrEmpty(actualTopologyName)) {
-      actualTopologyName = generateStormTopologyName(topologyId, topologyName);
+    public static String generateBeamTopologyName(Long topologyId, String topologyName) {
+        return "streamline-" + topologyId + "-" + topologyName;
     }
-    return actualTopologyName;
-  }
 
+    public static String generateBeamComponentId(Long componentId, String componentName) {
+        return String.format("%s-%s", componentId, componentName);
+    }
+
+    public static String generateUniqueBeamTopologyNamePrefix(Long topologyId) {
+        return "streamline-" + topologyId + "-";
+    }
+
+    //TODO add beam client
+    public static String findStormTopologyId(Long topologyId, String asUser) {
+        String topologyNamePrefix = generateUniqueBeamTopologyNamePrefix(topologyId);
+        String beamTopologyId = topologyNamePrefix;
+
+        return beamTopologyId;
+    }
+
+    public static String findStormCompleteTopologyName(Long topologyId, String asUser) {
+        String topologyNamePrefix = generateUniqueBeamTopologyNamePrefix(topologyId);
+        return topologyNamePrefix;
+    }
+
+    public static String findOrGenerateTopologyName(Long topologyId, String topologyName, String asUser) {
+        String actualTopologyName = topologyName + topologyId;
+        if (Strings.isNullOrEmpty(actualTopologyName)) {
+            actualTopologyName = generateBeamTopologyName(topologyId, topologyName);
+        }
+        return actualTopologyName;
+    }
 }

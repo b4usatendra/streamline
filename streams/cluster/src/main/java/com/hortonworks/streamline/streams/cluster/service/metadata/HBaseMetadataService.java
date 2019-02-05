@@ -21,7 +21,7 @@ import com.hortonworks.streamline.common.function.SupplierException;
 import com.hortonworks.streamline.streams.cluster.catalog.Component;
 import com.hortonworks.streamline.streams.cluster.catalog.ComponentProcess;
 import com.hortonworks.streamline.streams.cluster.discovery.ambari.ComponentPropertyPattern;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
+import com.hortonworks.streamline.streams.common.ServiceConfigurations;
 import com.hortonworks.streamline.streams.cluster.exception.EntityNotFoundException;
 import com.hortonworks.streamline.streams.cluster.exception.ServiceComponentNotFoundException;
 import com.hortonworks.streamline.streams.cluster.exception.ServiceConfigurationNotFoundException;

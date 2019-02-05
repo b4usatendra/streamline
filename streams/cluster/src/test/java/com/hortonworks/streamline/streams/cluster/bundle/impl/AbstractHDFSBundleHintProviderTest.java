@@ -21,7 +21,7 @@ import mockit.integration.junit4.JMockit;
 import com.hortonworks.streamline.streams.cluster.catalog.Cluster;
 import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
 import com.hortonworks.streamline.streams.cluster.service.metadata.HDFSMetadataService;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
+import com.hortonworks.streamline.streams.common.ServiceConfigurations;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

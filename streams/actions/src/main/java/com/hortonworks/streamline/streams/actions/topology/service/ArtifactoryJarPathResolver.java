@@ -52,7 +52,7 @@ public class ArtifactoryJarPathResolver {
         tempFilePath, StandardCopyOption.REPLACE_EXISTING);
     logger.info("Metadata file downloaded to: {}", tempFilePath.toAbsolutePath().toString());
 
-    final String url = String.format("%s%s/%s/%s/%s/%s-%s.jar",
+    final String url = String.format("%s/%s/%s/%s/%s/%s-%s.jar",
         client.getUri(),
         "maven2",
         groupId.replaceAll("\\.", "/"),

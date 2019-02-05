@@ -8,7 +8,7 @@ import com.hortonworks.streamline.streams.cluster.catalog.Namespace;
 import com.hortonworks.streamline.streams.cluster.catalog.Service;
 import com.hortonworks.streamline.streams.cluster.catalog.ServiceConfiguration;
 import com.hortonworks.streamline.streams.cluster.discovery.ambari.ComponentPropertyPattern;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
+import com.hortonworks.streamline.streams.common.ServiceConfigurations;
 import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
 import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
 import org.slf4j.Logger;

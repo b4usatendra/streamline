@@ -18,7 +18,7 @@ package com.hortonworks.streamline.streams.cluster.service.metadata.common;
 import com.hortonworks.streamline.streams.cluster.catalog.ServiceConfiguration;
 import com.hortonworks.streamline.streams.cluster.exception.ServiceConfigurationNotFoundException;
 import com.hortonworks.streamline.streams.cluster.exception.ServiceNotFoundException;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
+import com.hortonworks.streamline.streams.common.ServiceConfigurations;
 import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
 import org.apache.hadoop.conf.Configuration;
 import org.slf4j.Logger;

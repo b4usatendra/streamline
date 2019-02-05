@@ -21,7 +21,7 @@ import org.apache.hadoop.conf.Configuration;
 import com.hortonworks.streamline.streams.cluster.exception.ServiceConfigurationNotFoundException;
 import com.hortonworks.streamline.streams.cluster.exception.ServiceNotFoundException;
 import com.hortonworks.streamline.streams.cluster.service.metadata.common.OverrideHadoopConfiguration;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
+import com.hortonworks.streamline.streams.common.ServiceConfigurations;
 
 import java.io.IOException;
 import java.util.List;

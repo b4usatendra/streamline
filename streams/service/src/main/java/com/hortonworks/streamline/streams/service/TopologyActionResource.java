@@ -29,6 +29,7 @@ import com.hortonworks.streamline.streams.security.Roles;
 import com.hortonworks.streamline.streams.security.SecurityUtil;
 import com.hortonworks.streamline.streams.security.StreamlineAuthorizer;
 
+import javax.annotation.security.PermitAll;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -129,6 +130,7 @@ public class TopologyActionResource {
     @POST
     @Path("/topologies/{topologyId}/actions/deploy")
     @Timed
+    //@PermitAll
     public Response deployTopology (@PathParam("topologyId") Long topologyId, @Context SecurityContext securityContext) throws Exception {
         SecurityUtil.checkRoleOrPermissions(authorizer, securityContext, Roles.ROLE_TOPOLOGY_SUPER_ADMIN,
                 NAMESPACE, topologyId, READ, EXECUTE);

@@ -4,10 +4,11 @@
   "serviceUISpecification": {
     "fields": [
       {
-        "uiName": "Connection Endpoint",
-        "fieldName": "connection.endpoint",
-        "isOptional": true,
-        "tooltip": "Flink master URI",
+        "uiName": "Master Endpoint",
+        "fieldName": "master.endpoint",
+        "isUserInput":true,
+        "isOptional": false,
+        "tooltip": "Flink master <localhost>:<port>",
         "type": "string"
       }
     ]

@@ -21,7 +21,7 @@ import com.hortonworks.streamline.streams.cluster.exception.ServiceComponentNotF
 import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
 import com.hortonworks.streamline.streams.cluster.service.metadata.common.HostPort;
 import com.hortonworks.streamline.streams.cluster.discovery.ambari.ComponentPropertyPattern;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
+import com.hortonworks.streamline.streams.common.ServiceConfigurations;
 import com.hortonworks.streamline.streams.cluster.exception.ServiceNotFoundException;
 
 import java.util.Collection;

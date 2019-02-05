@@ -31,7 +31,7 @@ import com.hortonworks.streamline.streams.catalog.TopologyEditorMetadata;
 import com.hortonworks.streamline.streams.catalog.processor.CustomProcessorInfo;
 import com.hortonworks.streamline.streams.catalog.topology.TopologyComponentBundle;
 import com.hortonworks.streamline.streams.cluster.catalog.*;
-import com.hortonworks.streamline.streams.cluster.discovery.ambari.ServiceConfigurations;
+import com.hortonworks.streamline.streams.common.ServiceConfigurations;
 import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
 import com.hortonworks.streamline.streams.service.TopologyComponentBundleResource;
 import com.hortonworks.streamline.webservice.configurations.StreamlineConfiguration;
