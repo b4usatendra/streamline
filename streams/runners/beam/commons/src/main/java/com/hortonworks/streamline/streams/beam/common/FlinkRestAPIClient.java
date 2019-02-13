@@ -2,21 +2,21 @@ package com.hortonworks.streamline.streams.beam.common;
 
 import com.hortonworks.streamline.common.JsonClientUtil;
 import com.hortonworks.streamline.common.exception.WrappedWebApplicationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.security.auth.Subject;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import javax.security.auth.Subject;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by Karthik.K
@@ -57,7 +57,7 @@ public class FlinkRestAPIClient {
                     throw new FlinkNotReachableException("Exception while requesting " + requestUrl, ex);
                 }
             } else if (cause instanceof WebApplicationException) {
-                throw WrappedWebApplicationException.of((WebApplicationException)cause);
+                throw WrappedWebApplicationException.of((WebApplicationException) cause);
             }
 
             throw ex;
@@ -71,7 +71,7 @@ public class FlinkRestAPIClient {
                 @Override
                 public Map run() {
                     return JsonClientUtil.postForm(client.target(requestUrl), new MultivaluedHashMap<>(),
-                            FLINK_REST_API_MEDIA_TYPE, Map.class);
+                        FLINK_REST_API_MEDIA_TYPE, Map.class);
                 }
             });
         } catch (javax.ws.rs.ProcessingException e) {
@@ -92,7 +92,7 @@ public class FlinkRestAPIClient {
                 @Override
                 public Response run() {
                     return JsonClientUtil.patchForm(client.target(requestUrl), new MultivaluedHashMap<>(),
-                            FLINK_REST_API_MEDIA_TYPE);
+                        FLINK_REST_API_MEDIA_TYPE);
                 }
             });
         } catch (javax.ws.rs.ProcessingException e) {
@@ -106,25 +106,28 @@ public class FlinkRestAPIClient {
         }
     }
 
-    public Map getJobsOverview(){
+    public Map getJobsOverview() {
         return doGetRequest(generateJobsOverviewUrl());
     }
 
-    public Map getJobDetailsById(String jobId){
+    public Map getJobDetailsById(String jobId) {
         return doGetRequest(generateJobDetailUrl(jobId));
     }
 
-    public Map getJobDetailsByName(String jobName){
+    public Map getJobDetailsByName(String jobName) {
         HashMap<String, ArrayList<LinkedHashMap>> jobs = (HashMap<String, ArrayList<LinkedHashMap>>) getJobsOverview();
-        return jobs.get("jobs").stream().filter(list->list.get("name").toString().equalsIgnoreCase(jobName)).findFirst().orElse(null);
+        return jobs.get("jobs").stream().filter(list -> list.get("name").toString().equalsIgnoreCase(jobName)).findFirst().orElse(null);
     }
 
-    public String getJobId(String jobName){
+    public String getJobIdByName(String jobName) {
         Map jobDetails = getJobDetailsByName(jobName);
-        return (String) jobDetails.getOrDefault("jid",null);
+        if (jobDetails == null || jobDetails.isEmpty() || jobDetails.size() == 0) {
+            throw new NotFoundException("Unable to find jobId with jobName: " + jobName);
+        }
+        return (String) jobDetails.getOrDefault("jid", null);
     }
 
-    public boolean stopJob(String jobId){
+    public boolean stopJob(String jobId) {
         return doPatchRequestWithEmptyBody(generateJobStopUrl(jobId)).getStatus() == 202;
     }
 
@@ -136,14 +139,14 @@ public class FlinkRestAPIClient {
 
     private String generateJobDetailUrl(String jobId) {
         StringBuffer url = new StringBuffer(flinkApiRootUrl);
-        url.append(String.format(JOB_DETAILS_PATH,jobId));
+        url.append(String.format(JOB_DETAILS_PATH, jobId));
         return url.toString();
     }
 
 
-    private String generateJobStopUrl(String jobId){
+    private String generateJobStopUrl(String jobId) {
         StringBuffer url = new StringBuffer(flinkApiRootUrl);
-        url.append(String.format(JOB_STOP_PATH,jobId));
+        url.append(String.format(JOB_STOP_PATH, jobId));
         return url.toString();
     }
 

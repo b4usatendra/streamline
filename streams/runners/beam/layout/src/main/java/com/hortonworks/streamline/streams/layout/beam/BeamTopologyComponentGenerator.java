@@ -85,6 +85,7 @@ public class BeamTopologyComponentGenerator extends TopologyDagVisitor {
   @Override
   public void visit(StreamlineSource source) {
     String sourceId = getFluxId(source);
+    LOG.info("Visiting StreamlineSource with id: "+sourceId);
     if (!componentMap.containsKey(sourceId)) {
       BeamComponent beamSourceComponent = fluxComponentFactory.getFluxComponent(source);
       getYamlComponents(beamSourceComponent, source);
@@ -99,6 +100,7 @@ public class BeamTopologyComponentGenerator extends TopologyDagVisitor {
   @Override
   public void visit(StreamlineSink sink) {
     String sinkId = getFluxId(sink);
+    LOG.info("Visiting StreamlineSink with id: "+sinkId);
     if (!componentMap.containsKey(sinkId)) {
       BeamComponent beamSinkComponent = fluxComponentFactory.getFluxComponent(sink);
       getYamlComponents(beamSinkComponent, sink);
@@ -113,6 +115,7 @@ public class BeamTopologyComponentGenerator extends TopologyDagVisitor {
   @Override
   public void visit(StreamlineProcessor processor) {
     String processorId = getFluxId(processor);
+    LOG.info("Visiting StreamlineProcessor with id: "+processorId);
     if (!componentMap.containsKey(processorId)) {
       BeamComponent beamProcessorComponent = fluxComponentFactory.getFluxComponent(processor);
       getYamlComponents(beamProcessorComponent, processor);

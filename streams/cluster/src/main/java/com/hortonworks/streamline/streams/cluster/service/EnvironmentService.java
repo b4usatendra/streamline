@@ -1,17 +1,12 @@
 /**
-  * Copyright 2017 Hortonworks.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-
-  *   http://www.apache.org/licenses/LICENSE-2.0
-
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+ * Copyright 2017 Hortonworks.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing permissions and limitations under the License.
  **/
 package com.hortonworks.streamline.streams.cluster.service;
 
@@ -19,25 +14,23 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.hortonworks.registries.common.QueryParam;
-import com.hortonworks.streamline.common.exception.ComponentConfigException;
 import com.hortonworks.registries.storage.StorableKey;
 import com.hortonworks.registries.storage.StorageManager;
+import com.hortonworks.streamline.common.exception.ComponentConfigException;
+import com.hortonworks.streamline.streams.cluster.ClusterImporter;
 import com.hortonworks.streamline.streams.cluster.catalog.Cluster;
 import com.hortonworks.streamline.streams.cluster.catalog.Component;
 import com.hortonworks.streamline.streams.cluster.catalog.ComponentProcess;
+import com.hortonworks.streamline.streams.cluster.catalog.JobClusterMap;
 import com.hortonworks.streamline.streams.cluster.catalog.Namespace;
 import com.hortonworks.streamline.streams.cluster.catalog.NamespaceServiceClusterMap;
 import com.hortonworks.streamline.streams.cluster.catalog.Service;
 import com.hortonworks.streamline.streams.cluster.catalog.ServiceBundle;
 import com.hortonworks.streamline.streams.cluster.catalog.ServiceConfiguration;
 import com.hortonworks.streamline.streams.cluster.container.ContainingNamespaceAwareContainer;
-import com.hortonworks.streamline.streams.cluster.ClusterImporter;
 import com.hortonworks.streamline.streams.cluster.discovery.ServiceNodeDiscoverer;
 import com.hortonworks.streamline.streams.cluster.discovery.ambari.ComponentPropertyPattern;
 import com.hortonworks.streamline.streams.cluster.exception.EntityNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,15 +41,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A service layer for Namespace(Environment) where we could put our business logic.
  */
 public class EnvironmentService {
+
     private static final Logger LOG = LoggerFactory.getLogger(EnvironmentService.class);
 
     private static final String CLUSTER_NAMESPACE = new Cluster().getNameSpace();
     private static final String SERVICE_NAMESPACE = new Service().getNameSpace();
+    private static final String JOB_CLUSTER_MAP_NAMESPACE = new JobClusterMap().getNameSpace();
     private static final String COMPONENT_NAMESPACE = new Component().getNameSpace();
     private static final String SERVICE_CONFIGURATION_NAMESPACE = new ServiceConfiguration().getNameSpace();
     private static final String NAMESPACE_NAMESPACE = new Namespace().getNameSpace();
@@ -129,7 +126,7 @@ public class EnvironmentService {
     }
 
     public ServiceConfiguration createServiceConfiguration(Long serviceId, String confType, String actualFileName,
-                                                           Map<String, String> configuration) throws JsonProcessingException {
+        Map<String, String> configuration) throws JsonProcessingException {
         ServiceConfiguration conf = new ServiceConfiguration();
         conf.setId(this.dao.nextId(SERVICE_CONFIGURATION_NAMESPACE));
         conf.setName(confType);
@@ -169,7 +166,7 @@ public class EnvironmentService {
 
     public Cluster getClusterByNameAndImportUrl(String clusterName, String ambariImportUrl) {
         Collection<Cluster> clusters = listClusters(
-                Lists.newArrayList(new QueryParam("name", clusterName), new QueryParam("ambariImportUrl", ambariImportUrl)));
+            Lists.newArrayList(new QueryParam("name", clusterName), new QueryParam("ambariImportUrl", ambariImportUrl)));
         if (clusters.size() > 1) {
             LOG.warn("Multiple Clusters have same name {} and import url {} : returning first match.", clusterName, ambariImportUrl);
             return clusters.iterator().next();
@@ -207,6 +204,31 @@ public class EnvironmentService {
         return service;
     }
 
+    public JobClusterMap addJobClusterMapping(JobClusterMap jobClusterMap) {
+        if (jobClusterMap.getId() == null) {
+            jobClusterMap.setId(this.dao.nextId(JOB_CLUSTER_MAP_NAMESPACE));
+        }
+        this.dao.add(jobClusterMap);
+        return jobClusterMap;
+    }
+
+    public Collection<JobClusterMap> getJobByTopologyName(String topologyName, String streamingEngine) {
+        List<QueryParam> params = Lists.newArrayList(new QueryParam(JobClusterMap.TOPOLOGYNAME, topologyName), new QueryParam(JobClusterMap.STREAMINGENGINE, streamingEngine));
+        return this.dao.find(JobClusterMap.NAMESPACE, params);
+    }
+
+    public Collection<JobClusterMap> getJobById(String jobId, String streamingEngine) {
+        List<QueryParam> params = Lists.newArrayList(new QueryParam(JobClusterMap.JOBID, jobId), new QueryParam(JobClusterMap.STREAMINGENGINE, streamingEngine));
+        return this.dao.find(JobClusterMap.NAMESPACE, params);
+    }
+
+
+    public JobClusterMap removeJobClusterMapping(Long jobClusterMapId) {
+        JobClusterMap jobClusterMap = new JobClusterMap();
+        jobClusterMap.setId(jobClusterMapId);
+        return dao.remove(new StorableKey(JOB_CLUSTER_MAP_NAMESPACE, jobClusterMap.getPrimaryKey()));
+    }
+
     public Collection<Service> listServices() {
         return this.dao.list(SERVICE_NAMESPACE);
     }
@@ -232,7 +254,7 @@ public class EnvironmentService {
 
     public Service getServiceByName(Long clusterId, String serviceName) {
         Collection<Service> services = listServices(
-                Lists.newArrayList(new QueryParam("clusterId", String.valueOf(clusterId)), new QueryParam("name", serviceName)));
+            Lists.newArrayList(new QueryParam("clusterId", String.valueOf(clusterId)), new QueryParam("name", serviceName)));
         if (services.size() > 1) {
             LOG.warn("Multiple Services have same name {} in cluster {}. returning first match.", serviceName, clusterId);
             return services.iterator().next();
@@ -293,10 +315,10 @@ public class EnvironmentService {
 
     public Component getComponentByName(Long serviceId, String componentName) {
         Collection<Component> components = listComponents(Lists.newArrayList(
-                new QueryParam("serviceId", String.valueOf(serviceId)), new QueryParam("name", componentName)));
+            new QueryParam("serviceId", String.valueOf(serviceId)), new QueryParam("name", componentName)));
         if (components.size() > 1) {
             LOG.warn("Multiple Components have same name {} in service {}. returning first match.",
-                    componentName, serviceId);
+                componentName, serviceId);
             return components.iterator().next();
         } else if (components.size() == 1) {
             return components.iterator().next();
@@ -364,7 +386,7 @@ public class EnvironmentService {
     }
 
     public Collection<ServiceConfiguration> listServiceConfigurations(
-            List<QueryParam> queryParams) {
+        List<QueryParam> queryParams) {
         return dao.find(SERVICE_CONFIGURATION_NAMESPACE, queryParams);
     }
 
@@ -376,10 +398,10 @@ public class EnvironmentService {
 
     public ServiceConfiguration getServiceConfigurationByName(Long serviceId, String configurationName) {
         Collection<ServiceConfiguration> configurations = listServiceConfigurations(Lists.newArrayList(
-                new QueryParam("serviceId", String.valueOf(serviceId)), new QueryParam("name", configurationName)));
+            new QueryParam("serviceId", String.valueOf(serviceId)), new QueryParam("name", configurationName)));
         if (configurations.size() > 1) {
             LOG.warn("Multiple ServiceConfigurations have same name {} in service {}. returning first match.",
-                    configurationName, serviceId);
+                configurationName, serviceId);
             return configurations.iterator().next();
         } else if (configurations.size() == 1) {
             return configurations.iterator().next();
@@ -405,12 +427,12 @@ public class EnvironmentService {
     }
 
     public ServiceConfiguration addOrUpdateServiceConfiguration(Long serviceId,
-                                                                ServiceConfiguration serviceConfiguration) {
+        ServiceConfiguration serviceConfiguration) {
         return addOrUpdateServiceConfiguration(serviceId, serviceConfiguration.getId(), serviceConfiguration);
     }
 
     public ServiceConfiguration addOrUpdateServiceConfiguration(Long serviceId, Long serviceConfigurationId,
-                                                                ServiceConfiguration serviceConfiguration) {
+        ServiceConfiguration serviceConfiguration) {
         serviceConfiguration.setServiceId(serviceId);
         serviceConfiguration.setId(serviceConfigurationId);
         if (serviceConfiguration.getTimestamp() == null) {
@@ -485,17 +507,17 @@ public class EnvironmentService {
 
     public Collection<NamespaceServiceClusterMap> listServiceClusterMapping(Long namespaceId) {
         return this.dao.find(NAMESPACE_SERVICE_CLUSTER_MAPPING_NAMESPACE,
-                Lists.newArrayList(new QueryParam("namespaceId", namespaceId.toString())));
+            Lists.newArrayList(new QueryParam("namespaceId", namespaceId.toString())));
     }
 
     public Collection<NamespaceServiceClusterMap> listServiceClusterMapping(Long namespaceId, String serviceName) {
         return this.dao.find(NAMESPACE_SERVICE_CLUSTER_MAPPING_NAMESPACE,
-                Lists.newArrayList(new QueryParam("namespaceId", namespaceId.toString()),
-                        new QueryParam("serviceName", serviceName)));
+            Lists.newArrayList(new QueryParam("namespaceId", namespaceId.toString()),
+                new QueryParam("serviceName", serviceName)));
     }
 
     public NamespaceServiceClusterMap getServiceClusterMapping(Long namespaceId,
-                                                               String serviceName, Long clusterId) {
+        String serviceName, Long clusterId) {
         StorableKey key = getStorableKeyForNamespaceServiceClusterMapping(namespaceId, serviceName, clusterId);
         return this.dao.get(key);
     }
@@ -510,7 +532,7 @@ public class EnvironmentService {
     }
 
     public NamespaceServiceClusterMap addOrUpdateServiceClusterMapping(
-            NamespaceServiceClusterMap newMapping) {
+        NamespaceServiceClusterMap newMapping) {
         assertEnvironmentIsNotInternal(newMapping.getNamespaceId());
 
         this.dao.addOrUpdate(newMapping);
@@ -519,7 +541,7 @@ public class EnvironmentService {
     }
 
     public void injectProtocolAndPortToComponent(Map<String, String> configurations, Component component,
-                                                 List<ComponentProcess> componentProcesses) {
+        List<ComponentProcess> componentProcesses) {
         try {
             ComponentPropertyPattern componentPropertyPattern = ComponentPropertyPattern.valueOf(component.getName());
             String value = configurations.get(componentPropertyPattern.getConnectionConfName());
@@ -527,7 +549,7 @@ public class EnvironmentService {
                 Pattern parsePattern = componentPropertyPattern.getParsePattern();
                 LOG.debug("Connection configuration name: [{}], parse pattern: [{}]", value, parsePattern);
 
-                if(parsePattern != null) {
+                if (parsePattern != null) {
                     Matcher matcher = parsePattern.matcher(value);
 
                     if (matcher.matches()) {
@@ -547,8 +569,8 @@ public class EnvironmentService {
                                 }
                             } catch (NumberFormatException e) {
                                 LOG.warn(
-                                        "Protocol/Port information [{}] for component {} has illegal format [{}]."
-                                                + "skip assigning...", value, component.getName(), parsePattern);
+                                    "Protocol/Port information [{}] for component {} has illegal format [{}]."
+                                        + "skip assigning...", value, component.getName(), parsePattern);
 
                                 // reset protocol information
                                 for (ComponentProcess componentProcess : componentProcesses) {
@@ -558,7 +580,7 @@ public class EnvironmentService {
                         }
                     } else {
                         LOG.warn("Protocol/Port information [{}] for component {} doesn't seem to known format [{}]. "
-                                + "skipping assignment...", value, component.getName(), parsePattern);
+                            + "skipping assignment...", value, component.getName(), parsePattern);
                     }
                 }
             } else {
@@ -591,7 +613,7 @@ public class EnvironmentService {
     }
 
     public ServiceBundle addServiceBundle(ServiceBundle serviceBundle) throws
-            ComponentConfigException {
+        ComponentConfigException {
         serviceBundle.getServiceUISpecification().validate();
         if (serviceBundle.getId() == null) {
             serviceBundle.setId(this.dao.nextId(SERVICE_BUNDLE_NAMESPACE));
@@ -605,8 +627,9 @@ public class EnvironmentService {
 
     public ServiceBundle updateServiceBundle(String serviceName, ServiceBundle serviceBundle) throws EntityNotFoundException {
         ServiceBundle persistentServiceBundle = getServiceBundleByName(serviceName);
-        if (persistentServiceBundle == null)
-            throw new EntityNotFoundException(String.format("Unable to find a service bundle of name : \"%s\"",serviceName));
+        if (persistentServiceBundle == null) {
+            throw new EntityNotFoundException(String.format("Unable to find a service bundle of name : \"%s\"", serviceName));
+        }
         persistentServiceBundle.setRegisterClass(serviceBundle.getRegisterClass());
         persistentServiceBundle.setServiceUISpecification(serviceBundle.getServiceUISpecification());
         persistentServiceBundle.setTimestamp(System.currentTimeMillis());
@@ -621,13 +644,13 @@ public class EnvironmentService {
     }
 
     private StorableKey getStorableKeyForNamespaceServiceClusterMapping(Long namespaceId, String serviceName,
-                                                                        Long clusterId) {
+        Long clusterId) {
         NamespaceServiceClusterMap mapping = new NamespaceServiceClusterMap();
         mapping.setNamespaceId(namespaceId);
         mapping.setServiceName(serviceName);
         mapping.setClusterId(clusterId);
         return new StorableKey(NAMESPACE_SERVICE_CLUSTER_MAPPING_NAMESPACE,
-                mapping.getPrimaryKey());
+            mapping.getPrimaryKey());
     }
 
     private void invalidateTopologyActionsMetricsInstances(Long namespaceId) {

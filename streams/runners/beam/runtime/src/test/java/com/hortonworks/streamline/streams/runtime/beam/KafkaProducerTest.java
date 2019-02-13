@@ -1,28 +1,59 @@
 package com.hortonworks.streamline.streams.runtime.beam;
 
-import com.hortonworks.streamline.streams.*;
-import com.hortonworks.streamline.streams.common.*;
-import com.hortonworks.streamline.streams.runtime.beam.kafka.*;
-import org.apache.kafka.clients.*;
-import org.apache.kafka.clients.producer.*;
-import org.apache.kafka.common.serialization.*;
+import static org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG;
+import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
+import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
 
-import java.util.*;
-
-import static org.apache.kafka.clients.producer.ProducerConfig.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hortonworks.streamline.streams.StreamlineEvent;
+import com.hortonworks.streamline.streams.common.StreamlineEventImpl;
+import java.util.Properties;
+import java.util.Random;
+import org.apache.kafka.clients.CommonClientConfigs;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringSerializer;
 
 /**
  * Created by Satendra Sahu on 12/6/18
  */
 public class KafkaProducerTest {
 
-    Producer<String, StreamlineEvent> producer;
+    Producer<String, String> producer;
     Random random;
+    private final ObjectMapper mapper = new ObjectMapper();
+    private String fabricEvent = "{\n"
+        + "\t\"id\": \"51fd2bc8-3000-4c5a-81cb-0d3f200859a5\",\n"
+        + "\t\"metadata\": {\n"
+        + "\t\t\"timestamp\": 1550038067418,\n"
+        + "\t\t\"schema\": \"filter_booking_rakam\",\n"
+        + "\t\t\"schemaVersion\": 1,\n"
+        + "\t\t\"type\": \"EVENT\",\n"
+        + "\t\t\"routingKey\": {\n"
+        + "\t\t\t\"type\": \"simple\",\n"
+        + "\t\t\t\"value\": \"1550038067418\"\n"
+        + "\t\t},\n"
+        + "\t\t\"lookupKey\": {\n"
+        + "\t\t\t\"type\": null,\n"
+        + "\t\t\t\"value\": \"00f0e972-342d-44f4-9e19-96261347ad43\"\n"
+        + "\t\t},\n"
+        + "\t\t\"tenant\": \"sharedriver_instrumentation\",\n"
+        + "\t\t\"stream\": \"sharedriver_instrumentation_rakam\",\n"
+        + "\t\t\"sender\": \"testSender\"\n"
+        + "\t},\n"
+        + "\t\"data\": {\n"
+        + "\t\t\"machine\": \"testMachine\",\n"
+        + "\t\t\"machine_COUNT\": 1124235123513,\n"
+        + "\t\t\"building_MAX\": \"MAX\"\n"
+        + "\t}\n"
+        + "}";
+
 
     private Properties getProducerProperties() {
         Properties properties = new Properties();
         properties.put(KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getCanonicalName());
-        properties.put(VALUE_SERIALIZER_CLASS_CONFIG, StreamlineEventSerializer.class.getCanonicalName());
+        properties.put(VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getCanonicalName());
         properties.put("sasl.mechanism", "PLAIN");
         properties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
         properties.put(BOOTSTRAP_SERVERS_CONFIG, "C1MNV1CUDTY3.local:9092");
@@ -43,21 +74,26 @@ public class KafkaProducerTest {
     }
 
     public void init() {
-        producer = new KafkaProducer<String, StreamlineEvent>(getProducerProperties());
+        producer = new KafkaProducer<String, String>(getProducerProperties());
         random = new Random();
     }
 
     private ProducerRecord<String, StreamlineEvent> getRecord() {
+
         StreamlineEventImpl event = StreamlineEventImpl.builder().dataSourceId("1").sourceStream("testProducer")
-                .put("machine", "testMachine")
-                .put("machine_COUNT", random.nextLong())
-                .put("building_MAX", "MAX")
-                .build();
+            .put("machine", "testMachine")
+            .put("machine_COUNT", random.nextLong())
+            .put("building_MAX", "MAX")
+            .build();
         return new ProducerRecord<>("beam_test_input", "testMsgKey", event);
     }
 
+    private ProducerRecord<String, String> getFabricRecord() {
+        return new ProducerRecord<>("beam_test_input", "testMsgKey", fabricEvent);
+    }
+
     public void send() {
-        producer.send(getRecord());
+        producer.send(getFabricRecord());
     }
 
     public static void main(String[] args) throws InterruptedException {

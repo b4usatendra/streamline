@@ -1,17 +1,12 @@
 /**
-  * Copyright 2017 Hortonworks.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-
-  *   http://www.apache.org/licenses/LICENSE-2.0
-
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+ * Copyright 2017 Hortonworks.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing permissions and limitations under the License.
  **/
 package com.hortonworks.streamline.streams.common.event.sedes.kafka;
 
@@ -35,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class StreamlineEventSerializer implements Serializer<StreamlineEvent> {
+
     protected static final Logger LOG = LoggerFactory.getLogger(StreamlineEventSerializer.class);
     private final AvroSnapshotSerializer avroSnapshotSerializer;
     private SchemaRegistryClient schemaRegistryClient;
@@ -76,12 +72,12 @@ public class StreamlineEventSerializer implements Serializer<StreamlineEvent> {
             return null;
         } else {
             return avroSnapshotSerializer.serialize(getAvroRecord(streamlineEvent, new Schema.Parser().parse(schemaVersionInfo.getSchemaText())),
-                    schemaMetadata);
+                schemaMetadata);
         }
     }
 
     private SchemaMetadata getSchemaKey(String topic, boolean isKey) {
-        String name = isKey ? topic+":k" : topic;
+        String name = isKey ? topic + ":k" : topic;
         return new SchemaMetadata.Builder(name).type(AvroSchemaProvider.TYPE).schemaGroup("kafka").build();
     }
 
@@ -95,7 +91,7 @@ public class StreamlineEventSerializer implements Serializer<StreamlineEvent> {
     }
 
     //package level access for testing
-    public static Object getAvroRecord (StreamlineEvent streamlineEvent, Schema schema) {
+    public static Object getAvroRecord(StreamlineEvent streamlineEvent, Schema schema) {
         if (streamlineEvent.containsKey(StreamlineEvent.PRIMITIVE_PAYLOAD_FIELD)) {
             if (streamlineEvent.keySet().size() > 1) {
                 throw new RuntimeException("Invalid schema, primitive schema can contain only one field.");
@@ -104,7 +100,7 @@ public class StreamlineEventSerializer implements Serializer<StreamlineEvent> {
         }
         GenericRecord result;
         result = new GenericData.Record(schema);
-        for (Map.Entry<String, Object> entry: streamlineEvent.entrySet()) {
+        for (Map.Entry<String, Object> entry : streamlineEvent.entrySet()) {
             result.put(entry.getKey(), getAvroValue(entry.getValue(), schema.getField(entry.getKey()).schema()));
         }
         return result;
@@ -116,7 +112,7 @@ public class StreamlineEventSerializer implements Serializer<StreamlineEvent> {
         } else if (input instanceof Map && !((Map) input).isEmpty()) {
             GenericRecord result;
             result = new GenericData.Record(schema);
-            for (Map.Entry<String, Object> entry: ((Map<String, Object>) input).entrySet()) {
+            for (Map.Entry<String, Object> entry : ((Map<String, Object>) input).entrySet()) {
                 result.put(entry.getKey(), getAvroValue(entry.getValue(), schema.getField(entry.getKey()).schema()));
             }
             return result;
@@ -126,7 +122,7 @@ public class StreamlineEventSerializer implements Serializer<StreamlineEvent> {
             // a  streamline Schema Array field to Record in avro. However, with that the issue is that avro Field constructor does not allow a
             // null name. We could potentiall hack it by plugging in a dummy name like arrayfield, but seems hacky so not taking that path
             List<Object> values = new ArrayList<>(((Collection) input).size());
-            for (Object value: (Collection) input) {
+            for (Object value : (Collection) input) {
                 values.add(getAvroValue(value, schema.getElementType()));
             }
             return new GenericData.Array<Object>(schema, values);

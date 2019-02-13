@@ -88,11 +88,11 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
 
     //TODO remove this section
     if (!conf.containsKey(TopologyLayoutConstants.JSON_KEY_KEY_DESERIALIZATION)) {
-      conf.put(TopologyLayoutConstants.JSON_KEY_KEY_DESERIALIZATION, "ByteArrayDeserializer");
+      conf.put(TopologyLayoutConstants.JSON_KEY_KEY_DESERIALIZATION, KafkaDeserializer.StringDeserializer.name());
     }
 
     if (!conf.containsKey(TopologyLayoutConstants.JSON_KEY_VALUE_DESERIALIZATION)) {
-      conf.put(TopologyLayoutConstants.JSON_KEY_VALUE_DESERIALIZATION, "StreamlineAvroDeserialzer");
+      conf.put(TopologyLayoutConstants.JSON_KEY_VALUE_DESERIALIZATION, KafkaDeserializer.FabricEventJsonDeserializer.name());
     }
 
     if (!conf.containsKey(BeamTopologyLayoutConstants.KAFKA_CLIENT_USER)) {
@@ -155,8 +155,6 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
         consumerProperties.put(propertyNames[j], conf.get(fieldNames[j]));
       }
     }
-
-    validateSSLConfig();
     setSaslJaasConfig(consumerProperties);
     return consumerProperties;
   }
@@ -164,102 +162,22 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
   private void setSaslJaasConfig(Map<String, Object> consumerProperties) {
     String securityProtocol = (String) conf.get("securityProtocol");
     String jaasConfigStr = null;
+    String jaasFilePath = BeamKafkaSourceComponent.class.getClassLoader().getResource("flink-jaas.conf").getPath();
+
     if (securityProtocol != null && !securityProtocol.isEmpty() && securityProtocol
         .equals("SASL_PLAINTEXT")) {
       consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, securityProtocol);
       consumerProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
 
-      jaasConfigStr = getSaslJaasConfig();
-
-    } else if (securityProtocol != null && !securityProtocol.isEmpty() && securityProtocol
-        .startsWith("SASL")) {
-      StringBuilder saslConfigStrBuilder = new StringBuilder();
-      String kafkaServiceName = (String) conf.get(SASL_KERBEROS_SERVICE_NAME);
-      String principal = (String) conf.get("principal");
-      String keytab = (String) conf.get("keytab");
-      if (kafkaServiceName == null || kafkaServiceName.isEmpty()) {
-        throw new IllegalArgumentException("Kafka service name must be provided for SASL GSSAPI Kerberos");
-      }
-      if (principal == null || principal.isEmpty()) {
-        throw new IllegalArgumentException("Kafka client principal must be provided for SASL GSSAPI Kerberos");
-      }
-      if (keytab == null || keytab.isEmpty()) {
-        throw new IllegalArgumentException("Kafka client principal keytab must be provided for SASL GSSAPI Kerberos");
-      }
-      saslConfigStrBuilder.append("com.sun.security.auth.module.Krb5LoginModule required useKeyTab=true storeKey=true keyTab=\"");
-      saslConfigStrBuilder.append(keytab).append("\"  principal=\"").append(principal).append("\";");
-
-      jaasConfigStr = saslConfigStrBuilder.toString();
     }
 
-    if (!Strings.isNullOrEmpty(jaasConfigStr)) {
-      String jaasFilePath = (String) conf.get(BeamTopologyLayoutConstants.JAAS_CONF_PATH);
+    if (!Strings.isNullOrEmpty(jaasFilePath)) {
+      System.out.println(jaasFilePath);
       File consumerJaasFile = new File(jaasFilePath);
-
-      try (Writer writer = new BufferedWriter(new OutputStreamWriter(
-          new FileOutputStream(jaasFilePath), "utf-8"))) {
-        writer.write(jaasConfigStr);
-        consumerJaasFile.deleteOnExit();
-      } catch (IOException e) {
-        throw new RuntimeException("Unable to set security protocol for kafka source");
-      }
-      System.setProperty("java.security.auth.login.config", consumerJaasFile.getAbsolutePath());
+      //System.setProperty("java.security.auth.login.config", "/tmp/topology/Beam_Aggregator_Test/jaas/jaas.conf");
+      System.out.println(System.getProperty("java.security.auth.login.config"));
     }
   }
 
-  public String getSaslJaasConfig() {
 
-    String kafkaClientUser = (String) conf.get(BeamTopologyLayoutConstants.KAFKA_CLIENT_USER);
-    String kafkaClientPassword = (String) conf.get(BeamTopologyLayoutConstants.KAFKA_CLIENT_PASSWORD);
-    String zkClientUser = (String) conf.get(BeamTopologyLayoutConstants.ZK_CLIENT_USER);
-    String zkClientPassword = (String) conf.get(BeamTopologyLayoutConstants.ZK_CLIENT_PASSWORD);
-
-    StringBuilder stringBuilder = new StringBuilder();
-    stringBuilder.append("KafkaClient {\n")
-        .append("org.apache.kafka.common.security.plain.PlainLoginModule required")
-        .append("\n")
-        .append("username=\"").append(kafkaClientUser).append("\"")
-        .append("\n")
-        .append("password=\"").append(kafkaClientPassword).append("\"")
-        .append(";\n")
-        .append("};\n\n");
-
-    stringBuilder.append("Client {\n")
-        .append("org.apache.zookeeper.server.auth.DigestLoginModule required")
-        .append("\n")
-        .append("username=\"").append(zkClientUser).append("\"")
-        .append("\n")
-        .append("password=\"").append(zkClientPassword).append("\"")
-        .append(";\n")
-        .append("};\n\n");
-
-    return stringBuilder.toString();
-
-  }
-
-  private void validateSSLConfig() {
-    String securityProtocol = (String) conf.get("securityProtocol");
-    if (securityProtocol != null && !securityProtocol.isEmpty() && securityProtocol.endsWith("SSL")) {
-      String truststoreLocation = (String) conf.get("sslTruststoreLocation");
-      String truststorePassword = (String) conf.get("sslTruststorePassword");
-      if (truststoreLocation == null || truststoreLocation.isEmpty()) {
-        throw new IllegalArgumentException("Truststore location must be provided for SSL");
-      }
-      if (truststorePassword == null || truststorePassword.isEmpty()) {
-        throw new IllegalArgumentException("Truststore password must be provided for SSL");
-      }
-    } else if (securityProtocol != null && !securityProtocol.isEmpty() && securityProtocol
-        .equals("SASL_PLAINTEXT")) {
-
-      String userName = (String) conf.get(BeamTopologyLayoutConstants.KAFKA_CLIENT_USER);
-      String password = (String) conf.get(BeamTopologyLayoutConstants.KAFKA_CLIENT_PASSWORD);
-      String jaasFilePath = (String) conf.get(BeamTopologyLayoutConstants.JAAS_CONF_PATH);
-
-      if (!Strings.isNullOrEmpty(userName) && !Strings.isNullOrEmpty(password) && !Strings.isNullOrEmpty(jaasFilePath)) {
-        return;
-      } else {
-        throw new RuntimeException("either kafka.user or password is null");
-      }
-    }
-  }
 }

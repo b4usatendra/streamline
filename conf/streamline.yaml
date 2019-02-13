@@ -9,6 +9,7 @@ modules:
     className: com.hortonworks.streamline.streams.service.StreamsModule
     config:
       stormHomeDir: /usr/local/Cellar/storm/0.10.0/
+      flinkHomeDir: /Users/satendra.sahu/application/flink/flink-1.5.6/
       # directory to store the results of topology test run
       topologyTestRunResultDir: /tmp
       # schema registry configuration
@@ -21,7 +22,6 @@ modules:
       # directory (absolute path) to use for maven local repository (optional)
       # in practice it should not be under "/tmp" and the account which runs 'streamline' should have read/write permission
       mavenLocalRepositoryDirectory: "/tmp/local-repo"
-      #beamArtifactsDirectory: "/streamline/libs/beam-artifacts"
 
 catalogRootUrl: "http://localhost:6060/api/v1/catalog"
 

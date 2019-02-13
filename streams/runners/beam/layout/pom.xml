@@ -23,12 +23,6 @@
             <artifactId>beam-sdks-java-io-kafka</artifactId>
             <version>${beam.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.hortonworks.streamline</groupId>
-            <artifactId>streamline-layout</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>com.hortonworks.streamline</groupId>
             <artifactId>streamline-common</artifactId>
@@ -88,6 +82,10 @@
             <version>0.9.1</version>
             <scope>provided</scope>
         </dependency>
+      <dependency>
+        <groupId>com.hortonworks.streamline</groupId>
+        <artifactId>streamline-layout</artifactId>
+      </dependency>
 
     </dependencies>
 </project>

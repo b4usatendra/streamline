@@ -18,7 +18,6 @@ package com.hortonworks.streamline.common;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hortonworks.streamline.common.exception.WrappedWebApplicationException;
-import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
@@ -29,6 +28,7 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 
 public class JsonClientUtil {
 

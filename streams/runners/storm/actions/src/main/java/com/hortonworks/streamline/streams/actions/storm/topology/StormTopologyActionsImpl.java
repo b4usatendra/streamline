@@ -139,8 +139,6 @@ public class StormTopologyActionsImpl implements TopologyActions {
     public static final String TOPOLOGY_EVENTLOGGER_REGISTER = "topology.event.logger.register";
     public static final String TOPOLOGY_EVENTLOGGER_CLASSNAME_STREAMLINE = "com.hortonworks.streamline.streams.runtime.storm.event.sample.StreamlineEventLogger";
 
-
-
     private String stormArtifactsLocation = "/tmp/storm-artifacts/";
     private String stormCliPath = "storm";
     private String stormJarLocation;

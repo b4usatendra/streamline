@@ -50,7 +50,7 @@ public final class StreamlineEventImpl extends ForwardingMap<String, Object> imp
     private final String sourceStream;
     private final ImmutableMap<String, Object> auxiliaryFieldsAndValues;
     private final String dataSourceId;
-    private final String id = UUID.randomUUID().toString();
+    private String id = UUID.randomUUID().toString();
     private final ImmutableMap<String, Object> delegate;
 
     @Override
@@ -69,13 +69,14 @@ public final class StreamlineEventImpl extends ForwardingMap<String, Object> imp
     /**
      * Creates an StreamlineEvent with given keyValues, dataSourceId, id, header and sourceStream.
      */
-    private StreamlineEventImpl(Map<String, Object> keyValues, String dataSourceId, Map<String, Object> header,
+    private StreamlineEventImpl(String id, Map<String, Object> keyValues, String dataSourceId, Map<String, Object> header,
                                 String sourceStream, Map<String, Object> auxiliaryFieldsAndValues) {
         if (keyValues instanceof StreamlineEventImpl) {
             this.delegate = ImmutableMap.copyOf(((StreamlineEventImpl) keyValues).delegate());
         } else {
             this.delegate = ImmutableMap.copyOf(keyValues);
         }
+        this.id = id;
         this.dataSourceId = dataSourceId;
         this.sourceStream = sourceStream;
         this.header = header != null ? ImmutableMap.copyOf(header) : ImmutableMap.of();
@@ -89,11 +90,13 @@ public final class StreamlineEventImpl extends ForwardingMap<String, Object> imp
         private Map<String, Object> auxiliaryFieldsAndValues;
         private String sourceStream = DEFAULT_SOURCE_STREAM;
         private String dataSourceId = "";
+        private String id = UUID.randomUUID().toString();;
 
       private Builder() { }
 
         public Builder from(StreamlineEvent other) {
             return this.header(other.getHeader())
+                    .id(other.getId())
                     .sourceStream(other.getSourceStream())
                     .dataSourceId(other.getDataSourceId())
                     .auxiliaryFieldsAndValues(other.getAuxiliaryFieldsAndValues())
@@ -118,6 +121,11 @@ public final class StreamlineEventImpl extends ForwardingMap<String, Object> imp
         public Builder dataSourceId(String dataSourceId) {
             this.dataSourceId = dataSourceId;
             return this;
+        }
+
+        public Builder id(String id) {
+          this.id = id;
+          return this;
         }
 
         public Builder put(String key, Object value) {
@@ -171,11 +179,13 @@ public final class StreamlineEventImpl extends ForwardingMap<String, Object> imp
             } else {
                 fieldsAndValues = Collections.emptyMap();
             }
+
             Map<String, Object> header = this.header != null ? ImmutableMap.copyOf(this.header) : ImmutableMap.of();
             Map<String, Object> aux = this.auxiliaryFieldsAndValues != null ?
                     ImmutableMap.copyOf(this.auxiliaryFieldsAndValues) : ImmutableMap.of();
 
             return new StreamlineEventImpl(
+                    id,
                     fieldsAndValues,
                     this.dataSourceId,
                     header,
@@ -208,6 +218,10 @@ public final class StreamlineEventImpl extends ForwardingMap<String, Object> imp
     @Override
     public String getId() {
         return id;
+    }
+
+    public void setId(String id){
+      this.id = id;
     }
 
     @Override

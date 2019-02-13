@@ -1,21 +1,17 @@
 /**
  * Copyright 2017 Hortonworks.
  * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
  * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied. See the License for the specific language governing permissions and limitations under the License.
  **/
 package com.hortonworks.streamline.streams.actions.beam.topology;
 
-import static java.util.stream.Collectors.toList;
-
 import com.google.common.base.Joiner;
+import com.hortonworks.streamline.common.exception.WrappedWebApplicationException;
 import com.hortonworks.streamline.streams.actions.TopologyActionContext;
 import com.hortonworks.streamline.streams.actions.TopologyActions;
 import com.hortonworks.streamline.streams.actions.topology.service.ArtifactoryJarPathResolver;
@@ -25,6 +21,7 @@ import com.hortonworks.streamline.streams.beam.common.BeamTopologyLayoutConstant
 import com.hortonworks.streamline.streams.beam.common.BeamTopologyUtil;
 import com.hortonworks.streamline.streams.beam.common.FlinkRestAPIClient;
 import com.hortonworks.streamline.streams.catalog.TopologyTestRunHistory;
+import com.hortonworks.streamline.streams.cluster.catalog.JobClusterMap;
 import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
 import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
 import com.hortonworks.streamline.streams.layout.beam.TopologyMapper;
@@ -42,15 +39,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.StringWriter;
-
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -64,6 +61,7 @@ import javax.ws.rs.client.ClientBuilder;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.hadoop.io.SecureIOUtils.AlreadyExistsException;
 import org.glassfish.jersey.client.ClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,17 +75,20 @@ public class BeamTopologyActionsImpl implements TopologyActions {
 
   private static final String DEFAULT_BEAM_ARTIFACTS_LOCATION = "/tmp/beam-artifacts";
   private static final String FLINK_MASTER_KEY = "master.endpoint";
+  private final String tempTopologyPath = "/tmp/topology/%s/%s/";
   private static final String TOPOLOGY_SERIALIZED_OBJECT_PATH = "/serializedObject";
+  private static final String FLINK_HOME_DIR = "flinkHomeDir";
   private FlinkRestAPIClient flinkClient;
   private String beamJarLocation;
   private final ConcurrentHashMap<Long, Boolean> forceKillRequests = new ConcurrentHashMap<>();
   private HttpFileDownloader httpFileDownloader;
   private String beamArtifactsLocation = DEFAULT_BEAM_ARTIFACTS_LOCATION;
-  private final String tempTopologyPath = "/tmp/topology/%s/%s/";
   private String javaJarCommand;
   private BeamServiceConfigurationReader serviceConfigurationReader;
   private Map<String, Object> conf;
-  private Optional<String> jaasFilePath;
+  private EnvironmentService environmentService;
+  private String runner;
+
 
   public BeamTopologyActionsImpl() {
   }
@@ -115,21 +116,14 @@ public class BeamTopologyActionsImpl implements TopologyActions {
       }
       setupSecuredCluster(conf);
 
-      EnvironmentService environmentService = (EnvironmentService) conf
+      environmentService = (EnvironmentService) conf
           .get(TopologyLayoutConstants.ENVIRONMENT_SERVICE_OBJECT);
       Number namespaceId = (Number) conf.get(TopologyLayoutConstants.NAMESPACE_ID);
 
       serviceConfigurationReader = new BeamServiceConfigurationReader(environmentService,
           namespaceId.longValue());
 
-      Map<String, String> runnerConfig = serviceConfigurationReader.getRunnerConfig();
-      if (!runnerConfig.containsKey(FLINK_MASTER_KEY)) {
-        throw new RuntimeException(String.format("%s config not found", FLINK_MASTER_KEY));
-      }
-      flinkClient = new FlinkRestAPIClient(
-          String.format("http://%s", runnerConfig.get(FLINK_MASTER_KEY)),
-          (Subject) conf.get(TopologyLayoutConstants.SUBJECT_OBJECT),
-          ClientBuilder.newClient(new ClientConfig()));
+      runner = serviceConfigurationReader.getStreamingEngine();
 
       try {
         httpFileDownloader = new HttpFileDownloader("tmp");
@@ -146,48 +140,27 @@ public class BeamTopologyActionsImpl implements TopologyActions {
 
   private void setupSecuredCluster(Map<String, Object> conf) {
 
-
-/*
-        if (conf.containsKey(TopologyLayoutConstants.STORM_NIMBUS_PRINCIPAL_NAME)) {
-            String nimbusPrincipal = (String) conf.get(BeamTopologyLayoutConstants.PRINCIPAL_NAME);
-            String kerberizedNimbusServiceName = nimbusPrincipal.split("/")[0];
-            jaasFilePath = Optional.of(createJaasFile(kerberizedNimbusServiceName));
-        } else {
-            jaasFilePath = Optional.empty();
-        }
-
-        principalToLocal = (String) conf.getOrDefault(TopologyLayoutConstants.STORM_PRINCIPAL_TO_LOCAL, DEFAULT_PRINCIPAL_TO_LOCAL);
-
-        if (thriftTransport == null) {
-            if (jaasFilePath.isPresent()) {
-                thriftTransport = (String) conf.get(TopologyLayoutConstants.STORM_SECURED_THRIFT_TRANSPORT);
-            } else {
-                thriftTransport = (String) conf.get(TopologyLayoutConstants.STORM_NONSECURED_THRIFT_TRANSPORT);
-            }
-        }
-
-        // if it's still null, set to default
-        if (thriftTransport == null) {
-            thriftTransport = DEFAULT_THRIFT_TRANSPORT_PLUGIN;
-        }*/
   }
+
 
   @Override
   public void deploy(TopologyLayout topology, String mavenArtifacts, TopologyActionContext ctx,
       String asUser)
       throws Exception {
-
+    Collection<JobClusterMap> jobClusterMaps = environmentService.getJobByTopologyName(topology.getName(), runner);
     //Preconditions before deploying
+
+    if (jobClusterMaps.size() != 0) {
+      JobClusterMap jobClusterMap = jobClusterMaps.iterator().next();
+      throw new AlreadyExistsException(String.format("Flink Job with name: {} and jobId: {} already exists.", topology.getName(), jobClusterMap.getJobId()));
+    }
+
     BeamRunner runner = getRunnerArg();
     String runnerMasterCmd = getRunnerMaster(runner);
-
     Map<String, Object> config = new HashMap<String, Object>();
-    File file = new File(getTopologyTempPath(topology.getName(), "jaas"));
-    file.mkdirs();
-    conf.put(BeamTopologyLayoutConstants.JAAS_CONF_PATH, file.getAbsolutePath() + "/jaas.conf");
 
     //serialize topology
-    file = new File(getTopologyTempPath(topology.getName(), "serialization"));
+    File file = new File(getTopologyTempPath(topology.getName(), "serialization"));
     file.mkdirs();
     String filePath = file.getAbsolutePath() + TOPOLOGY_SERIALIZED_OBJECT_PATH;
 
@@ -200,19 +173,57 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     }
     serializeTopologyDag(new TopologyMapper(config, topology), filePath);
     ctx.setCurrentAction("Adding artifacts to jar");
-    downloadArtifactsAndCopyJars(mavenArtifacts, getExtraJarsLocation(topology));
+    //downloadArtifactsAndCopyJars(mavenArtifacts, getExtraJarsLocation(topology));
     Path jarToDeploy = addArtifactsToJar(getExtraJarsLocation(topology));
+    addJaaSConfig(conf, topology.getName(), jarToDeploy);
 
-    ctx.setCurrentAction("Creating Flink Pipeline from topology");
-    ctx.setCurrentAction("Deploying beam topology via 'java jar' command");
     List<String> commands = new ArrayList<String>();
-    commands.add("java");
+    JobClusterMap jobClusterMap = new JobClusterMap();
+    jobClusterMap.setTopologyName(topology.getName());
+    jobClusterMap.setTopologyId(topology.getId());
 
-    commands.add("-jar");
-    commands.add(jarToDeploy.toString());
-    commands.add(filePath);
-    commands.add("--runner=" + runner);
-    commands.add(runnerMasterCmd);
+    if (runner.equals(BeamRunner.FlinkRunner)) {
+      jobClusterMap.setStreamingEngine(serviceConfigurationReader.getStreamingEngine());
+      ctx.setCurrentAction("Creating Flink Pipeline from topology");
+      ctx.setCurrentAction("Deploying beam topology via 'java jar' command");
+      String flinkCliPath = (String) conf.get(FLINK_HOME_DIR);
+      String flinkExec = flinkCliPath + "bin/flink";
+      //Always add key value pair in command in separate line.
+
+      //TODO make command args configurable.
+      if (runnerMasterCmd.contains("[auto]")) {
+        commands.add(flinkExec);
+        commands.add("run");
+        //commands.add("-sae");
+        commands.add("-m");
+        commands.add("yarn-cluster");
+        commands.add("--yarncontainer");
+        commands.add("1");
+        commands.add("--yarnslots");
+        commands.add("1");
+        commands.add("--yarnjobManagerMemory");
+        commands.add("2000");
+        commands.add("--yarntaskManagerMemory");
+        commands.add("2000");
+        commands.add("--yarnname");
+        commands.add(topology.getName());
+        commands.add(jarToDeploy.toString());
+        commands.add(filePath);
+        commands.add("--runner=" + runner);
+        commands.add("--flinkMaster=" + runnerMasterCmd);
+        commands.add("--filesToStage=" + jarToDeploy);
+      } else {
+        commands.add("java");
+        commands.add("-jar");
+        commands.add(jarToDeploy.toString());
+        commands.add(filePath);
+        commands.add("--runner=" + runner);
+        commands.add("--filesToStage=" + jarToDeploy);
+        String connectionEndpoint = runnerMasterCmd.replace("http://", "");
+        commands.add("--flinkMaster=" + connectionEndpoint);
+        jobClusterMap.setConnectionEndpoint(connectionEndpoint);
+      }
+    }
 
     LOG.info("Deploying Application {}", topology.getName());
     LOG.info(String.join(" ", commands));
@@ -228,13 +239,81 @@ public class BeamTopologyActionsImpl implements TopologyActions {
       throw new Exception(
           "Topology could not be deployed successfully: flink deploy command failed with "
               + errors);
+    } else {
+      updateJobClusterMapping(shellProcessResult.stdout, jobClusterMap);
+    }
+    environmentService.addJobClusterMapping(jobClusterMap);
+  }
+
+  private void updateJobClusterMapping(String stdout, JobClusterMap jobClusterMap) {
+    String[] output = stdout.split("\\n\\t");
+
+    if (!serviceConfigurationReader.getRunnerConfig().containsKey(FLINK_MASTER_KEY)) {
+      for (String line : output) {
+
+        if (line.contains("Connecting to ResourceManager at")) {
+          String[] splittedLines = line.split(" ");
+          String str = splittedLines[splittedLines.length - 1];
+          String[] strs = str.split("/");
+          String applicationHost = strs[0].trim();
+          String applicationPort = strs[1].split(":")[1];
+          jobClusterMap.setConnectionEndpoint(applicationHost + ":" + applicationPort);
+        }
+
+        if (line.contains("Submitted application ")) {
+          String[] splittedLines = line.split(" ");
+          String applicationId = splittedLines[splittedLines.length - 1];
+          applicationId.trim();
+          jobClusterMap.setJobId(applicationId);
+        }
+      }
+    } else {
+      for (String line : output) {
+        if (line.contains("Submitting job")) {
+          String[] splittedLines = line.split(" ");
+          String applicationId = splittedLines[6];
+          jobClusterMap.setJobId(applicationId);
+        }
+      }
     }
   }
 
+
+  private void addJaaSConfig(Map<String, Object> conf, String topologyName, Path jarToDeploy) throws Exception {
+    BeamTopologyActionUtils.validateSSLConfig(conf);
+    String jaasConfig = BeamTopologyActionUtils.getSaslJaasConfig(conf);
+    File topologyMetaDir = new File(getTopologyTempPath(topologyName, "jaas"));
+    topologyMetaDir.mkdirs();
+    String jaasConfTempPath = topologyMetaDir.getAbsolutePath() + "/jaas.conf";
+    BeamTopologyActionUtils.createJaasFile(jaasConfTempPath, jaasConfig);
+
+    List<String> commands = new ArrayList<String>();
+
+    commands.add("jar");
+    commands.add("-uf");
+    commands.add(jarToDeploy.toString());
+    commands.add(jaasConfTempPath);
+
+    LOG.info(String.join(" ", commands));
+    Process process = executeShellProcess(commands);
+    ShellProcessResult shellProcessResult = waitProcessFor(process);
+    if (shellProcessResult.exitValue != 0) {
+      LOG.error("unable to add JAAS File to jar - exit code: {} / output: {}",
+          shellProcessResult.exitValue, shellProcessResult.stdout);
+      String[] lines = shellProcessResult.stdout.split("\\n");
+      String errors = Arrays.stream(lines)
+          .filter(line -> line.startsWith("Exception") || line.startsWith("Caused by"))
+          .collect(Collectors.joining(", "));
+      throw new Exception(
+          "Unable to add JAAS File to jar "
+              + errors);
+    }
+
+  }
+
   private BeamRunner getRunnerArg() {
-    String runner = serviceConfigurationReader.getStreamingEngine();
-    switch (runner.toLowerCase()) {
-      case "flink":
+    switch (runner) {
+      case "FLINK":
         return BeamRunner.FlinkRunner;
       default:
         throw new UnsupportedOperationException(String.format("Unsupported runner: %s", runner));
@@ -246,10 +325,10 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     switch (runner) {
       case FlinkRunner:
         if (!runnerConfig.containsKey(FLINK_MASTER_KEY)) {
-          throw new RuntimeException(String.format("%s config not found", FLINK_MASTER_KEY));
+          return "[auto]";
         }
-        return new StringBuffer("--flinkMaster=").append(runnerConfig.get(FLINK_MASTER_KEY))
-            .toString();
+        return runnerConfig.get(FLINK_MASTER_KEY);
+
       default:
         return null;
     }
@@ -267,7 +346,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
   }
 
   private Process executeShellProcess(List<String> commands) throws Exception {
-    LOG.debug("Executing command: {}", Joiner.on(" ").join(commands));
+    LOG.info("Executing command: {}", Joiner.on(" ").join(commands));
     ProcessBuilder processBuilder = new ProcessBuilder(commands);
     processBuilder.redirectErrorStream(true);
     return processBuilder.start();
@@ -276,50 +355,28 @@ public class BeamTopologyActionsImpl implements TopologyActions {
   private ShellProcessResult waitProcessFor(Process process)
       throws IOException, InterruptedException {
     StringWriter sw = new StringWriter();
-        /*while (process.isAlive()) {
-            final BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()));
-            String line = null;
-            while ((line = reader.readLine()) != null) {
 
-            }
-            reader.close();
-        }*/
     int exitValue = 0;
-    process.waitFor(10, TimeUnit.SECONDS);
+    process.waitFor(1, TimeUnit.SECONDS);
+    LOG.info("waiting for the process to exit");
     if (!process.isAlive() && process.exitValue() == -1) {
-      exitValue = -1;
+      exitValue = process.exitValue();
       IOUtils.copy(process.getInputStream(), sw, Charset.defaultCharset());
-    } else {
-      final BufferedReader reader = new BufferedReader(
-          new InputStreamReader(process.getInputStream()));
+    }else
+    {
+      final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
       String line;
       while ((line = reader.readLine()) != null) {
-        LOG.info(line);
-        sw.append(line);
-        if (line.contains("Submitting job")) {
+        sw.append(line).append("\n\t");
+        if (line.contains("Submitting job")  || line.contains("Submitted application ")) {
           break;
         }
       }
-
-
-            /*int len = process.getInputStream().read(buffer);
-            byte[] buffer = new byte[2048];
-            while (len!=-1){
-                log = IOUtils.toString(buffer,Charset.defaultCharset());
-                IOUtils.buffer(buffer,sw,Charset.defaultCharset());
-                if(stopStreamCopy)
-                    break;
-                if(sw.toString().toLowerCase().contains("Submitting job"))
-                    stopStreamCopy = true;
-                len = process.getInputStream().read(buffer);
-            }
-            LOG.info(sw.toString());*/
     }
-    //IOUtils.copy(process.getInputStream(), sw, Charset.defaultCharset());
+
     String stdout = sw.toString();
-    LOG.debug("Command output: {}", stdout);
-    LOG.debug("Command exit status: {}", exitValue);
+    LOG.info("Command output: {}", stdout);
+    LOG.info("Command exit status: {}", exitValue);
     return new ShellProcessResult(exitValue, stdout);
   }
 
@@ -343,13 +400,12 @@ public class BeamTopologyActionsImpl implements TopologyActions {
                 new File(destinationPath.toAbsolutePath().toString()));
             isDownloadedSet.add(dependency);
           } catch (HttpResponseException e) {
-            LOG.error("%s not found in repository %s", dependency, url);
+            LOG.warn("{} not found in repository {}", dependency, url);
           } catch (Exception e) {
             e.printStackTrace();
           }
         }
       }
-
     }
     //ArtifactoryJarPathResolver.resolve()
   }
@@ -377,7 +433,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
 
   private Path addArtifactsToJar(Path artifactsLocation) throws Exception {
     Path jarFile = Paths.get(beamJarLocation);
-    if (artifactsLocation.toFile().isDirectory()) {
+   /* if (artifactsLocation.toFile().isDirectory()) {
       File[] artifacts = artifactsLocation.toFile().listFiles();
       if (artifacts != null && artifacts.length > 0) {
         Path newJar = Files.copy(jarFile, artifactsLocation.resolve(jarFile.getFileName()));
@@ -397,7 +453,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
         });
 
         Process process = executeShellProcess(commands);
-        ShellProcessResult shellProcessResult = waitProcessFor(process);
+        ShellProcessResult shellProcessResult = waitProcessFor(process, null);
         if (shellProcessResult.exitValue != 0) {
           LOG.error("Adding artifacts to jar command failed - exit code: {} / output: {}",
               shellProcessResult.exitValue, shellProcessResult.stdout);
@@ -410,7 +466,7 @@ public class BeamTopologyActionsImpl implements TopologyActions {
     } else {
       LOG.debug("Artifacts directory {} does not exist, not adding any artifacts to jar",
           artifactsLocation);
-    }
+    }*/
     return jarFile;
   }
 
@@ -443,11 +499,56 @@ public class BeamTopologyActionsImpl implements TopologyActions {
   @Override
   public void kill(TopologyLayout topology, String asUser)
       throws Exception {
-    String jobId = flinkClient.getJobId(topology.getName());
-    if (jobId == null) {
-      throw new NotFoundException(String.format("Topology [%s] not found", topology.getName()));
+
+    Iterator<JobClusterMap> iterator = environmentService
+        .getJobByTopologyName(topology.getName(), serviceConfigurationReader.getStreamingEngine())
+        .iterator();
+
+    if (!serviceConfigurationReader.getRunnerConfig().containsKey(FLINK_MASTER_KEY)) {
+      if (iterator.hasNext()) {
+        JobClusterMap jobClusterMap = iterator.next();
+        List<String> commands = new ArrayList<String>();
+        commands.add("yarn");
+        commands.add("application");
+        commands.add("-kill");
+        commands.add(jobClusterMap.getJobId());
+
+        Process process = executeShellProcess(commands);
+        ShellProcessResult shellProcessResult = waitProcessFor(process);
+        if (shellProcessResult.exitValue != 0) {
+          LOG.error("Unable to kill Flink ApplicationMaster - exit code: {} / output: {}",
+              shellProcessResult.exitValue, shellProcessResult.stdout);
+          String[] lines = shellProcessResult.stdout.split("\\n");
+          String errors = Arrays.stream(lines)
+              .filter(line -> line.startsWith("Exception") || line.startsWith("Caused by"))
+              .collect(Collectors.joining(", "));
+          throw new Exception(
+              "Unable to kill Flink ApplicationMaster failed with "
+                  + errors);
+        } else {
+          environmentService.removeJobClusterMapping(jobClusterMap.getId());
+        }
+      }
+    } else {
+      if (iterator.hasNext()) {
+        JobClusterMap jobClusterMap = iterator.next();
+        LOG.info("Killing topology {} running on {}", topology.getName(), jobClusterMap.getConnectionEndpoint());
+        flinkClient = new FlinkRestAPIClient(
+            String.format("http://%s", jobClusterMap.getConnectionEndpoint()),
+            (Subject) conf.get(TopologyLayoutConstants.SUBJECT_OBJECT),
+            ClientBuilder.newClient(new ClientConfig()));
+        String jobId = null;
+        try {
+          jobId = flinkClient.getJobIdByName(topology.getName());
+        } catch (WrappedWebApplicationException | NotFoundException e) {
+          LOG.error(String.format("Topology {} not found: error {}", topology.getName()), e.getMessage());
+        }
+        if (jobId != null) {
+          flinkClient.stopJob(jobId);
+          environmentService.removeJobClusterMapping(jobClusterMap.getId());
+        }
+      }
     }
-    flinkClient.stopJob(jobId);
   }
 
   @Override
