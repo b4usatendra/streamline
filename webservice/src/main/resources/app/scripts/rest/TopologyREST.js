@@ -401,7 +401,7 @@ const TopologyREST = {
       .then((response) => {
         return response.json();
       });
-   }
+  },
   cloneTopology(id, namespaceId, options) {
     options = options || {};
     options.method = options.method || 'POST';

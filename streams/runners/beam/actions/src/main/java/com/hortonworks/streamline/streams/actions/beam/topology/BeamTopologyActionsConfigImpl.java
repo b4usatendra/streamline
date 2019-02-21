@@ -82,21 +82,6 @@ public class BeamTopologyActionsConfigImpl extends TopologyActionsConfig {
     }
 
     private Map<String, Object> putFlinkConfigurations(Map<String, Object> conf) {
-        if (!conf.containsKey(BeamTopologyLayoutConstants.YARN_CONTAINER)) {
-            conf.put(BeamTopologyLayoutConstants.YARN_CONTAINER, "2");
-        }
-
-        if (!conf.containsKey(BeamTopologyLayoutConstants.YARN_SLOTS)) {
-            conf.put(BeamTopologyLayoutConstants.YARN_SLOTS, "4");
-        }
-
-        if (!conf.containsKey(BeamTopologyLayoutConstants.YARN_JOB_MANAGER_MEMORY)) {
-            conf.put(BeamTopologyLayoutConstants.YARN_JOB_MANAGER_MEMORY, "2000");
-        }
-
-        if (!conf.containsKey(BeamTopologyLayoutConstants.YARN_TASK_MANAGER_MEMORY)) {
-            conf.put(BeamTopologyLayoutConstants.YARN_TASK_MANAGER_MEMORY, "2000");
-        }
         return conf;
     }
 

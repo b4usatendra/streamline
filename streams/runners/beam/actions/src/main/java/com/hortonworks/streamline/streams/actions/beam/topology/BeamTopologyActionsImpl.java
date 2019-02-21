@@ -204,16 +204,41 @@ public class BeamTopologyActionsImpl implements TopologyActions {
                 //commands.add("-sae");
                 commands.add("-m");
                 commands.add("yarn-cluster");
+
                 commands.add("--yarncontainer");
-                commands.add((String) conf.get(BeamTopologyLayoutConstants.YARN_CONTAINER));
+                if (topology.getConfig().contains(BeamTopologyLayoutConstants.YARN_CONTAINER)) {
+                    commands.add(Integer.toString((Integer) topology.getConfig().getProperties()
+                        .get(BeamTopologyLayoutConstants.YARN_CONTAINER)));
+                } else {
+                    commands.add("2");
+                }
+
                 commands.add("--yarnslots");
-                commands.add((String) conf.get(BeamTopologyLayoutConstants.YARN_SLOTS));
+                if (topology.getConfig().contains(BeamTopologyLayoutConstants.YARN_SLOTS)) {
+                    commands.add(Integer.toString((Integer) topology.getConfig().getProperties()
+                        .get(BeamTopologyLayoutConstants.YARN_SLOTS)));
+                } else {
+                    commands.add("4");
+                }
+
                 commands.add("--yarnjobManagerMemory");
-                commands
-                    .add((String) conf.get(BeamTopologyLayoutConstants.YARN_JOB_MANAGER_MEMORY));
+                if (topology.getConfig()
+                    .contains(BeamTopologyLayoutConstants.YARN_JOB_MANAGER_MEMORY)) {
+                    commands.add(Integer.toString((Integer) topology.getConfig().getProperties()
+                        .get(BeamTopologyLayoutConstants.YARN_JOB_MANAGER_MEMORY)));
+                } else {
+                    commands.add("2000");
+                }
+
                 commands.add("--yarntaskManagerMemory");
-                commands
-                    .add((String) conf.get(BeamTopologyLayoutConstants.YARN_TASK_MANAGER_MEMORY));
+                if (topology.getConfig()
+                    .contains(BeamTopologyLayoutConstants.YARN_TASK_MANAGER_MEMORY)) {
+                    commands.add(Integer.toString((Integer) topology.getConfig().getProperties()
+                        .get(BeamTopologyLayoutConstants.YARN_TASK_MANAGER_MEMORY)));
+                } else {
+                    commands.add("2000");
+                }
+
                 commands.add("--yarnname");
                 commands.add(topology.getName());
                 commands.add(jarToDeploy.toString());
