@@ -28,7 +28,6 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 
 public class JsonClientUtil {
 
@@ -125,7 +124,7 @@ public class JsonClientUtil {
     }
 
     public static Response patchForm(WebTarget target, MultivaluedMap<String, String> form, MediaType mediaType) {
-        return target.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true)
+        return target.property("jersey.config.client.httpUrlConnection.setMethodWorkaround", true)
                 .request(mediaType)
                 .build("PATCH",Entity.form(form))
                 .invoke();

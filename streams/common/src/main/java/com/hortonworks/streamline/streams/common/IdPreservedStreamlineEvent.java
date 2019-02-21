@@ -75,6 +75,14 @@ public class IdPreservedStreamlineEvent implements StreamlineEvent {
         return underlyingEvent.addFieldsAndValues(fieldsAndValues);
     }
 
+    /**
+     * Returns a Map of Key-Value pair.
+     */
+    @Override
+    public Map<String, Object> getFieldsAndValues() {
+        return underlyingEvent.getFieldsAndValues();
+    }
+
     @Override
     public StreamlineEvent addFieldAndValue(String key, Object value) {
         return underlyingEvent.addFieldAndValue(key, value);

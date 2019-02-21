@@ -393,6 +393,15 @@ const TopologyREST = {
         return response.json();
       });
   },
+  getTopologyConfigs(nameSpaceId, options) {
+    options = options || {};
+    options.method = options.method || 'GET';
+    options.credentials = 'same-origin';
+    return fetch(baseUrl + 'streams/componentbundles/TOPOLOGY/'+nameSpaceId, options)
+      .then((response) => {
+        return response.json();
+      });
+   }
   cloneTopology(id, namespaceId, options) {
     options = options || {};
     options.method = options.method || 'POST';

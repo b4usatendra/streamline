@@ -74,14 +74,16 @@
         "fieldName": "keySerializer",
         "isOptional": false,
         "tooltip": "Type of key serializer to use",
-        "type": "string"
+        "type": "enumstring",
+        "options": []
       },
       {
         "uiName": "Value Serializer",
         "fieldName": "valueSerializer",
         "isOptional": false,
         "tooltip": "Type of value serializer to use",
-        "type": "string"
+        "type": "enumstring",
+        "options": []
       },
       {
         "uiName": "Kafka Client User",

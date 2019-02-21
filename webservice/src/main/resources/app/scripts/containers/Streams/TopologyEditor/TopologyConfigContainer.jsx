@@ -101,9 +101,11 @@ export default class TopologyConfigContainer extends Component {
           }
           this.setState({formData: f_Data, formField: formField, fetchLoader: false,advancedField : adv_Field, clustersArr: clusters});
           let mapObj = r.mappings.find((m) => {
-            return m.serviceName.toLowerCase() === 'storm';
+            if(m.serviceName.toLowerCase() === 'storm' || m.serviceName.toLowerCase() === 'flink'){
+              return m;
+            };
           });
-          if (mapObj) {
+          if (mapObj.serviceName.toLowerCase() === 'storm') {
             var stormClusterId = mapObj.clusterId;
             let hasSecurity = false, principalsArr = [], keyTabsArr = [];
             ClusterREST.getStormSecurityDetails(stormClusterId)
@@ -160,6 +162,35 @@ export default class TopologyConfigContainer extends Component {
                 }
                 this.setState({hasSecurity: hasSecurity, formField: formField});
               });
+          } else if(mapObj.serviceName.toLowerCase() === 'flink') {
+            let hasSecurity = false;
+            //removing security related fields for non-secure mode
+            if(hasSecurity === false) {
+              if(formField.fields && formField.fields.length > 0) {
+                formField.fields = _.filter(formField.fields, (f)=>{
+                  if(f.hint && f.hint.indexOf('security_') !== -1) {
+                    return false;
+                  } else {
+                    return true;
+                  }
+                });
+              }
+            } else {
+              let nodes = this.props.topologyNodes.filter((c)=>{
+                return c.currentType.toLowerCase() === 'hbase' || c.currentType.toLowerCase() === 'hdfs' || c.currentType.toLowerCase() === 'hive';
+              });
+              if(nodes.length == 0) {
+                let nameField = _.find(securityFields, {"fieldName": "clusterId"});
+                nameField.isOptional = true;
+
+                let principalField = _.find(securityFields, {"fieldName": "principal"});
+                principalField.isOptional = true;
+
+                let keyTabField = _.find(securityFields, {"fieldName": "keytabPath"});
+                keyTabField.isOptional = true;
+              }
+            }
+            this.setState({hasSecurity: hasSecurity, formField: formField});
           }
         });
     }).catch(err => {

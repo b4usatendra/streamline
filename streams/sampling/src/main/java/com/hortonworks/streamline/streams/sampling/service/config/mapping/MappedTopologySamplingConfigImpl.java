@@ -17,7 +17,7 @@ package com.hortonworks.streamline.streams.sampling.service.config.mapping;
 
 public enum MappedTopologySamplingConfigImpl {
     STORM("com.hortonworks.streamline.streams.actions.storm.StormTopologySamplingConfigImpl"),
-    FLINK("com.hortonworks.streamline.streams.sampling.service.beam.BeamTopologySamplingConfigImpl");
+    BEAM("com.hortonworks.streamline.streams.sampling.service.beam.BeamTopologySamplingConfigImpl");
 
     private final String className;
 

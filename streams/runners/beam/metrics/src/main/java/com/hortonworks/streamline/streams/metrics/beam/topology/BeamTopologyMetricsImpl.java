@@ -29,9 +29,9 @@ import org.slf4j.LoggerFactory;
 /**
  * @Author satendra.sahu Beam implementation of the TopologyMetrics interface
  */
-public class FlinkTopologyMetricsImpl implements TopologyMetrics {
+public class BeamTopologyMetricsImpl implements TopologyMetrics {
 
-  private static final Logger LOG = LoggerFactory.getLogger(FlinkTopologyMetricsImpl.class);
+  private static final Logger LOG = LoggerFactory.getLogger(BeamTopologyMetricsImpl.class);
 
   private static final String FRAMEWORK = "BEAM";
   private static final int MAX_SIZE_TOPOLOGY_CACHE = 10;
@@ -48,7 +48,7 @@ public class FlinkTopologyMetricsImpl implements TopologyMetrics {
   private LoadingCache<Pair<String, String>, Map<String, ?>> topologyRetrieveCache;
   private LoadingCache<Pair<Pair<String, String>, String>, Map<String, ?>> componentRetrieveCache;
 
-  public FlinkTopologyMetricsImpl() {
+  public BeamTopologyMetricsImpl() {
   }
 
   /**
@@ -69,31 +69,30 @@ public class FlinkTopologyMetricsImpl implements TopologyMetrics {
   @Override
   public TopologyMetric getTopologyMetric(TopologyLayout topology, String asUser) {
 
-    return new TopologyMetric(FRAMEWORK, topology.getName(), "TOPOLOGY_STATE_DEPLOYED", 1000l,
+    return new TopologyMetric(FRAMEWORK, topology.getName(), "RUNNING", 1000l,
         1000l,
         1.0, 1.0, 0l, null);
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public Map<String, ComponentMetric> getMetricsForTopology(TopologyLayout topology,
-      String asUser) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Map<String, ComponentMetric> getMetricsForTopology(TopologyLayout topology,
+        String asUser) {
 
-    Map<String, ?> responseMap = getTopologyInfo("test-topology", asUser);
+        //TODO add extracted metrics
+        Map<String, ComponentMetric> metricMap = new HashMap<>();
 
-    Map<String, ComponentMetric> metricMap = new HashMap<>();
-    List<Map<String, ?>> spouts = (List<Map<String, ?>>) responseMap
-        .get(BeamRestAPIConstant.TOPOLOGY_JSON_SPOUTS);
-    extractMetrics(metricMap, spouts, BeamRestAPIConstant.TOPOLOGY_JSON_SPOUT_ID);
-
-    List<Map<String, ?>> bolts = (List<Map<String, ?>>) responseMap
-        .get(BeamRestAPIConstant.TOPOLOGY_JSON_BOLTS);
-    extractMetrics(metricMap, bolts, BeamRestAPIConstant.TOPOLOGY_JSON_BOLT_ID);
-
-    return metricMap;
-  }
+        if(topology.getTopologyDag()==null){
+          return metricMap;
+        }
+        for (Component component : topology.getTopologyDag().getComponents()) {
+            metricMap
+                .put(component.getName(), new ComponentMetric(component.getName(), 0l, 0l, 0l, 0d));
+        }
+        return metricMap;
+    }
 
   /**
    * {@inheritDoc}

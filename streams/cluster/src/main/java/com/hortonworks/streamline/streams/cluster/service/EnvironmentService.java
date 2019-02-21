@@ -213,12 +213,12 @@ public class EnvironmentService {
     }
 
     public Collection<JobClusterMap> getJobByTopologyName(String topologyName, String streamingEngine) {
-        List<QueryParam> params = Lists.newArrayList(new QueryParam(JobClusterMap.TOPOLOGYNAME, topologyName), new QueryParam(JobClusterMap.STREAMINGENGINE, streamingEngine));
+        List<QueryParam> params = Lists.newArrayList(new QueryParam(JobClusterMap.TOPOLOGYNAME, topologyName), new QueryParam(JobClusterMap.RUNNER, streamingEngine));
         return this.dao.find(JobClusterMap.NAMESPACE, params);
     }
 
     public Collection<JobClusterMap> getJobById(String jobId, String streamingEngine) {
-        List<QueryParam> params = Lists.newArrayList(new QueryParam(JobClusterMap.JOBID, jobId), new QueryParam(JobClusterMap.STREAMINGENGINE, streamingEngine));
+        List<QueryParam> params = Lists.newArrayList(new QueryParam(JobClusterMap.JOBID, jobId), new QueryParam(JobClusterMap.RUNNER, streamingEngine));
         return this.dao.find(JobClusterMap.NAMESPACE, params);
     }
 

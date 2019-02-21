@@ -20,7 +20,7 @@ import com.hortonworks.streamline.streams.metrics.*;
 /**
  * Metric name conversion table between Streamline and Storm. It also contains function information for aggregation.
  */
-public enum FlinkMappedMetric {
+public enum BeamMappedMetric {
     completeLatency("__complete-latency", TimeSeriesQuerier.AggregateFunction.AVG),
     inputRecords("__execute-count", TimeSeriesQuerier.AggregateFunction.SUM),
     outputRecords("__emit-count", TimeSeriesQuerier.AggregateFunction.SUM),
@@ -39,7 +39,7 @@ public enum FlinkMappedMetric {
     private final String stormMetricName;
     private final TimeSeriesQuerier.AggregateFunction aggregateFunction;
 
-    FlinkMappedMetric(String stormMetricName, TimeSeriesQuerier.AggregateFunction aggregateFunction) {
+    BeamMappedMetric(String stormMetricName, TimeSeriesQuerier.AggregateFunction aggregateFunction) {
         this.stormMetricName = stormMetricName;
         this.aggregateFunction = aggregateFunction;
     }

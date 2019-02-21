@@ -21,7 +21,7 @@ public class JobClusterMap extends AbstractStorable {
     public static final String ID = "id";
     public static final String TOPOLOGYID = "topologyId";
     public static final String TOPOLOGYNAME = "topologyName";
-    public static final String STREAMINGENGINE = "streamingEngine";
+    public static final String RUNNER = "runner";
     public static final String JOBID = "job_id";
     public static final String CONNECTIONENDPOINT = "connectionEndpoint";
 
@@ -29,7 +29,7 @@ public class JobClusterMap extends AbstractStorable {
     private Long id;
     private Long topologyId;
     private String topologyName;
-    private String streamingEngine;
+    private String runner;
     private String jobId;
     private String connectionEndpoint;
 
@@ -82,12 +82,12 @@ public class JobClusterMap extends AbstractStorable {
         this.topologyName = topologyName;
     }
 
-    public String getStreamingEngine() {
-        return streamingEngine;
+    public String getRunner() {
+        return runner;
     }
 
-    public void setStreamingEngine(String streamingEngine) {
-        this.streamingEngine = streamingEngine;
+    public void setRunner(String runner) {
+        this.runner = runner;
     }
 
     public String getJobId() {

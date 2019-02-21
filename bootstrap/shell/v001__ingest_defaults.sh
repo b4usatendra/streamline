@@ -179,6 +179,8 @@ function add_other_bundles {
 function add_topology_bundles {
     # === Topology ===
     add_topology_component_bundle /streams/componentbundles/TOPOLOGY ${component_dir}/topology/storm-topology-component.json
+    add_topology_component_bundle /streams/componentbundles/TOPOLOGY ${component_dir}/topology/beam-topology-component.json
+
 }
 
 function add_service_bundles {
@@ -289,14 +291,14 @@ function main {
     echo "===================================================================================="
     echo "Running bootstrap.sh will create streamline default components, notifiers, udfs and roles"
     skip_migration_if_not_needed
-    add_source_bundles
-    add_processor_bundles
-    add_sink_bundles
-    add_other_bundles
+    #add_source_bundles
+    #add_processor_bundles
+    #add_sink_bundles
+    #add_other_bundles
     add_topology_bundles
-    add_service_bundles
-    add_roles_and_users
-    add_udfs
+    #add_service_bundles
+    #add_roles_and_users
+    #add_udfs
 
     echo "Executing ${bootstrap_dir}/bootstrap-notifiers.sh ${CATALOG_ROOT_URL}"
     ${bootstrap_dir}/bootstrap-notifiers.sh ${CATALOG_ROOT_URL}

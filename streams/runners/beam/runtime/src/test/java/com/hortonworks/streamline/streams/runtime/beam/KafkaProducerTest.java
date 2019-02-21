@@ -49,7 +49,6 @@ public class KafkaProducerTest {
         + "\t}\n"
         + "}";
 
-
     private Properties getProducerProperties() {
         Properties properties = new Properties();
         properties.put(KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getCanonicalName());

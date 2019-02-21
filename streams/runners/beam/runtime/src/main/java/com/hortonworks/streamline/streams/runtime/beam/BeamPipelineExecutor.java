@@ -41,9 +41,6 @@ public class BeamPipelineExecutor {
         BeamTopologyComponentGenerator fluxGenerator = new BeamTopologyComponentGenerator(newLayout, conf, getExtraJarsLocation(newLayout));
         topologyDag.traverse(fluxGenerator);
         Pipeline pipeline = fluxGenerator.getPipeline();
-
-        //pipeline.getOptions().setRunner(FlinkRunner.class);
-        //options.setTempLocation("/streamline/libs/beam-artifacts/streamline-4-kafka-example/jars");
         options.setJobName(topologyMapper.getTopologyLayout().getName());
         pipeline.run(options);
 
@@ -89,7 +86,7 @@ public class BeamPipelineExecutor {
         args = Arrays.copyOfRange(args, 1, args.length);
 
         PipelineOptions options = PipelineOptionsFactory.fromArgs(args).withValidation().create();
-        if (options.getRunner().getSimpleName().equalsIgnoreCase(BeamRunner.FlinkRunner.name())) {
+        if (options.getRunner().getSimpleName().equalsIgnoreCase(BeamRunner.FLINK.getRunnerName())) {
             options.as(FlinkPipelineOptions.class);
         }
 

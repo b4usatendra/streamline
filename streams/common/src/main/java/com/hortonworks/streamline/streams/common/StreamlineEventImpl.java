@@ -259,6 +259,14 @@ public final class StreamlineEventImpl extends ForwardingMap<String, Object> imp
         return builder().from(this).putAll(fieldsAndValues).build();
     }
 
+    /**
+     * Returns a Map of Key-Value pair.
+     */
+    @Override
+    public Map<String, Object> getFieldsAndValues() {
+        return delegate;
+    }
+
     @Override
     public StreamlineEvent addFieldAndValue(String key, Object value) {
         return addFieldsAndValues(Collections.singletonMap(key, value));

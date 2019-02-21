@@ -416,6 +416,7 @@ class TopologyListingContainer extends Component {
       environmentLen = results[0].entities.length;
 
       // source component result[1]
+      console.log(results);
       sourceLen = results[1].entities.length;
 
       // All topology result[2]

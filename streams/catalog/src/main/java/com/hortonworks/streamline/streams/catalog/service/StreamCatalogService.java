@@ -9,12 +9,21 @@
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or  implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
 
 package com.hortonworks.streamline.streams.catalog.service;
+
+import static com.hortonworks.streamline.common.ComponentTypes.NOTIFICATION;
+import static com.hortonworks.streamline.common.util.WSUtils.CURRENT_VERSION;
+import static com.hortonworks.streamline.common.util.WSUtils.buildEdgesFromQueryParam;
+import static com.hortonworks.streamline.common.util.WSUtils.buildEdgesToQueryParam;
+import static com.hortonworks.streamline.common.util.WSUtils.currentVersionQueryParam;
+import static com.hortonworks.streamline.common.util.WSUtils.versionIdQueryParam;
+import static com.hortonworks.streamline.streams.catalog.TopologyEdge.StreamGrouping;
+import static com.hortonworks.streamline.streams.catalog.TopologyEditorMetadata.TopologyUIData;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -95,13 +104,6 @@ import com.hortonworks.streamline.streams.rule.UDF5;
 import com.hortonworks.streamline.streams.rule.UDF6;
 import com.hortonworks.streamline.streams.rule.UDF7;
 import com.hortonworks.streamline.streams.runtime.CustomProcessorRuntime;
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang.NotImplementedException;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -125,15 +127,11 @@ import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import static com.hortonworks.streamline.common.ComponentTypes.NOTIFICATION;
-import static com.hortonworks.streamline.common.util.WSUtils.CURRENT_VERSION;
-import static com.hortonworks.streamline.common.util.WSUtils.buildEdgesFromQueryParam;
-import static com.hortonworks.streamline.common.util.WSUtils.buildEdgesToQueryParam;
-import static com.hortonworks.streamline.common.util.WSUtils.currentVersionQueryParam;
-import static com.hortonworks.streamline.common.util.WSUtils.versionIdQueryParam;
-import static com.hortonworks.streamline.streams.catalog.TopologyEdge.StreamGrouping;
-import static com.hortonworks.streamline.streams.catalog.TopologyEditorMetadata.TopologyUIData;
+import javax.annotation.Nullable;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A service layer where we could put our business logic.
@@ -159,9 +157,10 @@ public class StreamCatalogService {
     private static final String TOPOLOGY_WINDOWINFO_NAMESPACE = new TopologyWindow().getNameSpace();
     private static final String UDF_NAMESPACE = new UDF().getNameSpace();
     private static final String TOPOLOGY_STATE_NAMESPACE = new TopologyState().getNameSpace();
+    private static final String NAMESPACE = new Namespace().getNameSpace();
 
     private static final ArrayList<Class<?>> UDF_CLASSES = Lists.newArrayList(UDAF.class, UDAF2.class, com.hortonworks.streamline.streams.rule.UDF.class, UDF2.class,
-            UDF3.class, UDF4.class, UDF5.class, UDF6.class, UDF7.class);
+        UDF3.class, UDF4.class, UDF5.class, UDF6.class, UDF7.class);
     public static final long PLACEHOLDER_ID = -1L;
     private static final String CLONE_SUFFIX = "-clone";
 
@@ -229,7 +228,7 @@ public class StreamCatalogService {
 
     public Optional<TopologyVersion> getCurrentTopologyVersionInfo(Long topologyId) {
         Collection<TopologyVersion> versions = listTopologyVersionInfos(
-                WSUtils.currentTopologyVersionQueryParam(topologyId, null));
+            WSUtils.currentTopologyVersionQueryParam(topologyId, null));
         if (versions.isEmpty()) {
             LOG.warn("No current version for topology " + topologyId);
             return Optional.empty();
@@ -244,11 +243,11 @@ public class StreamCatalogService {
         Collection<TopologyVersion> versions =
                 listTopologyVersionInfos(WSUtils.buildTopologyIdAwareQueryParams(topologyId, null));
         return versions.stream()
-                .filter(v -> !v.getName().equals(CURRENT_VERSION))
-                .max((versionInfo1, versionInfo2) -> {
-                    // compares the number part from version strings like V1, V2 ...
-                    return versionInfo1.getVersionNumber() - versionInfo2.getVersionNumber();
-                });
+            .filter(v -> !v.getName().equals(CURRENT_VERSION))
+            .max((versionInfo1, versionInfo2) -> {
+                // compares the number part from version strings like V1, V2 ...
+                return versionInfo1.getVersionNumber() - versionInfo2.getVersionNumber();
+            });
     }
 
     public TopologyVersion getTopologyVersionInfo(Long versionId) {
@@ -425,7 +424,7 @@ public class StreamCatalogService {
 
     private void removeTopologyDependencies(Long topologyId, Long versionId) throws Exception {
         List<QueryParam> topologyIdVersionIdQueryParams = WSUtils.buildTopologyIdAndVersionIdAwareQueryParams(
-                topologyId, versionId, null);
+            topologyId, versionId, null);
 
         // remove topology test histories
         Collection<TopologyTestRunHistory> runHistories = listTopologyTestRunHistory(topologyId, versionId);
@@ -523,7 +522,7 @@ public class StreamCatalogService {
 
     private void copyTopologyDependencies(Long topologyId, Long oldVersionId, Long newVersionId) throws Exception {
         List<QueryParam> topologyIdVersionIdQueryParams = WSUtils.buildTopologyIdAndVersionIdAwareQueryParams(
-                topologyId, oldVersionId, null);
+            topologyId, oldVersionId, null);
 
         // topology editor metadata
         TopologyEditorMetadata metadata = getTopologyEditorMetadata(topologyId, oldVersionId);
@@ -668,7 +667,7 @@ public class StreamCatalogService {
 
         if (bundles.size() != 1) {
             throw new IllegalStateException("Not able to find topology component bundle for type " + type
-                    + " sub type " + subType);
+                + " sub type " + subType);
         }
         return bundles.iterator().next();
     }
@@ -684,14 +683,14 @@ public class StreamCatalogService {
         // import source streams
         for (TopologySource topologySource : topologySources) {
             topologySource.setOutputStreamIds(importOutputStreams(newTopology.getId(),
-                    oldToNewStreamIds, topologySource.getOutputStreams()));
+                oldToNewStreamIds, topologySource.getOutputStreams()));
             topologySource.setOutputStreams(null);
         }
 
         // import processor streams
         for (TopologyProcessor topologyProcessor : topologyData.getProcessors()) {
             topologyProcessor.setOutputStreamIds(importOutputStreams(newTopology.getId(),
-                    oldToNewStreamIds, topologyProcessor.getOutputStreams()));
+                oldToNewStreamIds, topologyProcessor.getOutputStreams()));
             topologyProcessor.setOutputStreams(null);
         }
 
@@ -726,8 +725,8 @@ public class StreamCatalogService {
             topologySource.setTopologyId(newTopology.getId());
             Namespace namespace = getNamespaceByTopologyId(newTopology.getId());
             TopologyComponentBundle bundle = getCurrentTopologyComponentBundle(namespace,
-                    TopologyComponentBundle.TopologyComponentType.SOURCE,
-                    topologyData.getBundleIdToType().get(topologySource.getTopologyComponentBundleId().toString()));
+                TopologyComponentBundle.TopologyComponentType.SOURCE,
+                topologyData.getBundleIdToType().get(topologySource.getTopologyComponentBundleId().toString()));
             topologySource.setTopologyComponentBundleId(bundle.getId());
             addTopologySource(newTopology.getId(), topologySource);
             oldToNewComponentIds.put(oldComponentId, topologySource.getId());
@@ -746,7 +745,7 @@ public class StreamCatalogService {
                 Collection<TopologyComponentBundle> result = listCustomProcessorBundlesWithFilter(Collections.singletonList(queryParam));
                 if (result.size() != 1) {
                     throw new IllegalStateException("Not able to find topology component bundle for custom processor :" + topologyProcessor.getConfig().get
-                            (CustomProcessorInfo.NAME));
+                        (CustomProcessorInfo.NAME));
                 }
                 bundle = result.iterator().next();
             } else {
@@ -759,7 +758,7 @@ public class StreamCatalogService {
                 });
                 List<Long> updatedRuleIds = new ArrayList<>();
                 if (ComponentTypes.RULE.equals(bundle.getSubType())
-                        || ComponentTypes.PROJECTION.equals(bundle.getSubType())) {
+                    || ComponentTypes.PROJECTION.equals(bundle.getSubType())) {
                     ruleIds.forEach(ruleId -> updatedRuleIds.add(oldToNewRuleIds.get(ruleId)));
                 } else if (bundle.getSubType().equals(ComponentTypes.BRANCH)) {
                     ruleIds.forEach(ruleId -> updatedRuleIds.add(oldToNewBranchRuleIds.get(ruleId)));
@@ -771,7 +770,7 @@ public class StreamCatalogService {
             addTopologyProcessor(newTopology.getId(), topologyProcessor);
             oldToNewComponentIds.put(oldComponentId, topologyProcessor.getId());
         }
-
+    
         // import sinks
         for (TopologySink topologySink : topologyData.getSinks()) {
             topologySink.setTopologyId(newTopology.getId());
@@ -779,8 +778,8 @@ public class StreamCatalogService {
             Long currentId = topologySink.getId();
             topologySink.setId(null);
             TopologyComponentBundle bundle = getCurrentTopologyComponentBundle(namespace,
-                    TopologyComponentBundle.TopologyComponentType.SINK,
-                    topologyData.getBundleIdToType().get(topologySink.getTopologyComponentBundleId().toString()));
+                TopologyComponentBundle.TopologyComponentType.SINK,
+                topologyData.getBundleIdToType().get(topologySink.getTopologyComponentBundleId().toString()));
             topologySink.setTopologyComponentBundleId(bundle.getId());
             if (bundle.getSubType().equals(NOTIFICATION)) {
                 updateNotifierJarFileName(topologySink);
@@ -867,9 +866,9 @@ public class StreamCatalogService {
 
     Optional<String> getLatestCloneName(String topologyName, Collection<Topology> topologies) {
         return Utils.getLatestName(
-                topologies.stream().map(Topology::getName).collect(Collectors.toSet()),
-                Utils.getPrefix(topologyName, CLONE_SUFFIX),
-                CLONE_SUFFIX);
+            topologies.stream().map(Topology::getName).collect(Collectors.toSet()),
+            Utils.getPrefix(topologyName, CLONE_SUFFIX),
+            CLONE_SUFFIX);
     }
 
     String getNextCloneName(String topologyName) {
@@ -906,11 +905,28 @@ public class StreamCatalogService {
     }
 
     public Collection<TopologyComponentBundle> listTopologyComponentBundlesForTypeWithFilter(TopologyComponentBundle.TopologyComponentType componentType,
-                                                                                             List<QueryParam> params) {
+        List<QueryParam> params) {
         List<TopologyComponentBundle> topologyComponentBundles = new ArrayList<>();
         String ns = TopologyComponentBundle.NAME_SPACE;
 
         Collection<TopologyComponentBundle> filtered = dao.find(ns, params);
+
+        for (TopologyComponentBundle tcb : filtered) {
+            if (tcb.getType().equals(componentType)) {
+                topologyComponentBundles.add(tcb);
+            }
+        }
+        return topologyComponentBundles;
+    }
+
+    public Collection<TopologyComponentBundle> listTopologyForTypeWithFilter(Namespace namespace, TopologyComponentBundle.TopologyComponentType componentType,
+        List<QueryParam> params) {
+        List<TopologyComponentBundle> topologyComponentBundles = new ArrayList<>();
+        String ns = TopologyComponentBundle.NAME_SPACE;
+        List<QueryParam> newParams = Lists.newArrayList(params);
+        newParams.add(new QueryParam(TopologyComponentBundle.STREAMING_ENGINE, namespace.getStreamingEngine()));
+
+        Collection<TopologyComponentBundle> filtered = dao.find(ns, newParams);
 
         for (TopologyComponentBundle tcb : filtered) {
             if (tcb.getType().equals(componentType)) {
@@ -927,7 +943,7 @@ public class StreamCatalogService {
     }
 
     public TopologyComponentBundle addTopologyComponentBundle(TopologyComponentBundle topologyComponentBundle, java.io.File bundleJar) throws
-            ComponentConfigException, IOException {
+        ComponentConfigException, IOException {
         topologyComponentBundle.getTopologyComponentUISpecification().validate();
         loadTransformationClassForBundle(topologyComponentBundle, bundleJar);
         if (!topologyComponentBundle.getBuiltin()) {
@@ -955,7 +971,7 @@ public class StreamCatalogService {
     }
 
     public TopologyComponentBundle addOrUpdateTopologyComponentBundle(Long id, TopologyComponentBundle topologyComponentBundle, java.io.File bundleJar) throws
-            ComponentConfigException, IOException {
+        ComponentConfigException, IOException {
         topologyComponentBundle.getTopologyComponentUISpecification().validate();
         loadTransformationClassForBundle(topologyComponentBundle, bundleJar);
         if (!topologyComponentBundle.getBuiltin()) {
@@ -1022,7 +1038,7 @@ public class StreamCatalogService {
             }
         }
         Collection<TopologyComponentBundle> customProcessors = this.listTopologyComponentBundlesForTypeWithFilter(TopologyComponentBundle.TopologyComponentType
-                .PROCESSOR, queryParamsForTopologyComponent);
+            .PROCESSOR, queryParamsForTopologyComponent);
         Collection<TopologyComponentBundle> result = new ArrayList<>();
         for (TopologyComponentBundle cp : customProcessors) {
             Map<String, Object> config = new HashMap<>();
@@ -1044,7 +1060,7 @@ public class StreamCatalogService {
     }
 
     public CustomProcessorInfo addCustomProcessorInfoAsBundle(CustomProcessorInfo customProcessorInfo, InputStream jarFile) throws IOException,
-            ComponentConfigException, NoSuchAlgorithmException {
+        ComponentConfigException, NoSuchAlgorithmException {
         List<QueryParam> queryParams = new ArrayList<>();
         queryParams.add(new QueryParam(CustomProcessorInfo.NAME, customProcessorInfo.getName()));
         Collection<TopologyComponentBundle> result = this.listCustomProcessorBundlesWithFilter(queryParams);
@@ -1058,7 +1074,7 @@ public class StreamCatalogService {
     }
 
     public CustomProcessorInfo updateCustomProcessorInfoAsBundle(CustomProcessorInfo customProcessorInfo, InputStream jarFile, boolean verify) throws
-            IOException, ComponentConfigException, NoSuchAlgorithmException {
+        IOException, ComponentConfigException, NoSuchAlgorithmException {
         List<QueryParam> queryParams = new ArrayList<>();
         queryParams.add(new QueryParam(CustomProcessorInfo.NAME, customProcessorInfo.getName()));
         Collection<TopologyComponentBundle> result = this.listCustomProcessorBundlesWithFilter(queryParams);
@@ -1089,7 +1105,7 @@ public class StreamCatalogService {
                     updateCustomProcessorInfoAsBundle(customProcessorInfo, downloadFileFromStorage(oldJarToDelete), false);
                     deleteFileFromStorage(oldJarToDelete);
                     LOG.info("Updated custom processor {} with digest {} and jarFileName {}", customProcessorInfo.getName(), customProcessorInfo.getDigest(),
-                            customProcessorInfo.getJarFileName());
+                        customProcessorInfo.getJarFileName());
                     updatedCustomProcessorInfos.add(customProcessorInfo);
                 }
             }
@@ -1161,7 +1177,7 @@ public class StreamCatalogService {
 
     public Optional<TopologyEditorToolbar> removeTopologyEditorToolbar(long userId) {
         return getTopologyEditorToolbar(userId)
-                .map(toolbar -> dao.<TopologyEditorToolbar>remove(toolbar.getStorableKey()));
+            .map(toolbar -> dao.<TopologyEditorToolbar>remove(toolbar.getStorableKey()));
     }
 
     public Collection<TopologyEditorMetadata> listTopologyEditorMetadata() {
@@ -1169,7 +1185,7 @@ public class StreamCatalogService {
         Collection<TopologyVersion> currentVersions = listCurrentTopologyVersionInfos();
         for (TopologyVersion version : currentVersions) {
             List<QueryParam> queryParams = WSUtils.buildTopologyIdAndVersionIdAwareQueryParams(
-                    version.getTopologyId(), version.getId(), null);
+                version.getTopologyId(), version.getId(), null);
             metadatas.addAll(listTopologyEditorMetadata(queryParams));
         }
         return metadatas;
@@ -1191,10 +1207,9 @@ public class StreamCatalogService {
         }
 
         Long namespaceId = topologies.iterator().next().getNamespaceId();
-        queryParams.add(new com.hortonworks.registries.common.QueryParam("id", String.valueOf(namespaceId)));
         queryParams = new ArrayList<>();
+        queryParams.add(new com.hortonworks.registries.common.QueryParam("id", String.valueOf(namespaceId)));
         Collection<Namespace> namespaces = dao.find(Namespace.NAMESPACE, queryParams);
-
 
         return namespaces.iterator().next();
     }
@@ -1211,13 +1226,13 @@ public class StreamCatalogService {
     }
 
     public TopologyEditorMetadata addTopologyEditorMetadata(Long topologyId,
-                                                            TopologyEditorMetadata topologyEditorMetadata) {
+        TopologyEditorMetadata topologyEditorMetadata) {
         return addTopologyEditorMetadata(topologyId, getCurrentVersionId(topologyId), topologyEditorMetadata);
     }
 
     public TopologyEditorMetadata addTopologyEditorMetadata(Long topologyId,
-                                                            Long versionId,
-                                                            TopologyEditorMetadata topologyEditorMetadata) {
+        Long versionId,
+        TopologyEditorMetadata topologyEditorMetadata) {
 
         long timestamp = System.currentTimeMillis();
         topologyEditorMetadata.setTimestamp(timestamp);
@@ -1271,9 +1286,7 @@ public class StreamCatalogService {
     }
 
     /**
-     * Generate id from the {@link TopologyComponent} namespace
-     * so that its unique across source, sink and processors.
-     * Similar to Table per concrete class hibernate strategy.
+     * Generate id from the {@link TopologyComponent} namespace so that its unique across source, sink and processors. Similar to Table per concrete class hibernate strategy.
      */
     private Long getNextTopologyComponentId() {
         TopologyComponent component = new TopologyComponent();
@@ -1292,28 +1305,28 @@ public class StreamCatalogService {
      */
     private void validateTopology(Topology topology) {
         StorageUtils.ensureUnique(topology, this::listTopologies,
-                QueryParam.params(Topology.NAME, topology.getName()));
+            QueryParam.params(Topology.NAME, topology.getName()));
     }
 
     private void validateTopologySource(TopologySource topologySource) {
         StorageUtils.ensureUnique(topologySource, this::listTopologySources,
-                QueryParam.params(TopologySource.TOPOLOGYID, topologySource.getTopologyId().toString(),
-                        TopologySource.VERSIONID, topologySource.getVersionId().toString(),
-                        TopologySource.NAME, topologySource.getName()));
+            QueryParam.params(TopologySource.TOPOLOGYID, topologySource.getTopologyId().toString(),
+                TopologySource.VERSIONID, topologySource.getVersionId().toString(),
+                TopologySource.NAME, topologySource.getName()));
     }
 
     private void validateTopologySink(TopologySink topologySink) {
         StorageUtils.ensureUnique(topologySink, this::listTopologySinks,
-                QueryParam.params(TopologySink.TOPOLOGYID, topologySink.getTopologyId().toString(),
-                        TopologySink.VERSIONID, topologySink.getVersionId().toString(),
-                        TopologySink.NAME, topologySink.getName()));
+            QueryParam.params(TopologySink.TOPOLOGYID, topologySink.getTopologyId().toString(),
+                TopologySink.VERSIONID, topologySink.getVersionId().toString(),
+                TopologySink.NAME, topologySink.getName()));
     }
 
     private void validateTopologyProcessor(TopologyProcessor topologyProcessor) {
         StorageUtils.ensureUnique(topologyProcessor, this::listTopologyProcessors,
-                QueryParam.params(TopologyProcessor.TOPOLOGYID, topologyProcessor.getTopologyId().toString(),
-                        TopologyProcessor.VERSIONID, topologyProcessor.getVersionId().toString(),
-                        TopologyProcessor.NAME, topologyProcessor.getName()));
+            QueryParam.params(TopologyProcessor.TOPOLOGYID, topologyProcessor.getTopologyId().toString(),
+                TopologyProcessor.VERSIONID, topologyProcessor.getVersionId().toString(),
+                TopologyProcessor.NAME, topologyProcessor.getName()));
     }
 
     public TopologySource addTopologySource(Long topologyId, TopologySource topologySource) {
@@ -1321,8 +1334,8 @@ public class StreamCatalogService {
     }
 
     public TopologySource addTopologySource(Long topologyId,
-                                            Long versionId,
-                                            TopologySource topologySource) {
+        Long versionId,
+        TopologySource topologySource) {
         if (topologySource.getId() == null) {
             topologySource.setId(getNextTopologyComponentId());
         }
@@ -1340,7 +1353,7 @@ public class StreamCatalogService {
         List<TopologyStream> topologyStreams;
         if (outputComponent.getOutputStreams() != null) {
             topologyStreams = addOutputStreams(outputComponent.getTopologyId(), outputComponent.getVersionId(),
-                    outputComponent.getOutputStreams());
+                outputComponent.getOutputStreams());
             outputComponent.setOutputStreamIds(new ArrayList<>(Collections2.transform(topologyStreams, new Function<TopologyStream, Long>() {
                 @Override
                 public Long apply(TopologyStream input) {
@@ -1349,7 +1362,7 @@ public class StreamCatalogService {
             })));
         } else if (outputComponent.getOutputStreamIds() != null) {
             topologyStreams = getOutputStreams(outputComponent.getTopologyId(), outputComponent.getVersionId(),
-                    outputComponent.getOutputStreamIds());
+                outputComponent.getOutputStreamIds());
         } else {
             topologyStreams = Collections.emptyList();
             outputComponent.setOutputStreamIds(Collections.<Long>emptyList());
@@ -1379,9 +1392,9 @@ public class StreamCatalogService {
     public Map<String, Set<Long>> getComponentsToReconfigure(Topology topology) {
         Map<String, Set<Long>> components = new HashMap<>();
         List<QueryParam> qps = QueryParam.params(
-                TopologyComponent.TOPOLOGYID, String.valueOf(topology.getId()),
-                TopologyComponent.VERSIONID, String.valueOf(topology.getVersionId()),
-                TopologyComponent.RECONFIGURE, String.valueOf(true));
+            TopologyComponent.TOPOLOGYID, String.valueOf(topology.getId()),
+            TopologyComponent.VERSIONID, String.valueOf(topology.getVersionId()),
+            TopologyComponent.RECONFIGURE, String.valueOf(true));
         components.put(ComponentTypes.PROCESSOR, listTopologyProcessors(qps).stream().map(TopologyComponent::getId).collect(Collectors.toSet()));
         components.put(ComponentTypes.SINK, listTopologySinks(qps).stream().map(TopologyComponent::getId).collect(Collectors.toSet()));
         components.put(ComponentTypes.RULE, listRules(qps).stream().map(TopologyRule::getId).collect(Collectors.toSet()));
@@ -1490,7 +1503,7 @@ public class StreamCatalogService {
     private void addSourceStreamMapping(TopologySource topologySource, List<Long> streamIds) {
         for (Long outputStreamId : streamIds) {
             dao.<TopologySourceStreamMap>add(new TopologySourceStreamMap(topologySource.getId(),
-                    topologySource.getVersionId(), outputStreamId));
+                topologySource.getVersionId(), outputStreamId));
         }
     }
 
@@ -1504,9 +1517,9 @@ public class StreamCatalogService {
         if (topologySource != null) {
             for (Long outputStreamId : streamIds) {
                 TopologySourceStreamMap mapping = new TopologySourceStreamMap(
-                        topologySource.getId(),
-                        topologySource.getVersionId(),
-                        outputStreamId);
+                    topologySource.getId(),
+                    topologySource.getVersionId(),
+                    outputStreamId);
                 dao.<TopologySourceStreamMap>remove(mapping.getStorableKey());
             }
         }
@@ -1516,9 +1529,9 @@ public class StreamCatalogService {
         List<Long> streamIds = new ArrayList<>();
         if (topologySource != null) {
             QueryParam qp1 = new QueryParam(TopologySourceStreamMap.FIELD_SOURCE_ID,
-                    String.valueOf(topologySource.getId()));
+                String.valueOf(topologySource.getId()));
             QueryParam qp2 = new QueryParam(TopologySourceStreamMap.FIELD_VERSION_ID,
-                    String.valueOf(topologySource.getVersionId()));
+                String.valueOf(topologySource.getVersionId()));
             for (TopologySourceStreamMap mapping : listTopologySourceStreamMapping(ImmutableList.of(qp1, qp2))) {
                 streamIds.add(mapping.getStreamId());
             }
@@ -1561,9 +1574,9 @@ public class StreamCatalogService {
         List<TopologyStream> streams = new ArrayList<>();
         if (topologyProcessor != null) {
             QueryParam qp1 = new QueryParam(TopologyProcessorStreamMap.FIELD_PROCESSOR_ID,
-                    String.valueOf(topologyProcessor.getId()));
+                String.valueOf(topologyProcessor.getId()));
             QueryParam qp2 = new QueryParam(TopologyProcessorStreamMap.FIELD_VERSION_ID,
-                    String.valueOf(topologyProcessor.getVersionId()));
+                String.valueOf(topologyProcessor.getVersionId()));
             for (TopologyProcessorStreamMap mapping : listTopologyProcessorStreamMapping(ImmutableList.of(qp1, qp2))) {
                 TopologyStream topologyStream = getStreamInfo(topologyProcessor.getTopologyId(), mapping.getStreamId(), topologyProcessor.getVersionId());
                 if (topologyStream != null) {
@@ -1601,9 +1614,9 @@ public class StreamCatalogService {
         List<TopologyStream> streams = new ArrayList<>();
         if (topologySource != null) {
             QueryParam qp1 = new QueryParam(TopologySourceStreamMap.FIELD_SOURCE_ID,
-                    String.valueOf(topologySource.getId()));
+                String.valueOf(topologySource.getId()));
             QueryParam qp2 = new QueryParam(TopologySourceStreamMap.FIELD_VERSION_ID,
-                    String.valueOf(topologySource.getVersionId()));
+                String.valueOf(topologySource.getVersionId()));
             for (TopologySourceStreamMap mapping : listTopologySourceStreamMapping(ImmutableList.of(qp1, qp2))) {
                 TopologyStream topologyStream = getStreamInfo(topologySource.getTopologyId(), mapping.getStreamId(), topologySource.getVersionId());
                 if (topologyStream != null) {
@@ -1635,8 +1648,8 @@ public class StreamCatalogService {
     }
 
     public TopologySink addTopologySink(Long topologyId,
-                                        Long versionId,
-                                        TopologySink topologySink) {
+        Long versionId,
+        TopologySink topologySink) {
         if (topologySink.getId() == null) {
             topologySink.setId(getNextTopologyComponentId());
         }
@@ -1715,8 +1728,8 @@ public class StreamCatalogService {
     }
 
     public TopologyProcessor addTopologyProcessor(Long topologyId,
-                                                  Long versionId,
-                                                  TopologyProcessor topologyProcessor) {
+        Long versionId,
+        TopologyProcessor topologyProcessor) {
         if (topologyProcessor.getId() == null) {
             topologyProcessor.setId(getNextTopologyComponentId());
         }
@@ -1783,16 +1796,16 @@ public class StreamCatalogService {
         for (TopologyStream outputStream : streams) {
             TopologyStream addedStream = addStreamInfo(topologyProcessor.getTopologyId(), outputStream);
             dao.<TopologyProcessorStreamMap>add(new TopologyProcessorStreamMap(topologyProcessor.getId(),
-                    topologyProcessor.getVersionId(),
-                    addedStream.getId()));
+                topologyProcessor.getVersionId(),
+                addedStream.getId()));
         }
     }
 
     private void addProcessorStreamMapping(TopologyProcessor topologyProcessor, List<Long> streamIds) {
         for (Long outputStreamId : streamIds) {
             dao.<TopologyProcessorStreamMap>add(new TopologyProcessorStreamMap(topologyProcessor.getId(),
-                    topologyProcessor.getVersionId(),
-                    outputStreamId));
+                topologyProcessor.getVersionId(),
+                outputStreamId));
         }
     }
 
@@ -1806,8 +1819,8 @@ public class StreamCatalogService {
         if (topologyProcessor != null) {
             for (Long outputStreamId : streamIds) {
                 TopologyProcessorStreamMap mapping = new TopologyProcessorStreamMap(topologyProcessor.getId(),
-                        topologyProcessor.getVersionId(),
-                        outputStreamId);
+                    topologyProcessor.getVersionId(),
+                    outputStreamId);
                 dao.<TopologyProcessorStreamMap>remove(mapping.getStorableKey());
             }
         }
@@ -1817,9 +1830,9 @@ public class StreamCatalogService {
         List<Long> streamIds = new ArrayList<>();
         if (topologyProcessor != null) {
             QueryParam qp1 = new QueryParam(TopologyProcessorStreamMap.FIELD_PROCESSOR_ID,
-                    String.valueOf(topologyProcessor.getId()));
+                String.valueOf(topologyProcessor.getId()));
             QueryParam qp2 = new QueryParam(TopologyProcessorStreamMap.FIELD_VERSION_ID,
-                    String.valueOf(topologyProcessor.getVersionId()));
+                String.valueOf(topologyProcessor.getVersionId()));
             for (TopologyProcessorStreamMap mapping : listTopologyProcessorStreamMapping(ImmutableList.of(qp1, qp2))) {
                 streamIds.add(mapping.getStreamId());
             }
@@ -1864,8 +1877,8 @@ public class StreamCatalogService {
     }
 
     public TopologyEdge addTopologyEdge(Long topologyId,
-                                        Long versionId,
-                                        TopologyEdge topologyEdge) {
+        Long versionId,
+        TopologyEdge topologyEdge) {
         if (topologyEdge.getId() == null) {
             topologyEdge.setId(dao.nextId(TOPOLOGY_EDGE_NAMESPACE));
         }
@@ -1903,42 +1916,76 @@ public class StreamCatalogService {
     private void setReconfigureTarget(TopologyStream stream) {
         // reconfigure all targets of processors that use this output stream
         List<QueryParam> params = QueryParam.params(
-                TopologyProcessorStreamMap.FIELD_VERSION_ID, String.valueOf(stream.getVersionId()),
-                TopologyProcessorStreamMap.FIELD_STREAM_ID, String.valueOf(stream.getId()));
+            TopologyProcessorStreamMap.FIELD_VERSION_ID, String.valueOf(stream.getVersionId()),
+            TopologyProcessorStreamMap.FIELD_STREAM_ID, String.valueOf(stream.getId()));
         listTopologyProcessorStreamMapping(params)
-                .stream()
-                .map(sm -> getTopologyProcessor(stream.getTopologyId(), sm.getProcessorId(), sm.getVersionId()))
-                .flatMap(p -> getEdgesFrom(p).stream())
-                .filter(e -> e.getStreamGroupings().stream().map(StreamGrouping::getStreamId).anyMatch(sgid -> sgid.equals(stream.getId())))
-                .forEach(e -> setReconfigureTarget(e, stream));
+            .stream()
+            .map(sm -> getTopologyProcessor(stream.getTopologyId(), sm.getProcessorId(), sm.getVersionId()))
+            .flatMap(p -> getEdgesFrom(p).stream())
+            .filter(e -> e.getStreamGroupings().stream().map(StreamGrouping::getStreamId).anyMatch(sgid -> sgid.equals(stream.getId())))
+            .forEach(e -> setReconfigureTarget(e, stream));
 
         // reconfigure all targets of source that use this output stream
         params = QueryParam.params(
-                TopologySourceStreamMap.FIELD_VERSION_ID, String.valueOf(stream.getVersionId()),
-                TopologySourceStreamMap.FIELD_STREAM_ID, String.valueOf(stream.getId()));
+            TopologySourceStreamMap.FIELD_VERSION_ID, String.valueOf(stream.getVersionId()),
+            TopologySourceStreamMap.FIELD_STREAM_ID, String.valueOf(stream.getId()));
         listTopologySourceStreamMapping(params)
-                .stream()
-                .map(sm -> getTopologySource(stream.getTopologyId(), sm.getSourceId(), sm.getVersionId()))
-                .flatMap(source -> getEdgesFrom(source).stream())
-                .filter(e -> e.getStreamGroupings().stream().map(StreamGrouping::getStreamId).anyMatch(sgid -> sgid.equals(stream.getId())))
-                .forEach(e -> setReconfigureTarget(e, stream));
+            .stream()
+            .map(sm -> getTopologySource(stream.getTopologyId(), sm.getSourceId(), sm.getVersionId()))
+            .flatMap(source -> getEdgesFrom(source).stream())
+            .filter(e -> e.getStreamGroupings().stream().map(StreamGrouping::getStreamId).anyMatch(sgid -> sgid.equals(stream.getId())))
+            .forEach(e -> setReconfigureTarget(e, stream));
 
     }
 
     private void setReconfigureRules(List<TopologyProcessor> processors, List<TopologyStream> affectedStreams) {
 
-
         Namespace namespace = getNamespaceByTopologyId(processors.get(0).getTopologyId());
 
         Map<Long, BiFunction<TopologyProcessor, Long, BaseTopologyRule>> bundles = new HashMap<>();
-        TopologyComponentBundle bundle = getCurrentTopologyComponentBundle(namespace, TopologyComponentBundle.TopologyComponentType.PROCESSOR, ComponentTypes.RULE);
+        TopologyComponentBundle bundle = null;
+
+       /* bundle = getCurrentTopologyComponentBundle(namespace, TopologyComponentBundle.TopologyComponentType.PROCESSOR, ComponentTypes.RULE);
         bundles.put(bundle.getId(), (p, r) -> getRule(p.getTopologyId(), r, p.getVersionId()));
+
         bundle = getCurrentTopologyComponentBundle(namespace, TopologyComponentBundle.TopologyComponentType.PROCESSOR, ComponentTypes.BRANCH);
         bundles.put(bundle.getId(), (p, r) -> getBranchRule(p.getTopologyId(), r, p.getVersionId()));
+
         bundle = getCurrentTopologyComponentBundle(namespace, TopologyComponentBundle.TopologyComponentType.PROCESSOR, ComponentTypes.PROJECTION);
         bundles.put(bundle.getId(), (p, r) -> getRule(p.getTopologyId(), r, p.getVersionId()));
+
         bundle = getCurrentTopologyComponentBundle(namespace, TopologyComponentBundle.TopologyComponentType.PROCESSOR, ComponentTypes.WINDOW);
         bundles.put(bundle.getId(), (p, r) -> getWindow(p.getTopologyId(), r, p.getVersionId()));
+*/
+        try {
+            bundle = getCurrentTopologyComponentBundle(namespace, TopologyComponentBundle.TopologyComponentType.PROCESSOR, ComponentTypes.RULE);
+            bundles.put(bundle.getId(), (p, r) -> getRule(p.getTopologyId(), r, p.getVersionId()));
+        } catch (IllegalStateException e) {
+            LOG.error("Not able to find topology component bundle for type " + TopologyComponentBundle.TopologyComponentType.PROCESSOR
+                + " sub type " + ComponentTypes.BRANCH);
+        }
+        try {
+            bundle = getCurrentTopologyComponentBundle(namespace, TopologyComponentBundle.TopologyComponentType.PROCESSOR, ComponentTypes.BRANCH);
+            bundles.put(bundle.getId(), (p, r) -> getBranchRule(p.getTopologyId(), r, p.getVersionId()));
+        } catch (IllegalStateException e) {
+            LOG.error("Not able to find topology component bundle for type " + TopologyComponentBundle.TopologyComponentType.PROCESSOR
+                + " sub type " + ComponentTypes.BRANCH);
+        }
+
+        try {
+            bundle = getCurrentTopologyComponentBundle(namespace, TopologyComponentBundle.TopologyComponentType.PROCESSOR, ComponentTypes.PROJECTION);
+            bundles.put(bundle.getId(), (p, r) -> getRule(p.getTopologyId(), r, p.getVersionId()));
+        } catch (IllegalStateException e) {
+            LOG.error("Not able to find topology component bundle for type " + TopologyComponentBundle.TopologyComponentType.PROCESSOR
+                + " sub type " + ComponentTypes.PROJECTION);
+        }
+        try {
+            bundle = getCurrentTopologyComponentBundle(namespace, TopologyComponentBundle.TopologyComponentType.PROCESSOR, ComponentTypes.WINDOW);
+            bundles.put(bundle.getId(), (p, r) -> getWindow(p.getTopologyId(), r, p.getVersionId()));
+        } catch (IllegalStateException e) {
+            LOG.error("Not able to find topology component bundle for type " + TopologyComponentBundle.TopologyComponentType.PROCESSOR
+                + " sub type " + ComponentTypes.WINDOW);
+        }
 
         Set<String> affectedStreamIds = affectedStreams.stream().map(TopologyStream::getStreamId).collect(Collectors.toSet());
         for (TopologyProcessor processor : processors) {
@@ -1998,12 +2045,12 @@ public class StreamCatalogService {
         // if component is a processor, update any rules in that processor that uses any of the streams
         if (component instanceof TopologyProcessor) {
             setReconfigureRules(Collections.singletonList((TopologyProcessor) component),
-                    edge.getStreamGroupings()
-                            .stream()
-                            .map(StreamGrouping::getStreamId)
-                            .map(sid -> getStreamInfo(edge.getTopologyId(), sid, edge.getVersionId()))
-                            .filter(curStream -> stream == null || curStream.getId().equals(stream.getId()))
-                            .collect(Collectors.toList()));
+                edge.getStreamGroupings()
+                    .stream()
+                    .map(StreamGrouping::getStreamId)
+                    .map(sid -> getStreamInfo(edge.getTopologyId(), sid, edge.getVersionId()))
+                    .filter(curStream -> stream == null || curStream.getId().equals(stream.getId()))
+                    .collect(Collectors.toList()));
         }
     }
 
@@ -2030,26 +2077,26 @@ public class StreamCatalogService {
         }
 
         Collection<Long> edgeStreamIds = Collections2.transform(edge.getStreamGroupings(),
-                new Function<StreamGrouping, Long>() {
-                    public Long apply(StreamGrouping streamGrouping) {
-                        return streamGrouping.getStreamId();
-                    }
-                });
+            new Function<StreamGrouping, Long>() {
+                public Long apply(StreamGrouping streamGrouping) {
+                    return streamGrouping.getStreamId();
+                }
+            });
         if (!outputStreamIds.containsAll(edgeStreamIds)) {
             throw new IllegalArgumentException("Edge stream Ids " + edgeStreamIds +
-                    " must be a subset of outputStreamIds " + outputStreamIds);
+                " must be a subset of outputStreamIds " + outputStreamIds);
         }
         // check the fields specified in the fields grouping is a subset of the stream fields
         for (StreamGrouping streamGrouping : edge.getStreamGroupings()) {
             List<String> fields;
             if ((fields = streamGrouping.getFields()) != null) {
                 Set<String> schemaFieldPatterns = getFieldPatterns(
-                        getStreamInfo(edge.getTopologyId(), streamGrouping.getStreamId(), edge.getVersionId())
-                                .getFields());
+                    getStreamInfo(edge.getTopologyId(), streamGrouping.getStreamId(), edge.getVersionId())
+                        .getFields());
                 fields.forEach(field -> {
                     schemaFieldPatterns.stream().filter(pat -> field.matches(pat)).findAny()
-                            .orElseThrow(() -> new IllegalArgumentException("Fields in the grouping " + fields +
-                                    " must be a subset the stream fields " + schemaFieldPatterns));
+                        .orElseThrow(() -> new IllegalArgumentException("Fields in the grouping " + fields +
+                            " must be a subset the stream fields " + schemaFieldPatterns));
                 });
             }
         }
@@ -2063,7 +2110,7 @@ public class StreamCatalogService {
         fields.forEach(field -> {
             if (field.getType() == Schema.Type.NESTED) {
                 getFieldPatterns(((Schema.NestedField) field).getFields())
-                        .forEach(childFieldName -> names.add(field.getName() + "." + childFieldName));
+                    .forEach(childFieldName -> names.add(field.getName() + "." + childFieldName));
             } else if (field.getType() == Schema.Type.ARRAY) {
                 String pattern;
                 if (field.getName() == null || field.getName().isEmpty()) {
@@ -2072,16 +2119,16 @@ public class StreamCatalogService {
                     pattern = field.getName() + "\\[\\d+\\]";
                 }
                 ((Schema.ArrayField) field).getMembers()
-                        .forEach(member -> {
-                            getFieldPatterns(Collections.singletonList(member))
-                                    .forEach(pat -> {
-                                        if (member.getType() == Schema.Type.ARRAY) {
-                                            names.add(pattern + pat);
-                                        } else if (member.getType() == Schema.Type.NESTED) {
-                                            names.add(pattern + "." + pat);
-                                        }
-                                    });
-                        });
+                    .forEach(member -> {
+                        getFieldPatterns(Collections.singletonList(member))
+                            .forEach(pat -> {
+                                if (member.getType() == Schema.Type.ARRAY) {
+                                    names.add(pattern + pat);
+                                } else if (member.getType() == Schema.Type.NESTED) {
+                                    names.add(pattern + "." + pat);
+                                }
+                            });
+                    });
             } else {
                 names.add(field.getName());
             }
@@ -2118,7 +2165,7 @@ public class StreamCatalogService {
         TopologyEdge curEdge = getTopologyEdge(topologyId, id);
         if (curEdge != null) {
             if (!curEdge.getToId().equals(topologyEdge.getToId())
-                    || !getStreamIds(curEdge).equals(getStreamIds(topologyEdge))) {
+                || !getStreamIds(curEdge).equals(getStreamIds(topologyEdge))) {
                 setReconfigureTarget(curEdge);
             }
         }
@@ -2129,9 +2176,9 @@ public class StreamCatalogService {
 
     private Set<Long> getStreamIds(TopologyEdge edge) {
         return edge.getStreamGroupings()
-                .stream()
-                .map(StreamGrouping::getStreamId)
-                .collect(Collectors.toSet());
+            .stream()
+            .map(StreamGrouping::getStreamId)
+            .collect(Collectors.toSet());
     }
 
     public TopologyEdge removeTopologyEdge(Long topologyId, Long edgeId) {
@@ -2177,8 +2224,8 @@ public class StreamCatalogService {
     }
 
     public TopologyStream getStreamInfoByName(Long topologyId,
-                                              String streamId,
-                                              Long versionId) {
+        String streamId,
+        Long versionId) {
         List<QueryParam> queryParams = WSUtils.buildTopologyIdAndVersionIdAwareQueryParams(topologyId, versionId, null);
         try {
             for (TopologyStream topologyStream : listStreamInfos(queryParams)) {
@@ -2198,9 +2245,9 @@ public class StreamCatalogService {
             throw new IllegalArgumentException("Stream with empty fields: " + topologyStream);
         }
         StorageUtils.ensureUnique(topologyStream, this::listStreamInfos,
-                QueryParam.params(TopologyStream.TOPOLOGYID, topologyStream.getTopologyId().toString(),
-                        TopologyStream.VERSIONID, topologyStream.getVersionId().toString(),
-                        TopologyStream.STREAMID, topologyStream.getStreamId()));
+            QueryParam.params(TopologyStream.TOPOLOGYID, topologyStream.getTopologyId().toString(),
+                TopologyStream.VERSIONID, topologyStream.getVersionId().toString(),
+                TopologyStream.STREAMID, topologyStream.getStreamId()));
     }
 
     public TopologyStream addStreamInfo(Long topologyId, TopologyStream topologyStream) {
@@ -2208,8 +2255,8 @@ public class StreamCatalogService {
     }
 
     public TopologyStream addStreamInfo(Long topologyId,
-                                        Long versionId,
-                                        TopologyStream topologyStream) {
+        Long versionId,
+        TopologyStream topologyStream) {
         if (topologyStream.getId() == null) {
             topologyStream.setId(dao.nextId(STREAMINFO_NAMESPACE));
         }
@@ -2275,8 +2322,8 @@ public class StreamCatalogService {
     }
 
     public TopologyRule addRule(Long topologyId,
-                                Long versionId,
-                                TopologyRule topologyRule) throws Exception {
+        Long versionId,
+        TopologyRule topologyRule) throws Exception {
         if (topologyRule.getId() == null) {
             topologyRule.setId(dao.nextId(TOPOLOGY_RULEINFO_NAMESPACE));
         }
@@ -2355,8 +2402,8 @@ public class StreamCatalogService {
     }
 
     public TopologyBranchRule addBranchRule(Long topologyId,
-                                            Long versionId,
-                                            TopologyBranchRule topologyBranchRule) throws Exception {
+        Long versionId,
+        TopologyBranchRule topologyBranchRule) throws Exception {
         if (topologyBranchRule.getId() == null) {
             topologyBranchRule.setId(dao.nextId(TOPOLOGY_BRANCHRULEINFO_NAMESPACE));
         }
@@ -2418,8 +2465,8 @@ public class StreamCatalogService {
     }
 
     public TopologyWindow addWindow(Long topologyId,
-                                    Long versionId,
-                                    TopologyWindow topologyWindow) throws Exception {
+        Long versionId,
+        TopologyWindow topologyWindow) throws Exception {
         if (topologyWindow.getId() == null) {
             topologyWindow.setId(dao.nextId(TOPOLOGY_WINDOWINFO_NAMESPACE));
         }
@@ -2518,9 +2565,9 @@ public class StreamCatalogService {
         rule.setWindow(topologyWindow.getWindow());
         rule.setActions(topologyWindow.getActions());
         String sql = getSqlString(topologyWindow.getStreams(),
-                topologyWindow.getProjections(),
-                topologyWindow.getCondition(),
-                topologyWindow.getGroupbykeys());
+            topologyWindow.getProjections(),
+            topologyWindow.getCondition(),
+            topologyWindow.getGroupbykeys());
         updateRuleWithSql(rule, sql, topologyWindow.getTopologyId(), topologyWindow.getVersionId());
         validateProjection(rule.getProjection().getExpressions(), rule.getGroupBy().getExpressions());
         ObjectMapper mapper = new ObjectMapper();
@@ -2531,30 +2578,30 @@ public class StreamCatalogService {
     private void validateProjection(List<Expression> projections, List<Expression> groupByExpressions) {
         Set<Expression> groupBy = new HashSet<>(groupByExpressions);
         projections.stream()
-                .map(expr -> {
-                    if (expr instanceof FieldExpression) {
-                        return (FieldExpression) expr;
-                    } else if (expr instanceof AsExpression) {
-                        Expression inner = ((AsExpression) expr).getExpression();
-                        if (inner instanceof FieldExpression) {
-                            return (FieldExpression) inner;
-                        }
+            .map(expr -> {
+                if (expr instanceof FieldExpression) {
+                    return (FieldExpression) expr;
+                } else if (expr instanceof AsExpression) {
+                    Expression inner = ((AsExpression) expr).getExpression();
+                    if (inner instanceof FieldExpression) {
+                        return (FieldExpression) inner;
                     }
-                    return null;
-                })
-                .filter(Objects::nonNull)
-                .forEach(e -> {
-                    if (!groupBy.contains(e)) {
-                        throw new IllegalArgumentException("field: " + e.getValue().getName()
-                                + " is not being grouped");
-                    }
-                });
+                }
+                return null;
+            })
+            .filter(Objects::nonNull)
+            .forEach(e -> {
+                if (!groupBy.contains(e)) {
+                    throw new IllegalArgumentException("field: " + e.getValue().getName()
+                        + " is not being grouped");
+                }
+            });
     }
 
     String getSqlString(List<String> streams,
-                        List<Projection> projections,
-                        String condition,
-                        List<String> groupByKeys) {
+        List<Projection> projections,
+        String condition,
+        List<String> groupByKeys) {
         String SQL = select(streams, projections).orElse("SELECT * ");
         SQL += join(" FROM ", getTable(streams)).get();
         SQL += join(" WHERE ", convertNested(streams, condition)).orElse("");
@@ -2635,12 +2682,12 @@ public class StreamCatalogService {
     private Optional<String> select(List<String> streams, List<Projection> projections) {
         if (projections != null) {
             return join("SELECT ", projections.stream()
-                    .map(p -> {
-                        Projection res = new Projection(convertNested(streams, p.getExpr()), p.getFunctionName(),
-                                convertNested(streams, p.getArgs()), p.getOutputFieldName());
-                        return res.toString();
-                    })
-                    .collect(Collectors.toList()));
+                .map(p -> {
+                    Projection res = new Projection(convertNested(streams, p.getExpr()), p.getFunctionName(),
+                        convertNested(streams, p.getArgs()), p.getOutputFieldName());
+                    return res.toString();
+                })
+                .collect(Collectors.toList()));
         }
         return Optional.empty();
     }
@@ -2754,7 +2801,7 @@ public class StreamCatalogService {
                 } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
                     LOG.debug("Got exception", e);
                     throw new RuntimeException("Check transformationClass property. Cannot load builtin transformation class " + topologyComponentBundle
-                            .getTransformationClass());
+                        .getTransformationClass());
                 }
             } else {
                 ProxyUtil<FluxComponent> fluxComponentProxyUtil = new ProxyUtil<FluxComponent>(FluxComponent.class);
@@ -2763,7 +2810,7 @@ public class StreamCatalogService {
                 } catch (IOException | ClassNotFoundException | IllegalAccessException | InstantiationException ex) {
                     LOG.debug("Got exception", ex);
                     throw new RuntimeException("Cannot load transformation class " + topologyComponentBundle.getTransformationClass() + " from bundle Jar: "
-                            + bundleJar.getAbsolutePath());
+                        + bundleJar.getAbsolutePath());
                 }
             }
             //TODO add logic for beam streamEngine
@@ -2774,7 +2821,7 @@ public class StreamCatalogService {
 
     private String getTopologyComponentBundleJarName(TopologyComponentBundle topologyComponentBundle) {
         List<String> jarFileName = Arrays.asList(topologyComponentBundle.getStreamingEngine(), topologyComponentBundle.getType().name(), topologyComponentBundle
-                .getSubType(), UUID.randomUUID().toString(), ".jar");
+            .getSubType(), UUID.randomUUID().toString(), ".jar");
         String bundleJarFileName = String.join("-", jarFileName);
         return bundleJarFileName;
     }
@@ -2890,10 +2937,10 @@ public class StreamCatalogService {
         testCaseSource.setId(testCaseId);
 
         Collection<TopologyTestRunCaseSource> sources = dao.find(TopologyTestRunCaseSource.NAMESPACE,
-                Lists.newArrayList(
-                        new QueryParam("testCaseId", testCaseId.toString()),
-                        new QueryParam("sourceId", sourceId.toString())
-                ));
+            Lists.newArrayList(
+                new QueryParam("testCaseId", testCaseId.toString()),
+                new QueryParam("sourceId", sourceId.toString())
+            ));
 
         if (sources == null || sources.isEmpty()) {
             return null;
@@ -2974,10 +3021,10 @@ public class StreamCatalogService {
         testCaseSink.setId(testCaseId);
 
         Collection<TopologyTestRunCaseSink> sinks = dao.find(TopologyTestRunCaseSink.NAMESPACE,
-                Lists.newArrayList(
-                        new QueryParam("testCaseId", testCaseId.toString()),
-                        new QueryParam("sinkId", sinkId.toString())
-                ));
+            Lists.newArrayList(
+                new QueryParam("testCaseId", testCaseId.toString()),
+                new QueryParam("sinkId", sinkId.toString())
+            ));
 
         if (sinks == null || sinks.isEmpty()) {
             return null;
@@ -3054,7 +3101,7 @@ public class StreamCatalogService {
     }
 
     private void handleCustomProcessorJar(InputStream jarFile, CustomProcessorInfo customProcessorInfo, boolean verify) throws NoSuchAlgorithmException,
-            IOException {
+        IOException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
         java.io.File tmpFile;
         try (DigestInputStream dis = new DigestInputStream(jarFile, md)) {
@@ -3068,7 +3115,7 @@ public class StreamCatalogService {
             throw new RuntimeException(message);
         }
         Collection<CustomProcessorInfo> customProcessorInfos = this.listCustomProcessorsFromBundleWithFilter(Collections.singletonList(new QueryParam
-                (CustomProcessorInfo.DIGEST, customProcessorInfo.getDigest())));
+            (CustomProcessorInfo.DIGEST, customProcessorInfo.getDigest())));
         if (!customProcessorInfos.isEmpty()) {
             customProcessorInfo.setJarFileName(customProcessorInfos.iterator().next().getJarFileName());
         } else {

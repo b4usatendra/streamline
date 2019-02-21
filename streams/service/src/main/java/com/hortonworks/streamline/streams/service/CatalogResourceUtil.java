@@ -15,24 +15,33 @@
  **/
 package com.hortonworks.streamline.streams.service;
 
-import com.fasterxml.jackson.annotation.*;
-import com.google.common.base.*;
-import com.hortonworks.streamline.streams.actions.topology.service.*;
-import com.hortonworks.streamline.streams.actions.topology.state.*;
-import com.hortonworks.streamline.streams.catalog.*;
-import com.hortonworks.streamline.streams.catalog.service.*;
-import com.hortonworks.streamline.streams.cluster.catalog.*;
-import com.hortonworks.streamline.streams.cluster.service.*;
-import com.hortonworks.streamline.streams.exception.*;
-import com.hortonworks.streamline.streams.metrics.topology.*;
-import com.hortonworks.streamline.streams.metrics.topology.service.*;
-import com.hortonworks.streamline.streams.storm.common.*;
-import org.apache.commons.lang3.tuple.*;
-import org.slf4j.*;
-
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.common.base.Stopwatch;
+import com.hortonworks.streamline.streams.actions.topology.service.TopologyActionsService;
+import com.hortonworks.streamline.streams.actions.topology.state.TopologyStateFactory;
+import com.hortonworks.streamline.streams.actions.topology.state.TopologyStates;
+import com.hortonworks.streamline.streams.beam.common.BeamRunner;
+import com.hortonworks.streamline.streams.beam.common.BeamTopologyLayoutConstants;
+import com.hortonworks.streamline.streams.catalog.Topology;
+import com.hortonworks.streamline.streams.catalog.service.StreamCatalogService;
+import com.hortonworks.streamline.streams.cluster.catalog.JobClusterMap;
+import com.hortonworks.streamline.streams.cluster.catalog.Namespace;
+import com.hortonworks.streamline.streams.cluster.catalog.NamespaceServiceClusterMap;
+import com.hortonworks.streamline.streams.cluster.service.EnvironmentService;
+import com.hortonworks.streamline.streams.exception.TopologyNotAliveException;
+import com.hortonworks.streamline.streams.layout.TopologyLayoutConstants;
+import com.hortonworks.streamline.streams.metrics.topology.TopologyMetrics;
+import com.hortonworks.streamline.streams.metrics.topology.service.TopologyMetricsService;
+import com.hortonworks.streamline.streams.storm.common.StormNotReachableException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class CatalogResourceUtil
 {
@@ -119,7 +128,7 @@ public final class CatalogResourceUtil
 	  RUNNING, NOT_RUNNING, UNKNOWN
    }
 
-   static TopologyDashboardResponse enrichTopology(Topology topology,
+   static TopologyDashboardResponse  enrichTopology(Topology topology,
 		   String asUser,
 		   Integer latencyTopN,
 		   EnvironmentService environmentService,
@@ -152,13 +161,28 @@ public final class CatalogResourceUtil
 			TopologyMetrics.TopologyMetric topologyMetric = metricsService.getTopologyMetric(topology, asUser);
 
 			//TODO make topology state configurable
-			detailedResponse = new TopologyDashboardResponse(topology, TopologyRunningStatus.RUNNING, namespaceName);
+			 if(namespace.getStreamingEngine().equals(TopologyLayoutConstants.BEAM_STREAMING_ENGINE)){
+				 Iterator<JobClusterMap> iterator = environmentService
+					 .getJobByTopologyName(topology.getName(), BeamRunner.FLINK.name())
+					 .iterator();
+				 if (iterator.hasNext()) {
+					 detailedResponse = new TopologyDashboardResponse(topology, TopologyRunningStatus.RUNNING, namespaceName);
+					 List<Pair<String, Double>> latenciesTopN = metricsService
+						 .getTopNAndOtherComponentsLatency(topology, asUser, latencyTopN);
+					 detailedResponse.setRuntime(
+						 new TopologyRuntimeResponse(runtimeTopologyId, topologyMetric, latenciesTopN));
+				 }else
+				 {
+					 detailedResponse = new TopologyDashboardResponse(topology, TopologyRunningStatus.NOT_RUNNING, namespaceName);
+				 }
+			 }else{
+				 detailedResponse = new TopologyDashboardResponse(topology, TopologyRunningStatus.RUNNING, namespaceName);
 
-			if (!namespace.getStreamingEngine().equalsIgnoreCase("beam")) {
-			   List<Pair<String, Double>> latenciesTopN = metricsService.getTopNAndOtherComponentsLatency(topology, asUser, latencyTopN);
-			   detailedResponse.setRuntime(new TopologyRuntimeResponse(runtimeTopologyId, topologyMetric, latenciesTopN));
-			}
-
+				 List<Pair<String, Double>> latenciesTopN = metricsService
+					 .getTopNAndOtherComponentsLatency(topology, asUser, latencyTopN);
+				 detailedResponse.setRuntime(
+					 new TopologyRuntimeResponse(runtimeTopologyId, topologyMetric, latenciesTopN));
+			 }
 		 }
 		 catch (TopologyNotAliveException e)
 		 {

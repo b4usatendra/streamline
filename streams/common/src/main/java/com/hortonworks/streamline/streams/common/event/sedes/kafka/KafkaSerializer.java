@@ -11,25 +11,26 @@ import org.apache.kafka.common.serialization.StringSerializer;
  * Created by Satendra Sahu on 1/16/19
  */
 public enum KafkaSerializer {
-  StringSerializer(StringSerializer.class),
-  LongSerializer(LongSerializer.class),
-  IntegerSerializer(IntegerSerializer.class),
-  ByteArraySerializer(ByteArraySerializer.class),
-  StreamlineAvroSerialzer(StreamlineEventSerializer.class),
-  DoubleSerializer(DoubleSerializer.class);
+    StringSerializer(StringSerializer.class),
+    LongSerializer(LongSerializer.class),
+    IntegerSerializer(IntegerSerializer.class),
+    ByteArraySerializer(ByteArraySerializer.class),
+    StreamlineAvroSerialzer(StreamlineEventSerializer.class),
+    DoubleSerializer(DoubleSerializer.class),
+    FabricEventJsonSerializer(FabricEventJsonSerializer.class);
 
-  private Class serializer;
+    private Class serializer;
 
-  KafkaSerializer(Class serializer) {
-    this.serializer = serializer;
-  }
-
-  public static Class getSerializer(String name) {
-    for (KafkaSerializer serializer : KafkaSerializer.values()) {
-      if (serializer.name().equals(name)) {
-        return serializer.serializer;
-      }
+    KafkaSerializer(Class serializer) {
+        this.serializer = serializer;
     }
-    return null;
-  }
+
+    public static Class getSerializer(String name) {
+        for (KafkaSerializer serializer : KafkaSerializer.values()) {
+            if (serializer.name().equals(name)) {
+                return serializer.serializer;
+            }
+        }
+        return null;
+    }
 }

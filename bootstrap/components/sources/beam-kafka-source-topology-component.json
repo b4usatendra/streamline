@@ -1,7 +1,7 @@
 {
   "type": "SOURCE",
   "name": "Beam-Kafka-Source",
-  "subType": "Kafka",
+  "subType": "KAFKA",
   "streamingEngine": "BEAM",
   "builtin": true,
   "fieldHintProviderClass": "com.hortonworks.streamline.streams.cluster.bundle.impl.KafkaBundleHintProvider",
@@ -55,14 +55,16 @@
         "fieldName": "keyDeserializer",
         "isOptional": false,
         "tooltip": "Type of de-serialization used to read record key",
-        "type": "string"
+        "type": "enumstring",
+        "options": []
       },
       {
         "uiName": "Value Deserializer",
         "fieldName": "valueDeserializer",
         "isOptional": false,
         "tooltip": "Type of de-serialization used to read record",
-        "type": "string"
+        "type": "enumstring",
+        "options": []
       },
       {
         "uiName": "Kafka Client User",

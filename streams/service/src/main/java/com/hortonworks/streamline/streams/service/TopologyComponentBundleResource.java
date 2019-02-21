@@ -25,6 +25,7 @@ import com.hortonworks.streamline.common.exception.service.exception.request.Ent
 import com.hortonworks.streamline.common.util.FileUtil;
 import com.hortonworks.streamline.common.util.ProxyUtil;
 import com.hortonworks.streamline.common.util.WSUtils;
+import com.hortonworks.streamline.streams.catalog.topology.TopologyComponentBundle.TopologyComponentType;
 import com.hortonworks.streamline.streams.cluster.catalog.Namespace;
 import com.hortonworks.streamline.streams.catalog.processor.CustomProcessorInfo;
 import com.hortonworks.streamline.streams.catalog.service.StreamCatalogService;
@@ -136,6 +137,33 @@ public class TopologyComponentBundleResource {
         queryParams = WSUtils.buildQueryParameters(params);
         Collection<TopologyComponentBundle> topologyComponentBundles = catalogService
                 .listTopologyComponentBundlesForTypeWithFilter(componentType, queryParams);
+        if (topologyComponentBundles != null) {
+            return WSUtils.respondEntities(topologyComponentBundles, OK);
+        }
+
+        throw EntityNotFoundException.byFilter(queryParams.toString());
+    }
+
+    /**
+     * Get the dummy topology based on the streamingEngine(namespaceId)
+     * <p>
+     * GET api/v1/catalog/streams/componentbundles/SOURCE/7
+     * </p>
+     */
+    @GET
+    @Path("/componentbundles/TOPOLOGY/{namespaceId}")
+    @Timed
+    public Response listTopologyForTypeWithFilter (
+        @PathParam ("namespaceId") Long namespaceId,
+        @Context UriInfo uriInfo,
+        @Context SecurityContext securityContext) {
+        SecurityUtil.checkRole(authorizer, securityContext, Roles.ROLE_TOPOLOGY_COMPONENT_BUNDLE_USER);
+        List<QueryParam> queryParams;
+        MultivaluedMap<String, String> params = uriInfo.getQueryParameters();
+        Namespace namespace = environmentService.getNamespace(namespaceId);
+        queryParams = WSUtils.buildQueryParameters(params);
+        Collection<TopologyComponentBundle> topologyComponentBundles = catalogService
+            .listTopologyForTypeWithFilter( namespace, TopologyComponentType.TOPOLOGY, queryParams);
         if (topologyComponentBundles != null) {
             return WSUtils.respondEntities(topologyComponentBundles, OK);
         }

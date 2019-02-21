@@ -5,6 +5,8 @@ import static org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hortonworks.streamline.streams.StreamlineEvent;
+import com.hortonworks.streamline.streams.common.event.sedes.kafka.FabricEventJsonDeserializer;
+import com.hortonworks.streamline.streams.common.event.sedes.kafka.FabricEventJsonSerializer;
 import com.hortonworks.streamline.streams.common.event.sedes.kafka.StreamlineEventDeserializer;
 import java.util.Arrays;
 import java.util.Properties;
@@ -32,7 +34,7 @@ public class KafkaConsumerTest {
         StringDeserializer.class.getCanonicalName());
     properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
         StreamlineEventDeserializer.class.getCanonicalName());
-    properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+    properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
 
     properties.put("sasl.mechanism", "PLAIN");
     properties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");

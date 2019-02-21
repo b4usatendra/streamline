@@ -7,9 +7,10 @@
         "uiName": "Master Endpoint",
         "fieldName": "master.endpoint",
         "isUserInput":true,
-        "isOptional": false,
-        "tooltip": "Flink master <localhost>:<port>",
-        "type": "string"
+        "isOptional": true,
+        "tooltip": "Flink master <localhost>:<port>. If not provided [auto] will be used.",
+        "type": "string",
+        "defaultValue": "[auto]"
       }
     ]
   }

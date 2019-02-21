@@ -12,7 +12,7 @@ import java.util.*;
 /**
  * @author suman.bn
  */
-public class FlinkTopologyMetricsConfigImpl implements TopologyMetricsConfig {
+public class BeamTopologyMetricsConfigImpl implements TopologyMetricsConfig {
 
     public static final String COMPONENT_NAME_STORM_UI_SERVER = ComponentPropertyPattern.STORM_UI_SERVER.name();
 
