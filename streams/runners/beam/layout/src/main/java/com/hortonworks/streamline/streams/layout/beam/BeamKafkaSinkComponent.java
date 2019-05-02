@@ -64,7 +64,7 @@ public class BeamKafkaSinkComponent extends AbstractBeamComponent {
 
         if (!conf.containsKey(TopologyLayoutConstants.JSON_KEY_VALUE_SERIALIZATION)) {
             conf.put(TopologyLayoutConstants.JSON_KEY_VALUE_SERIALIZATION,
-                KafkaSerializer.StreamlineAvroSerialzer.name());
+                KafkaSerializer.FabricEventAvroSerializer.name());
         }
 
         String bootstrapServers = (String) conf
@@ -79,10 +79,10 @@ public class BeamKafkaSinkComponent extends AbstractBeamComponent {
             .withBootstrapServers(bootstrapServers)
             .withTopic(topic)
             .withKeySerializer(
-                KafkaSerializer.getSerializer(KafkaSerializer.ByteArraySerializer.name()))
+                KafkaSerializer.getSerializer(keySerializer))
             .withValueSerializer(KafkaSerializer.getSerializer(valueSerializer))
             .updateProducerProperties(addProducerProperties());
-
+        routingKey = "";
         pCollection.apply("recordKeyGeneration", BeamUtilFunctions.generateKey(sinkId, routingKey))
             .apply(writer);
 

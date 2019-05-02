@@ -12,7 +12,7 @@
       {
         "uiName": "Security Protocol",
         "fieldName": "securityProtocol",
-        "isOptional": true,
+        "isOptional": false,
         "tooltip": "Protocol to be used to communicate with Kafka brokers",
         "type": "enumstring",
         "options": []

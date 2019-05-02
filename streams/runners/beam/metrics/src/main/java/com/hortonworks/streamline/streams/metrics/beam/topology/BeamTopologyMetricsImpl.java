@@ -69,9 +69,14 @@ public class BeamTopologyMetricsImpl implements TopologyMetrics {
   @Override
   public TopologyMetric getTopologyMetric(TopologyLayout topology, String asUser) {
 
+    //TODO add misc stats(refer: StormTopologyMetricsImpl.jav)
+    Map<String, Number> miscMetrics = new HashMap<>();
+    miscMetrics.put("TOTAL_WORKERS", 1);
+
+
     return new TopologyMetric(FRAMEWORK, topology.getName(), "RUNNING", 1000l,
         1000l,
-        1.0, 1.0, 0l, null);
+        1.0, 1.0, 0l, miscMetrics);
   }
 
     /**

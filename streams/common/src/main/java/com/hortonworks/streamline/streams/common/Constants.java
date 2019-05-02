@@ -1,21 +1,20 @@
 /**
-  * Copyright 2017 Hortonworks.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-
-  *   http://www.apache.org/licenses/LICENSE-2.0
-
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
+ * Copyright 2017 Hortonworks.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  **/
 package com.hortonworks.streamline.streams.common;
 
 public class Constants {
+
     private Constants() {
     }
 
@@ -24,6 +23,21 @@ public class Constants {
     public static final String CONFIG_CP_WATCH_PATH = "customProcessorWatchPath";
     public static final String CONFIG_CP_UPLOAD_FAIL_PATH = "customProcessorUploadFailPath";
     public static final String CONFIG_CP_UPLOAD_SUCCESS_PATH = "customProcessorUploadSuccessPath";
+
+
+    //fabric document constants
+    public static final String FABRIC_ID = "id";
+    public static final String FABRIC_METADATA = "metadata";
+    public static final String FABRIC_DATA = "data";
+    public static final String FABRIC_METADATA_TIMESTAMP = "timestamp";
+    public static final String FABRIC_METADATA_SCHEMA = "schema";
+    public static final String FABRIC_METADATA_SCHEMA_VERSION = "schemaVersion";
+    public static final String FABRIC_METADATA_TYPE = "type";
+    public static final String FABRIC_METADATA_ROUTING_KEY = "routingKey";
+    public static final String FABRIC_METADATA_LOOKUP_KEY = "lookupKey";
+    public static final String FABRIC_METADATA_TENANT = "tenant";
+    public static final String FABRIC_METADATA_STREAM = "stream";
+    public static final String FABRIC_METADATA_SENDER = "sender";
 
 
 }

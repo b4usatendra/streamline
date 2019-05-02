@@ -51,7 +51,6 @@ public class TopologyActionsContainer extends NamespaceAwareContainer<TopologyAc
         String streamingEngine = namespace.getStreamingEngine();
 
         MappedTopologyActionsImpl actionsImpl;
-        // Only Storm is supported as streaming engine
 
         try {
             actionsImpl = MappedTopologyActionsImpl.valueOf(streamingEngine);

@@ -15,7 +15,7 @@ public enum KafkaDeserializer {
   LongDeserializer(LongDeserializer.class),
   IntegerDeserializer(IntegerDeserializer.class),
   ByteArrayDeserializer(ByteArrayDeserializer.class),
-  StreamlineAvroDeserialzer(StreamlineEventDeserializer.class),
+  FabricEventAvroDeserializer(FabricEventAvroDeserializer.class),
   DoubleDeserializer(DoubleDeserializer.class),
   FabricEventJsonDeserializer(FabricEventJsonDeserializer.class);
 

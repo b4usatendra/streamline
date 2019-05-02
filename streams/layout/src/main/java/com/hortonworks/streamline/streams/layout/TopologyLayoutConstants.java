@@ -33,6 +33,7 @@ public final class TopologyLayoutConstants {
     public static final String DEFAULT_ABSOLUTE_JAR_LOCATION_DIR = "default.jar.location";
 
     // metric
+    // metric
     public static final String STORM_API_ROOT_URL_KEY = "stormApiRootUrl";
 
     public static final String SCHEMA_REGISTRY_URL = "schemaRegistryUrl";

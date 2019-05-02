@@ -47,7 +47,7 @@ class AddTopology extends Component {
   }
 
   fetchData = () => {
-    let promiseArr = [TopologyREST.getTopologyConfigs(this.state.namespaceId), EnvironmentREST.getAllNameSpaces()];
+    let promiseArr = [TopologyREST.getTopologyConfigByNamespaceId(this.state.namespaceId), EnvironmentREST.getAllNameSpaces()];
     Promise.all(promiseArr).then(result => {
       var config = result[0];
       if (config.responseMessage !== undefined) {

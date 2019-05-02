@@ -18,6 +18,7 @@ package com.hortonworks.streamline.streams.service;
 
 import com.codahale.metrics.annotation.Timed;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import com.hortonworks.registries.common.QueryParam;
 import com.hortonworks.streamline.common.exception.service.exception.request.BadRequestException;
 import com.hortonworks.streamline.common.exception.service.exception.request.CustomProcessorOnlyException;
@@ -129,12 +130,23 @@ public class TopologyComponentBundleResource {
     @Path("/componentbundles/{component}")
     @Timed
     public Response listTopologyComponentBundlesForTypeWithFilter (@PathParam ("component") TopologyComponentBundle.TopologyComponentType componentType,
+                                                                   @javax.ws.rs.QueryParam("namespaceId") Long namespaceId,
                                                                    @Context UriInfo uriInfo,
                                                                    @Context SecurityContext securityContext) {
         SecurityUtil.checkRole(authorizer, securityContext, Roles.ROLE_TOPOLOGY_COMPONENT_BUNDLE_USER);
+
         List<QueryParam> queryParams;
         MultivaluedMap<String, String> params = uriInfo.getQueryParameters();
         queryParams = WSUtils.buildQueryParameters(params);
+
+        if(namespaceId==null){
+
+        }else{
+            Namespace namespace = environmentService.getNamespace(namespaceId);
+            queryParams = Lists.newArrayList(queryParams);
+            queryParams.add(new QueryParam(TopologyComponentBundle.STREAMING_ENGINE, namespace.getStreamingEngine()));
+        }
+
         Collection<TopologyComponentBundle> topologyComponentBundles = catalogService
                 .listTopologyComponentBundlesForTypeWithFilter(componentType, queryParams);
         if (topologyComponentBundles != null) {
@@ -151,9 +163,10 @@ public class TopologyComponentBundleResource {
      * </p>
      */
     @GET
-    @Path("/componentbundles/TOPOLOGY/{namespaceId}")
+    @Path("/componentbundles/{component}/namespaceId/{namespaceId}")
     @Timed
     public Response listTopologyForTypeWithFilter (
+        @PathParam ("component") String component,
         @PathParam ("namespaceId") Long namespaceId,
         @Context UriInfo uriInfo,
         @Context SecurityContext securityContext) {

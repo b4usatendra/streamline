@@ -165,9 +165,9 @@ class TopologyEditorContainer extends Component {
         }
         this.namespaceId = data.topology.namespaceId;
         this.lastUpdatedTime = new Date(result.topology.timestamp);
-        promiseArr.push(TopologyREST.getSourceComponent());
-        promiseArr.push(TopologyREST.getProcessorComponent());
-        promiseArr.push(TopologyREST.getSinkComponent());
+        promiseArr.push(TopologyREST.getSourceComponent(this.namespaceId));
+        promiseArr.push(TopologyREST.getProcessorComponent(this.namespaceId));
+        promiseArr.push(TopologyREST.getSinkComponent(this.namespaceId));
         promiseArr.push(TopologyREST.getLinkComponent());
         promiseArr.push(TopologyREST.getAllNodes(this.topologyId, versionId, 'sources'));
         promiseArr.push(TopologyREST.getAllNodes(this.topologyId, versionId, 'processors'));
@@ -175,7 +175,7 @@ class TopologyEditorContainer extends Component {
         promiseArr.push(TopologyREST.getAllNodes(this.topologyId, versionId, 'edges'));
         promiseArr.push(TopologyREST.getMetaInfo(this.topologyId, versionId));
         promiseArr.push(TopologyREST.getAllVersions(this.topologyId));
-        promiseArr.push(TopologyREST.getTopologyConfigs(this.namespaceId));
+        promiseArr.push(TopologyREST.getTopologyConfigByNamespaceId(this.namespaceId));
 
         Promise.all(promiseArr).then((resultsArr) => {
           let allNodes = [];

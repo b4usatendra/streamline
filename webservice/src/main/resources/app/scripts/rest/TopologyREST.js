@@ -154,29 +154,37 @@ const TopologyREST = {
         return response.json();
       });
   },
-  getSourceComponent(options) {
+  getSourceComponent(namespaceId, options) {
     options = options || {};
     options.method = options.method || 'GET';
     options.credentials = 'same-origin';
-    return fetch(baseUrl + 'streams/componentbundles/SOURCE', options)
+    if(namespaceId == undefined){
+      return fetch(baseUrl + 'streams/componentbundles/SOURCE', options)
+        .then((response) => {
+          return response.json();
+        });
+    }else {
+      return fetch(baseUrl + 'streams/componentbundles/SOURCE?namespaceId=' + namespaceId, options)
+        .then((response) => {
+          return response.json();
+        });
+    }
+
+  },
+  getProcessorComponent(namespaceId, options) {
+    options = options || {};
+    options.method = options.method || 'GET';
+    options.credentials = 'same-origin';
+    return fetch(baseUrl + 'streams/componentbundles/PROCESSOR?namespaceId=' + namespaceId, options)
       .then((response) => {
         return response.json();
       });
   },
-  getProcessorComponent(options) {
+  getSinkComponent(namespaceId, options) {
     options = options || {};
     options.method = options.method || 'GET';
     options.credentials = 'same-origin';
-    return fetch(baseUrl + 'streams/componentbundles/PROCESSOR', options)
-      .then((response) => {
-        return response.json();
-      });
-  },
-  getSinkComponent(options) {
-    options = options || {};
-    options.method = options.method || 'GET';
-    options.credentials = 'same-origin';
-    return fetch(baseUrl + 'streams/componentbundles/SINK', options)
+    return fetch(baseUrl + 'streams/componentbundles/SINK?namespaceId=' + namespaceId, options)
       .then((response) => {
         return response.json();
       });
@@ -384,23 +392,21 @@ const TopologyREST = {
         return response.json();
       });
   },
-  getTopologyConfig(options) {
+  getTopologyConfigByNamespaceId(namespaceId, options) {
     options = options || {};
     options.method = options.method || 'GET';
     options.credentials = 'same-origin';
-    return fetch(baseUrl + 'streams/componentbundles/TOPOLOGY', options)
-      .then((response) => {
-        return response.json();
-      });
-  },
-  getTopologyConfigs(nameSpaceId, options) {
-    options = options || {};
-    options.method = options.method || 'GET';
-    options.credentials = 'same-origin';
-    return fetch(baseUrl + 'streams/componentbundles/TOPOLOGY/'+nameSpaceId, options)
-      .then((response) => {
-        return response.json();
-      });
+    if(namespaceId == undefined || namespaceId == ""){
+      return fetch(baseUrl + 'streams/componentbundles/TOPOLOGY', options)
+        .then((response) => {
+          return response.json();
+        });
+    }else {
+      return fetch(baseUrl + 'streams/componentbundles/TOPOLOGY?namespaceId=' + namespaceId, options)
+        .then((response) => {
+          return response.json();
+        });
+    }
   },
   cloneTopology(id, namespaceId, options) {
     options = options || {};

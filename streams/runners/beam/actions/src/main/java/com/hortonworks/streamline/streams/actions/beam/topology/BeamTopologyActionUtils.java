@@ -43,14 +43,6 @@ public class BeamTopologyActionUtils {
 
     public static String getSaslJaasConfig(Map<String, Object> conf) {
 
-        if (!conf.containsKey(BeamTopologyLayoutConstants.KAFKA_CLIENT_USER)) {
-            conf.put(BeamTopologyLayoutConstants.KAFKA_CLIENT_USER, "olauser");
-        }
-
-        if (!conf.containsKey(BeamTopologyLayoutConstants.KAFKA_CLIENT_PASSWORD)) {
-            conf.put(BeamTopologyLayoutConstants.KAFKA_CLIENT_PASSWORD, "olauser@1234");
-        }
-
         if (!conf.containsKey(BeamTopologyLayoutConstants.ZK_CLIENT_USER)) {
             conf.put(BeamTopologyLayoutConstants.ZK_CLIENT_USER, "zkclient");
         }

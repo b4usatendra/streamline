@@ -46,7 +46,7 @@ public class BeamUtilFunctions implements Serializable {
     public static Combine.Globally<StreamlineEvent, StreamlineEvent> applyCombiningStrategy(
         String fieldName, String function) {
         return AggregationFunImpl.globally(fieldName, FunctionEnum.enumOf(function).getClazz())
-                   .withoutDefaults();
+            .withoutDefaults();
     }
 
     //filter fields
@@ -61,15 +61,16 @@ public class BeamUtilFunctions implements Serializable {
                 //TODO validate datatype of the field
                 for (FieldExpression field : filteredFields) {
                     if (streamlineEvent.containsKey(field.getValue().getName())) {
-                        fields.put(field.getValue().getName(), streamlineEvent.get(field.getValue().getName()));
+                        fields.put(field.getValue().getName(),
+                            streamlineEvent.get(field.getValue().getName()));
                     }
                 }
                 StreamlineEvent newEvent = StreamlineEventImpl.builder()
-                                               .fieldsAndValues(fields)
-                                               .auxiliaryFieldsAndValues(streamlineEvent.getAuxiliaryFieldsAndValues())
-                                               .dataSourceId(beamComponentId)
-                                               .header(streamlineEvent.getHeader())
-                                               .build();
+                    .fieldsAndValues(fields)
+                    .auxiliaryFieldsAndValues(streamlineEvent.getAuxiliaryFieldsAndValues())
+                    .dataSourceId(beamComponentId)
+                    .header(streamlineEvent.getHeader())
+                    .build();
 
                 out.output(newEvent);
             }
@@ -86,7 +87,7 @@ public class BeamUtilFunctions implements Serializable {
                 ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
                 byte[] recordRoutingKey = null;
 
-                if (streamlineEvent.containsKey(routingKey)) {
+                if (routingKey != null && streamlineEvent.containsKey(routingKey)) {
                     if (streamlineEvent.get(routingKey) instanceof Long) {
                         Long key = (Long) streamlineEvent.get(routingKey);
                         recordRoutingKey = buffer.putLong(key).array();
@@ -105,7 +106,7 @@ public class BeamUtilFunctions implements Serializable {
                 }
 
                 StreamlineEvent newEvent = StreamlineEventImpl.builder().from(streamlineEvent)
-                                               .dataSourceId(sinkId).build();
+                    .dataSourceId(sinkId).build();
                 KV<byte[], StreamlineEvent> eventKV = KV.of(recordRoutingKey, newEvent);
                 out.output(eventKV);
             }
@@ -121,7 +122,7 @@ public class BeamUtilFunctions implements Serializable {
                 OutputReceiver<StreamlineEvent> out) {
                 if (kV.getValue() != null) {
                     StreamlineEvent newEvent = StreamlineEventImpl.builder().from(kV.getValue())
-                                                   .dataSourceId(beamSourceId).build();
+                        .dataSourceId(beamSourceId).build();
                     out.output(newEvent);
                 }
             }

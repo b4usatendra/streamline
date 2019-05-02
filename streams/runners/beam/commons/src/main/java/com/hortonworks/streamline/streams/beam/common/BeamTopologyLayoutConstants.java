@@ -21,6 +21,15 @@ public final class BeamTopologyLayoutConstants {
     public static final String BEAM_JAR_FILE_TYPE_KEY = "jars";
     // yaml key constants
 
+
+    public static final String DEFAULT_BEAM_ARTIFACTS_LOCATION = "/tmp/beam-artifacts";
+    public static final String FLINK_MASTER_KEY = "master.endpoint";
+    public static final String TEMP_TOPLOGY_PATH = "/tmp/topology/%s/%s/";
+    public static final String TOPOLOGY_SERIALIZED_OBJECT_PATH = "/serializedObject";
+    public static final String FLINK_HOME_DIR = "flinkHomeDir";
+
+
+
     // TODO: add hbase conf to topology config when processing data sinks
 
     //event metadata constants
@@ -37,10 +46,26 @@ public final class BeamTopologyLayoutConstants {
     public static final String ZK_CLIENT_PASSWORD = "zk.client.password";
     public static final String JAAS_CONF_PATH = "jaas.conf.path";
 
-    //Flink Cluster constants
-    public static final String YARN_CONTAINER = "yarn.container";
-    public static final String YARN_SLOTS = "yarn.slots";
-    public static final String YARN_JOB_MANAGER_MEMORY = "yarn.job.manager.memory";
-    public static final String YARN_TASK_MANAGER_MEMORY = "yarn.task.manager.memory";
+    //Flink config properties
+    public static final String JSON_KEY_YARN_CONTAINER = "yarn.container";
+    public static final String JSON_KEY_YARN_SLOTS = "yarn.slots";
+    public static final String JSON_KEY_YARN_JOB_MANAGER_MEMORY = "yarn.job.manager.memory";
+    public static final String JSON_KEY_YARN_TASK_MANAGER_MEMORY = "yarn.task.manager.memory";
+
+    //flink CLI args
+    public static final String SHUTDOWN_HOOK = "--sae";
+    public static final String YARN_CLUSTER = "yarn-cluster";
+    public static final String YARN_CONTAINER = "--yarncontainer";
+    public static final String YARN_SLOTS = "--yarnslots";
+    public static final String YARN_JOB_MANAGER_MEMORY = "--yarnjobManagerMemory";
+    public static final String YARN_TASK_MANAGER_MEMORY = "--yarntaskManagerMemory";
+    public static final String YARN_NAME = "--yarnname";
+    public static final String FLINK_MASTER = "--flinkMaster";
+
+    //BEAM Constants
+    public static final String RUNNER = "--runner";
+    public static final String FILES_TO_STAGE = "--filesToStage";
+
+
 
 }

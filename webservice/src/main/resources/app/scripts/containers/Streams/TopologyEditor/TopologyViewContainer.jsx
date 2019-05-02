@@ -109,9 +109,9 @@ class TopologyViewContainer extends Component {
           versionId = data.topology.versionId;
         }
 
-        promiseArr.push(TopologyREST.getSourceComponent());
-        promiseArr.push(TopologyREST.getProcessorComponent());
-        promiseArr.push(TopologyREST.getSinkComponent());
+        promiseArr.push(TopologyREST.getSourceComponent(this.namespaceId));
+        promiseArr.push(TopologyREST.getProcessorComponent(this.namespaceId));
+        promiseArr.push(TopologyREST.getSinkComponent(this.namespaceId));
         promiseArr.push(TopologyREST.getLinkComponent());
         promiseArr.push(TopologyREST.getAllNodes(this.topologyId, versionId, 'sources'));
         promiseArr.push(TopologyREST.getAllNodes(this.topologyId, versionId, 'processors'));

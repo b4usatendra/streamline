@@ -1,12 +1,15 @@
 /**
  * Copyright 2017 Hortonworks.
  * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p>
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied. See the License for the specific language governing permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  **/
 package com.hortonworks.streamline.streams.layout.beam;
 
@@ -60,12 +63,14 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
 
     @Override
     public void generateComponent(PCollection inputCollection) {
-        kafkaSource = (StreamlineSource) conf.get(TopologyLayoutConstants.STREAMLINE_COMPONENT_CONF_KEY);
+        kafkaSource = (StreamlineSource) conf
+            .get(TopologyLayoutConstants.STREAMLINE_COMPONENT_CONF_KEY);
         if (!isGenerated) {
             StreamlineSource streamlineSource = (StreamlineSource) conf
                 .get(TopologyLayoutConstants.STREAMLINE_COMPONENT_CONF_KEY);
 
-            String outputStream = (String) conf.get(TopologyLayoutConstants.JSON_KEY_OUTPUT_STREAM_ID);
+            String outputStream = (String) conf
+                .get(TopologyLayoutConstants.JSON_KEY_OUTPUT_STREAM_ID);
             String sourceId = streamlineSource.getId();
 
             initializeComponent();
@@ -81,11 +86,13 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
 
         //TODO remove this section
         if (!conf.containsKey(TopologyLayoutConstants.JSON_KEY_KEY_DESERIALIZATION)) {
-            conf.put(TopologyLayoutConstants.JSON_KEY_KEY_DESERIALIZATION, KafkaDeserializer.StringDeserializer.name());
+            conf.put(TopologyLayoutConstants.JSON_KEY_KEY_DESERIALIZATION,
+                KafkaDeserializer.StringDeserializer.name());
         }
 
         if (!conf.containsKey(TopologyLayoutConstants.JSON_KEY_VALUE_DESERIALIZATION)) {
-            conf.put(TopologyLayoutConstants.JSON_KEY_VALUE_DESERIALIZATION, KafkaDeserializer.FabricEventJsonDeserializer.name());
+            conf.put(TopologyLayoutConstants.JSON_KEY_VALUE_DESERIALIZATION,
+                KafkaDeserializer.FabricEventJsonDeserializer.name());
         }
 
         if (!conf.containsKey(BeamTopologyLayoutConstants.KAFKA_CLIENT_USER)) {
@@ -104,9 +111,12 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
             conf.put(BeamTopologyLayoutConstants.ZK_CLIENT_PASSWORD, "Ukidfds#59");
         }
 
-        String valueDeserializer = (String) conf.get(TopologyLayoutConstants.JSON_KEY_VALUE_DESERIALIZATION);
-        String keyDeserializer = (String) conf.get(TopologyLayoutConstants.JSON_KEY_KEY_DESERIALIZATION);
-        String bootstrapServers = (String) conf.get(TopologyLayoutConstants.JSON_KEY_BOOTSTRAP_SERVER);
+        String valueDeserializer = (String) conf
+            .get(TopologyLayoutConstants.JSON_KEY_VALUE_DESERIALIZATION);
+        String keyDeserializer = (String) conf
+            .get(TopologyLayoutConstants.JSON_KEY_KEY_DESERIALIZATION);
+        String bootstrapServers = (String) conf
+            .get(TopologyLayoutConstants.JSON_KEY_BOOTSTRAP_SERVER);
         String topic = (String) conf.get(TopologyLayoutConstants.JSON_KEY_TOPIC);
 
         try {
@@ -120,7 +130,8 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
 
             outputCollection = this.pipeline
                 .apply(beamSourceId, reader.withoutMetadata())
-                .apply("beamKafkaInputParDo", BeamUtilFunctions.extractStreamlineEvents(beamSourceId));
+                .apply("beamKafkaInputParDo",
+                    BeamUtilFunctions.extractStreamlineEvents(beamSourceId));
         } catch (Exception e) {
             throw new RuntimeException("Class not found: " + e.getMessage());
         }
@@ -157,7 +168,31 @@ public class BeamKafkaSourceComponent extends AbstractBeamComponent {
             .equals("SASL_PLAINTEXT")) {
             consumerProperties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, securityProtocol);
             consumerProperties.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
-            System.setProperty("java.security.auth.login.config", "/tmp/topology/beam_aggregator_test/jaas/jaas.conf");
+
+            if (!conf.containsKey(BeamTopologyLayoutConstants.ZK_CLIENT_USER)) {
+                conf.put(BeamTopologyLayoutConstants.ZK_CLIENT_USER, "zkclient");
+            }
+
+            if (!conf.containsKey(BeamTopologyLayoutConstants.ZK_CLIENT_PASSWORD)) {
+                conf.put(BeamTopologyLayoutConstants.ZK_CLIENT_PASSWORD, "Ukidfds#59");
+            }
+
+            String kafkaClientUser = (String) conf
+                .get(BeamTopologyLayoutConstants.KAFKA_CLIENT_USER);
+            String kafkaClientPassword = (String) conf
+                .get(BeamTopologyLayoutConstants.KAFKA_CLIENT_PASSWORD);
+            String zkClientUser = (String) conf.get(BeamTopologyLayoutConstants.ZK_CLIENT_USER);
+            String zkClientPassword = (String) conf
+                .get(BeamTopologyLayoutConstants.ZK_CLIENT_PASSWORD);
+
+            String jaasFile = BeamLayoutUtils
+                .getSaslJaasConfig(kafkaClientUser, kafkaClientPassword, zkClientUser,
+                    zkClientPassword);
+            BeamLayoutUtils
+                .createJaasFile((String) conf.get("jaas_conf"), jaasFile);
+
+            System.setProperty("java.security.auth.login.config",
+                conf.get("jaas_conf") + "/jaas.conf");
         }
     }
 }

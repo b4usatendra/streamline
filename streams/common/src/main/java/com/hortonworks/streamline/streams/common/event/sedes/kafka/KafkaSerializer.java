@@ -15,7 +15,7 @@ public enum KafkaSerializer {
     LongSerializer(LongSerializer.class),
     IntegerSerializer(IntegerSerializer.class),
     ByteArraySerializer(ByteArraySerializer.class),
-    StreamlineAvroSerialzer(StreamlineEventSerializer.class),
+    FabricEventAvroSerializer(FabricEventAvroSerializer.class),
     DoubleSerializer(DoubleSerializer.class),
     FabricEventJsonSerializer(FabricEventJsonSerializer.class);
 

@@ -28,7 +28,6 @@ public class FabricEventJsonSerializer implements Serializer<StreamlineEvent> {
     protected static final Logger LOG = LoggerFactory.getLogger(FabricEventJsonSerializer.class);
     private static final ObjectMapper mapper = new ObjectMapper();
 
-
     public FabricEventJsonSerializer() {
 
     }

@@ -54,7 +54,7 @@ language governing permissions and limitations under the License. -->
                             <resources>
                                 <resource>
                                     <targetPath>/</targetPath>
-                                    <directory>${project.basedir}/../streamline-dist/target</directory>
+                                    <directory>${project.basedir}/target</directory>
                                     <include>hortonworks-streamline-${parent.version}.tar.gz</include>
                                 </resource>
                             </resources>
@@ -64,5 +64,4 @@ language governing permissions and limitations under the License. -->
             </build>
         </profile>
     </profiles>
-
 </project>
