@@ -44,6 +44,16 @@
 
       <exclusions>
         <exclusion>
+          <groupId>org.apache.calcite</groupId>
+          <artifactId>calcite-core</artifactId>
+        </exclusion>
+
+        <exclusion>
+          <groupId>org.apache.calcite.avatica</groupId>
+          <artifactId>avatica</artifactId>
+        </exclusion>
+
+        <exclusion>
           <groupId>org.glassfish.jersey.media</groupId>
           <artifactId>*</artifactId>
         </exclusion>
@@ -112,6 +122,16 @@
       <groupId>com.hortonworks.streamline</groupId>
       <artifactId>streamline-runtime</artifactId>
       <exclusions>
+        <exclusion>
+          <groupId>org.apache.calcite</groupId>
+          <artifactId>calcite-core</artifactId>
+        </exclusion>
+
+        <exclusion>
+          <groupId>org.apache.calcite.avatica</groupId>
+          <artifactId>avatica</artifactId>
+        </exclusion>
+
         <exclusion>
           <groupId>com.hortonworks.streamline</groupId>
           <artifactId>streamline-catalog</artifactId>

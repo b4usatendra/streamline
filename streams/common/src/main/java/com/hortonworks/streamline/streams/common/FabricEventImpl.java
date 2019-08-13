@@ -165,10 +165,13 @@ public final class FabricEventImpl extends ForwardingMap<String, Object> impleme
         }
 
         public Builder fieldsAndValues(Map<String, Object> fieldsAndValues) {
-            if (kv != null) {
-                kv =  Maps.newHashMap();
+            if (kv == null) {
+                kv = fieldsAndValues;
+            } else {
+                kv = Maps.newHashMap();
+                kv.putAll(fieldsAndValues);
             }
-            kv.putAll(fieldsAndValues);
+
             return this;
         }
 

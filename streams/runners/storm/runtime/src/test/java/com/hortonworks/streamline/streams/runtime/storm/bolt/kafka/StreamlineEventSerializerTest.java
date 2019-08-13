@@ -18,6 +18,7 @@ package com.hortonworks.streamline.streams.runtime.storm.bolt.kafka;
 import com.hortonworks.streamline.streams.StreamlineEvent;
 import com.hortonworks.streamline.streams.common.StreamlineEventImpl;
 import com.hortonworks.streamline.streams.common.event.sedes.kafka.FabricEventAvroSerializer;
+import com.hortonworks.streamline.streams.common.utils.FabricEventUtils;
 import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
@@ -75,13 +76,13 @@ public class StreamlineEventSerializerTest {
         expected.put("fixed", new GenericData.Fixed(Schema.createFixed("fixedSchema", null, null, 10), "bytes".getBytes()));
         expected.put("array", new GenericData.Array<Integer>(Schema.createArray(Schema.create(Schema.Type.INT)), integerList));
         StreamlineEvent streamlineEvent = StreamlineEventImpl.builder().fieldsAndValues(data).dataSourceId("dataSourceId").build();
-        Assert.assertEquals(expected, FabricEventAvroSerializer
+        Assert.assertEquals(expected, StreamlineEventSerializer
             .getAvroRecord(streamlineEvent, schema));
     }
 
     private void runPrimitiveTest (Map data, Schema schema, Object expectedValue) {
         StreamlineEvent streamlineEvent = StreamlineEventImpl.builder().fieldsAndValues(data).dataSourceId("dataSourceId").build();
-        Assert.assertEquals(expectedValue, FabricEventAvroSerializer
+        Assert.assertEquals(expectedValue, StreamlineEventSerializer
             .getAvroRecord(streamlineEvent, schema));
     }
 

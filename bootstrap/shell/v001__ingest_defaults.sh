@@ -137,8 +137,10 @@ function add_source_bundles {
 function add_processor_bundles {
     # === Processor ===
     add_topology_component_bundle /streams/componentbundles/PROCESSOR ${component_dir}/processors/beam-rule-topology-component.json
-
     add_topology_component_bundle /streams/componentbundles/PROCESSOR ${component_dir}/processors/beam-window-topology-component.json
+    add_topology_component_bundle /streams/componentbundles/PROCESSOR ${component_dir}/processors/beam-branch-topology-component.json
+    add_topology_component_bundle /streams/componentbundles/PROCESSOR ${component_dir}/processors/beam-filter-topology-component.json
+
     add_topology_component_bundle /streams/componentbundles/PROCESSOR ${component_dir}/processors/rule-topology-component.json
     add_topology_component_bundle /streams/componentbundles/PROCESSOR ${component_dir}/processors/window-topology-component.json
     add_topology_component_bundle /streams/componentbundles/PROCESSOR ${component_dir}/processors/branch-topology-component.json
@@ -169,11 +171,14 @@ function add_sink_bundles {
 }
 
 function add_other_bundles {
+    add_topology_component_bundle /streams/componentbundles/ACTION ${component_dir}/processors/beam-enrichment-transform-topology-component.json
+    add_topology_component_bundle /streams/componentbundles/TRANSFORM ${component_dir}/processors/beam-transform-action-topology-component.json
+
     post /streams/componentbundles/ACTION $component_dir/sinks/transform-action-topology-component
     post /streams/componentbundles/TRANSFORM $component_dir/sinks/projection-transform-topology-component
     post /streams/componentbundles/TRANSFORM $component_dir/sinks/enrichment-transform-topology-component
-    note that the below is just a sample for ui to work with. Once UI is ready, all above will be replaced with new bundle components
-    add_sample_bundle
+    #note that the below is just a sample for ui to work with. Once UI is ready, all above will be replaced with new bundle components
+    #add_sample_bundle
 }
 
 function add_topology_bundles {
@@ -294,8 +299,8 @@ function main {
     #add_source_bundles
     #add_processor_bundles
     #add_sink_bundles
-    #add_other_bundles
-    add_topology_bundles
+    add_other_bundles
+    #add_topology_bundles
     #add_service_bundles
     #add_roles_and_users
     #add_udfs

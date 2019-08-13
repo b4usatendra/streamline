@@ -1,0 +1,39 @@
+{
+  "type": "PROCESSOR",
+  "name": "Beam-Filter",
+  "subType": "BRANCH",
+  "builtin": true,
+  "streamingEngine": "BEAM",
+  "transformationClass": "com.hortonworks.streamline.streams.layout.beam.BeamFilterComponent",
+  "topologyComponentUISpecification": {
+    "fields": [
+      {
+        "uiName": "Filter Key",
+        "fieldName": "keyFilter",
+        "isOptional": false,
+        "tooltip": "Name of filter key",
+        "isUserInput": true,
+        "type": "string"
+      },
+      {
+        "uiName": "Filter Value",
+        "fieldName": "valueFilter",
+        "isOptional": false,
+        "tooltip": "value",
+        "isUserInput": true,
+        "type": "enumstring",
+        "options": []
+      },
+      {
+        "uiName": "Parallelism",
+        "fieldName": "parallelism",
+        "isOptional": true,
+        "tooltip": "Parallelism hint for rule bolt",
+        "type": "number",
+        "defaultValue": 1,
+        "min": 1,
+        "hint": "hidden"
+      }
+    ]
+  }
+}

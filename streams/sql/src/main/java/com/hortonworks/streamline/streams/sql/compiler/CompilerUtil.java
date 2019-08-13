@@ -22,6 +22,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.hortonworks.streamline.streams.sql.calcite.ParallelStreamableTable;
 import com.hortonworks.streamline.streams.sql.parser.ColumnConstraint;
+import org.apache.calcite.config.CalciteConnectionConfig;
 import org.apache.calcite.rel.RelCollations;
 import org.apache.calcite.rel.RelFieldCollation;
 import org.apache.calcite.rel.type.RelDataType;
@@ -31,7 +32,9 @@ import org.apache.calcite.schema.Statistic;
 import org.apache.calcite.schema.Statistics;
 import org.apache.calcite.schema.StreamableTable;
 import org.apache.calcite.schema.Table;
+import org.apache.calcite.sql.SqlCall;
 import org.apache.calcite.sql.SqlDataTypeSpec;
+import org.apache.calcite.sql.SqlNode;
 import org.apache.calcite.sql.type.SqlTypeName;
 import org.apache.calcite.sql.validate.SqlMonotonicity;
 import org.apache.calcite.util.ImmutableBitSet;
@@ -144,6 +147,33 @@ public class CompilerUtil {
         public Schema.TableType getJdbcTableType() {
           return Schema.TableType.STREAM;
         }
+
+        /**
+         * Determines whether the given {@code column} has been rolled up.
+         */
+        @Override
+        public boolean isRolledUp(String column) {
+          return false;
+        }
+
+        /**
+         * Determines whether the given rolled up column can be used inside
+         * the given aggregate function. You can assume that {@code
+         * isRolledUp(column)} is {@code true}.
+         *
+         * @param column The column name for which {@code isRolledUp} is
+         * true
+         * @param call The aggregate call
+         * @param parent Parent node of {@code call} in the {@link SqlNode}
+         * tree
+         * @param config Config settings. May be null
+         * @return true iff the given aggregate call is valid
+         */
+        @Override
+        public boolean rolledUpColumnValidInsideAgg(String column, SqlCall call, SqlNode parent,
+            CalciteConnectionConfig config) {
+          return false;
+        }
       };
 
       return new ParallelStreamableTable() {
@@ -170,6 +200,32 @@ public class CompilerUtil {
         @Override
         public Schema.TableType getJdbcTableType() {
           return Schema.TableType.STREAM;
+        }
+
+        /**
+         * Determines whether the given {@code column} has been rolled up.
+         */
+        @Override
+        public boolean isRolledUp(String column) {
+          return false;
+        }
+
+        /**
+         * Determines whether the given rolled up column can be used inside the
+         * given aggregate function. You can assume that {@code
+         * isRolledUp(column)} is {@code true}.
+         *
+         * @param column The column name for which {@code isRolledUp} is true
+         * @param call The aggregate call
+         * @param parent Parent node of {@code call} in the {@link SqlNode}
+         * tree
+         * @param config Config settings. May be null
+         * @return true iff the given aggregate call is valid
+         */
+        @Override
+        public boolean rolledUpColumnValidInsideAgg(String column, SqlCall call, SqlNode parent,
+            CalciteConnectionConfig config) {
+          return false;
         }
       };
     }

@@ -9,6 +9,8 @@ import com.hortonworks.streamline.streams.StreamlineEvent;
 import com.hortonworks.streamline.streams.common.FabricEventImpl;
 import com.hortonworks.streamline.streams.common.StreamlineEventImpl;
 import com.hortonworks.streamline.streams.common.event.sedes.kafka.FabricEventAvroSerializer;
+import com.hortonworks.streamline.streams.common.event.sedes.kafka.FabricEventJsonDeserializer;
+import com.hortonworks.streamline.streams.common.event.sedes.kafka.FabricEventJsonSerializer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -78,23 +80,13 @@ public class KafkaProducerTest {
     private Properties getProducerProperties() {
         Properties properties = new Properties();
         properties.put(KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getCanonicalName());
-        properties.put(VALUE_SERIALIZER_CLASS_CONFIG, FabricEventAvroSerializer.class);
+        properties.put(VALUE_SERIALIZER_CLASS_CONFIG, FabricEventJsonSerializer.class);
         properties.put("sasl.mechanism", "PLAIN");
         properties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
         properties.put(BOOTSTRAP_SERVERS_CONFIG, "C1MNV1CUDTY3.local:9092");
         System.setProperty("java.security.auth.login.config",
             "/Users/satendra.sahu/code/github/streamline/conf/jaas.conf");
 
-        /*properties.put(PARTITIONER_CLASS_CONFIG, PropertyReader.readString(kafkaClientConfigProperties, PARTITIONER_CLASS_CONFIG, Constants.DEFAULT_PARTITIONER_CLASS));
-        properties.put(ACKS_CONFIG, PropertyReader.readString(kafkaClientConfigProperties, ACKS_CONFIG, Constants.REQUIRED_ACKS));
-        properties.put(COMPRESSION_TYPE_CONFIG, PropertyReader.readString(kafkaClientConfigProperties, COMPRESSION_TYPE_CONFIG, Constants.DEFAULT_COMPRESSION.name));
-        properties.put(BATCH_SIZE_CONFIG, PropertyReader.readInt(kafkaClientConfigProperties, BATCH_SIZE_CONFIG, Constants.DEFAULT_BATCH_SIZE));
-        properties.put(REQUEST_TIMEOUT_MS_CONFIG, PropertyReader.readInt(kafkaClientConfigProperties, REQUEST_TIMEOUT_MS_CONFIG, Constants.DEFAULT_REQUEST_TIMEOUT));
-        properties.put(LINGER_MS_CONFIG, PropertyReader.readLong(kafkaClientConfigProperties, LINGER_MS_CONFIG, Constants.DEFAULT_LINGER_TIMEOUT));
-        properties.put(BUFFER_MEMORY_CONFIG, PropertyReader.readLong(kafkaClientConfigProperties, BUFFER_MEMORY_CONFIG, Constants.DEFAULT_BUFFER_MEMORY));
-        properties.put(CONNECTIONS_MAX_IDLE_MS_CONFIG, PropertyReader.readLong(kafkaClientConfigProperties, CONNECTIONS_MAX_IDLE_MS_CONFIG, 540000l));
-        properties.put(MAX_BLOCK_MS_CONFIG, PropertyReader.readLong(kafkaClientConfigProperties, MAX_BLOCK_MS_CONFIG, Constants.DEFAULT_MAX_BLOCK_MS_CONFIG));
-*/
         properties.put("schema.registry.url", "http://localhost:8877/api/v1");
         return properties;
     }
@@ -104,7 +96,7 @@ public class KafkaProducerTest {
         random = new Random();
     }
 
-    private ProducerRecord<String, StreamlineEvent> getRecord() {
+    private ProducerRecord<String, StreamlineEvent> getFabricEvent() {
 
         Map<String, Object> metadata = new HashMap<>();
 
@@ -136,6 +128,7 @@ public class KafkaProducerTest {
             .put("dialing_code", random.nextInt())
             .put("user_id", "test_user")
             .build();
+
         return new ProducerRecord<>("beam_test_input", "testMsgKey", event);
     }
 
@@ -144,7 +137,8 @@ public class KafkaProducerTest {
     }
 
     public void send() {
-        producer.send(getRecord());
+        producer.send(
+            getFabricEvent());
     }
 
     public static void main(String[] args) throws InterruptedException {

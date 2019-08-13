@@ -13,9 +13,6 @@
     <groupId>com.hortonworks.streamline</groupId>
     <artifactId>streamline-actions-beam</artifactId>
 
-    <properties>
-        <beam.version>2.6.0</beam.version>
-    </properties>
 
     <dependencies>
         <dependency>

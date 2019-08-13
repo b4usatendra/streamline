@@ -32,14 +32,14 @@ public class AggregationFunImpl {
   }
 
   public static <event extends StreamlineEvent>
-  Combine.AccumulatingCombineFn<event, FindMax<event>, StreamlineEvent> of(String fieldName,
+  Combine.AccumulatingCombineFn<event, Aggregator<event>, StreamlineEvent> of(String fieldName,
       String function) {
     return new AggregationFn<>(fieldName, function);
   }
 
 
   private static class AggregationFn<event extends StreamlineEvent>
-      extends Combine.AccumulatingCombineFn<event, FindMax<event>, StreamlineEvent> {
+      extends Combine.AccumulatingCombineFn<event, Aggregator<event>, StreamlineEvent> {
 
     /**
      * Constructs a combining function that computes the mean over a collection of values of type
@@ -55,14 +55,14 @@ public class AggregationFunImpl {
     }
 
     @Override
-    public FindMax<event> createAccumulator() {
-      return new FindMax<>(this.fieldName, this.function);
+    public Aggregator<event> createAccumulator() {
+      return new Aggregator<>(this.fieldName, this.function);
     }
 
     @Override
-    public Coder<FindMax<event>> getAccumulatorCoder(
+    public Coder<Aggregator<event>> getAccumulatorCoder(
         CoderRegistry registry, Coder<event> inputCoder) {
-      return new FindMaxCoder<>();
+      return new AggregatorCoder<>();
     }
   }
 
@@ -71,12 +71,12 @@ public class AggregationFunImpl {
    * Accumulator class
    * */
 
-  static class FindMax<event extends StreamlineEvent> implements
-      Accumulator<event, FindMax<event>, StreamlineEvent> {
+  static class Aggregator<event extends StreamlineEvent> implements
+      Accumulator<event, Aggregator<event>, StreamlineEvent> {
 
     BeamAggregationFunction beamAggregationFunction;
 
-    public FindMax(String fieldName, String function) {
+    public Aggregator(String fieldName, String function) {
       super();
 
       try {
@@ -109,7 +109,7 @@ public class AggregationFunImpl {
      * Adds the input values represented by the given accumulator into this accumulator.
      */
     @Override
-    public void mergeAccumulator(FindMax<event> other) {
+    public void mergeAccumulator(Aggregator<event> other) {
       beamAggregationFunction.compare(other.beamAggregationFunction.getEvent());
     }
 
@@ -129,11 +129,11 @@ public class AggregationFunImpl {
         justification = "Comparing doubles directly since equals method is only used in coder test."
     )
     public boolean equals(Object other) {
-      if (!(other instanceof FindMax)) {
+      if (!(other instanceof Aggregator)) {
         return false;
       }
       @SuppressWarnings("unchecked")
-      FindMax<?> otherCountSum = (FindMax<?>) other;
+      Aggregator<?> otherCountSum = (Aggregator<?>) other;
       return (beamAggregationFunction.equals(otherCountSum.beamAggregationFunction));
 
     }
@@ -149,7 +149,7 @@ public class AggregationFunImpl {
     }
   }
 
-  static class FindMaxCoder<event extends StreamlineEvent> extends AtomicCoder<FindMax<event>> {
+  static class AggregatorCoder<event extends StreamlineEvent> extends AtomicCoder<Aggregator<event>> {
 
     private static final StringUtf8Coder STRING_UTF_8_CODER = StringUtf8Coder.of();
     private static final ByteArrayCoder BYTE_ARRAY_CODER = ByteArrayCoder.of();
@@ -157,17 +157,17 @@ public class AggregationFunImpl {
 
 
     @Override
-    public void encode(FindMax<event> value, OutputStream outStream)
+    public void encode(Aggregator<event> value, OutputStream outStream)
         throws CoderException, IOException {
       BYTE_ARRAY_CODER.encode(mapper.writeValueAsBytes(value.beamAggregationFunction), outStream);
 
     }
 
     @Override
-    public FindMax<event> decode(InputStream inStream)
+    public Aggregator<event> decode(InputStream inStream)
         throws CoderException, IOException {
 
-      return new FindMax<>(STRING_UTF_8_CODER.decode(inStream),
+      return new Aggregator<>(STRING_UTF_8_CODER.decode(inStream),
           STRING_UTF_8_CODER.decode(inStream));
     }
 

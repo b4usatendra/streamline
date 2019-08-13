@@ -181,62 +181,12 @@ public class FabricEventAvroDeserializer implements Deserializer<StreamlineEvent
         }
     }
 
-    private SchemaMetadata getSchemaKey(String topic, boolean isKey) {
-        String name = isKey ? topic + ":k" : topic;
-        return new SchemaMetadata.Builder(name).type(AvroSchemaProvider.TYPE).schemaGroup("kafka")
-            .build();
-    }
-
     @Override
     public void close() {
         try {
             avroStreamsSnapshotDeserializer.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    //package level access for testing
-    static Object getAvroRecord(StreamlineEvent streamlineEvent, Schema schema) {
-        if (streamlineEvent.containsKey(StreamlineEvent.PRIMITIVE_PAYLOAD_FIELD)) {
-            if (streamlineEvent.keySet().size() > 1) {
-                throw new RuntimeException(
-                    "Invalid schema, primitive schema can contain only one field.");
-            }
-            return streamlineEvent.get(StreamlineEvent.PRIMITIVE_PAYLOAD_FIELD);
-        }
-        GenericRecord result;
-        result = new GenericData.Record(schema);
-        for (Map.Entry<String, Object> entry : streamlineEvent.entrySet()) {
-            result.put(entry.getKey(),
-                getAvroValue(entry.getValue(), schema.getField(entry.getKey()).schema()));
-        }
-        return result;
-    }
-
-    private static Object getAvroValue(Object input, Schema schema) {
-        if (input instanceof byte[] && Schema.Type.FIXED.equals(schema.getType())) {
-            return new GenericData.Fixed(schema, (byte[]) input);
-        } else if (input instanceof Map && !((Map) input).isEmpty()) {
-            GenericRecord result;
-            result = new GenericData.Record(schema);
-            for (Map.Entry<String, Object> entry : ((Map<String, Object>) input).entrySet()) {
-                result.put(entry.getKey(),
-                    getAvroValue(entry.getValue(), schema.getField(entry.getKey()).schema()));
-            }
-            return result;
-        } else if (input instanceof Collection && !((Collection) input).isEmpty()) {
-            // for array even though we(Schema in streamline registry) support different types of elements in an array, avro expects an array
-            // schema to have elements of same type. Hence, for now we will restrict array to have elements of same type. Other option is convert
-            // a  streamline Schema Array field to Record in avro. However, with that the issue is that avro Field constructor does not allow a
-            // null name. We could potentiall hack it by plugging in a dummy name like arrayfield, but seems hacky so not taking that path
-            List<Object> values = new ArrayList<>(((Collection) input).size());
-            for (Object value : (Collection) input) {
-                values.add(getAvroValue(value, schema.getElementType()));
-            }
-            return new GenericData.Array<Object>(schema, values);
-        } else {
-            return input;
         }
     }
 }

@@ -32,7 +32,9 @@ import com.hortonworks.streamline.streams.sql.runtime.DataSourcesRegistry;
 import com.hortonworks.streamline.streams.sql.runtime.FieldInfo;
 import com.hortonworks.streamline.streams.sql.runtime.AbstractValuesProcessor;
 
+import java.util.Properties;
 import org.apache.calcite.adapter.java.JavaTypeFactory;
+import org.apache.calcite.config.CalciteConnectionConfigImpl;
 import org.apache.calcite.jdbc.CalciteSchema;
 import org.apache.calcite.prepare.CalciteCatalogReader;
 import org.apache.calcite.rel.RelNode;
@@ -156,8 +158,8 @@ class StreamlineSqlImpl extends StreamlineSql {
       List<SqlOperatorTable> sqlOperatorTables = new ArrayList<>();
       sqlOperatorTables.add(SqlStdOperatorTable.instance());
       sqlOperatorTables.add(new CalciteCatalogReader(CalciteSchema.from(schema),
-                                                     false,
-                                                     Collections.<String>emptyList(), typeFactory));
+
+                                                     Collections.<String>emptyList(), typeFactory, new CalciteConnectionConfigImpl(new Properties())));
       return Frameworks.newConfigBuilder().defaultSchema(schema)
               .operatorTable(new ChainedSqlOperatorTable(sqlOperatorTables)).build();
     } else {

@@ -1,32 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>streamline-runners</artifactId>
-        <groupId>com.hortonworks.streamline</groupId>
-        <version>0.6.0-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>streamline-runners</artifactId>
+    <groupId>com.hortonworks.streamline</groupId>
+    <version>0.6.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>streamline-runners-beam</artifactId>
-    <packaging>pom</packaging>
+  <artifactId>streamline-runners-beam</artifactId>
+  <packaging>pom</packaging>
 
-    <modules>
-        <module>layout</module>
-        <module>actions</module>
-        <module>commons</module>
-        <module>sampling</module>
-        <module>metrics</module>
-        <module>runtime</module>
+  <modules>
+    <module>layout</module>
+    <module>actions</module>
+    <module>commons</module>
+    <module>sampling</module>
+    <module>metrics</module>
+    <module>runtime</module>
 
-    </modules>
-    <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.apache.beam/beam-sdks-java-core -->
-        <dependency>
-            <groupId>org.apache.beam</groupId>
-            <artifactId>beam-sdks-java-core</artifactId>
-            <version>${beam.version}</version>
-        </dependency>
-    </dependencies>
+  </modules>
+  <dependencies>
+    <!-- https://mvnrepository.com/artifact/org.apache.beam/beam-sdks-java-core -->
+    <dependency>
+      <groupId>org.apache.beam</groupId>
+      <artifactId>beam-sdks-java-core</artifactId>
+      <version>${beam.version}</version>
+    </dependency>
+
+
+    <!-- https://mvnrepository.com/artifact/org.apache.beam/beam-sdks-java-extensions-sql -->
+
+  </dependencies>
 </project>

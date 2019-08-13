@@ -1,24 +1,26 @@
 /**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements.  See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership.  The ASF licenses this file to you under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with the License.  You may obtain
+ * a copy of the License at
  * <p/>
  * http://www.apache.org/licenses/LICENSE-2.0
  * <p/>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.hortonworks.streamline.streams.sql;
 
 import com.hortonworks.streamline.streams.sql.compiler.CompilerUtil;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 import org.apache.calcite.adapter.java.JavaTypeFactory;
+import org.apache.calcite.config.CalciteConnectionConfigImpl;
 import org.apache.calcite.jdbc.CalciteSchema;
 import org.apache.calcite.jdbc.JavaTypeFactoryImpl;
 import org.apache.calcite.plan.RelOptUtil;
@@ -42,51 +44,54 @@ import org.apache.calcite.tools.Planner;
 import org.apache.calcite.tools.RelConversionException;
 import org.apache.calcite.tools.ValidationException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class TestCompilerUtils {
 
     public static class MyPlus {
+
         public static Integer eval(Integer x, Integer y) {
             return x + y;
         }
     }
 
     public static class MyStaticSumFunction {
+
         public static long init() {
             return 0L;
         }
+
         public static long add(long accumulator, int v) {
             return accumulator + v;
         }
     }
 
     public static class MySumFunction {
+
         public MySumFunction() {
         }
+
         public long init() {
             return 0L;
         }
+
         public long add(long accumulator, int v) {
             return accumulator + v;
         }
+
         public long result(long accumulator) {
             return accumulator;
         }
     }
 
     public static CalciteState sqlOverDummyTable(String sql)
-            throws RelConversionException, ValidationException, SqlParseException {
+        throws RelConversionException, ValidationException, SqlParseException {
         SchemaPlus schema = Frameworks.createRootSchema(true);
         JavaTypeFactory typeFactory = new JavaTypeFactoryImpl
-                (RelDataTypeSystem.DEFAULT);
+            (RelDataTypeSystem.DEFAULT);
         StreamableTable streamableTable = new CompilerUtil.TableBuilderInfo(typeFactory)
-                .field("ID", SqlTypeName.INTEGER)
-                .field("NAME", typeFactory.createType(String.class))
-                .field("ADDR", typeFactory.createType(String.class))
-                .build();
+            .field("ID", SqlTypeName.INTEGER)
+            .field("NAME", typeFactory.createType(String.class))
+            .field("ADDR", typeFactory.createType(String.class))
+            .build();
         Table table = streamableTable.stream();
         schema.add("FOO", table);
         schema.add("BAR", table);
@@ -95,11 +100,11 @@ public class TestCompilerUtils {
         List<SqlOperatorTable> sqlOperatorTables = new ArrayList<>();
         sqlOperatorTables.add(SqlStdOperatorTable.instance());
         sqlOperatorTables.add(new CalciteCatalogReader(CalciteSchema.from(schema),
-                false,
-                Collections.<String>emptyList(), typeFactory));
+            Collections.<String>emptyList(), typeFactory,
+            new CalciteConnectionConfigImpl(new Properties())));
         SqlOperatorTable chainedSqlOperatorTable = new ChainedSqlOperatorTable(sqlOperatorTables);
         FrameworkConfig config = Frameworks.newConfigBuilder().defaultSchema(
-                schema).operatorTable(chainedSqlOperatorTable).build();
+            schema).operatorTable(chainedSqlOperatorTable).build();
         Planner planner = Frameworks.getPlanner(config);
         SqlNode parse = planner.parse(sql);
         SqlNode validate = planner.validate(parse);
@@ -109,40 +114,40 @@ public class TestCompilerUtils {
     }
 
     public static CalciteState sqlOverNestedTable(String sql)
-            throws RelConversionException, ValidationException, SqlParseException {
+        throws RelConversionException, ValidationException, SqlParseException {
         SchemaPlus schema = Frameworks.createRootSchema(true);
         JavaTypeFactory typeFactory = new JavaTypeFactoryImpl
-                (RelDataTypeSystem.DEFAULT);
+            (RelDataTypeSystem.DEFAULT);
 
         StreamableTable streamableTable = new CompilerUtil.TableBuilderInfo(typeFactory)
-                .field("ID", SqlTypeName.INTEGER)
-                .field("MAPFIELD",
+            .field("ID", SqlTypeName.INTEGER)
+            .field("MAPFIELD",
+                typeFactory.createTypeWithNullability(
+                    typeFactory.createMapType(
                         typeFactory.createTypeWithNullability(
-                                typeFactory.createMapType(
-                                        typeFactory.createTypeWithNullability(
-                                                typeFactory.createSqlType(SqlTypeName.VARCHAR), true),
-                                        typeFactory.createTypeWithNullability(
-                                                typeFactory.createSqlType(SqlTypeName.INTEGER), true))
-                                , true))
-                .field("NESTEDMAPFIELD",
+                            typeFactory.createSqlType(SqlTypeName.VARCHAR), true),
+                        typeFactory.createTypeWithNullability(
+                            typeFactory.createSqlType(SqlTypeName.INTEGER), true))
+                    , true))
+            .field("NESTEDMAPFIELD",
+                typeFactory.createTypeWithNullability(
+                    typeFactory.createMapType(
+                        typeFactory.createTypeWithNullability(
+                            typeFactory.createSqlType(SqlTypeName.VARCHAR), true),
                         typeFactory.createTypeWithNullability(
                             typeFactory.createMapType(
-                                    typeFactory.createTypeWithNullability(
-                                            typeFactory.createSqlType(SqlTypeName.VARCHAR), true),
-                                    typeFactory.createTypeWithNullability(
-                                            typeFactory.createMapType(
-                                                    typeFactory.createTypeWithNullability(
-                                                            typeFactory.createSqlType(SqlTypeName.VARCHAR), true),
-                                                    typeFactory.createTypeWithNullability(
-                                                            typeFactory.createSqlType(SqlTypeName.INTEGER), true))
-                                            , true))
-                                        , true))
-                .field("ARRAYFIELD", typeFactory.createTypeWithNullability(
-                        typeFactory.createArrayType(
-                            typeFactory.createTypeWithNullability(
-                                typeFactory.createSqlType(SqlTypeName.INTEGER), true), -1L)
-                        , true))
-                .build();
+                                typeFactory.createTypeWithNullability(
+                                    typeFactory.createSqlType(SqlTypeName.VARCHAR), true),
+                                typeFactory.createTypeWithNullability(
+                                    typeFactory.createSqlType(SqlTypeName.INTEGER), true))
+                            , true))
+                    , true))
+            .field("ARRAYFIELD", typeFactory.createTypeWithNullability(
+                typeFactory.createArrayType(
+                    typeFactory.createTypeWithNullability(
+                        typeFactory.createSqlType(SqlTypeName.INTEGER), true), -1L)
+                , true))
+            .build();
         Table table = streamableTable.stream();
         schema.add("FOO", table);
         schema.add("BAR", table);
@@ -150,11 +155,11 @@ public class TestCompilerUtils {
         List<SqlOperatorTable> sqlOperatorTables = new ArrayList<>();
         sqlOperatorTables.add(SqlStdOperatorTable.instance());
         sqlOperatorTables.add(new CalciteCatalogReader(CalciteSchema.from(schema),
-                                                       false,
-                                                       Collections.<String>emptyList(), typeFactory));
+
+            Collections.<String>emptyList(), typeFactory,new CalciteConnectionConfigImpl(new Properties())));
         SqlOperatorTable chainedSqlOperatorTable = new ChainedSqlOperatorTable(sqlOperatorTables);
         FrameworkConfig config = Frameworks.newConfigBuilder().defaultSchema(
-                schema).operatorTable(chainedSqlOperatorTable).build();
+            schema).operatorTable(chainedSqlOperatorTable).build();
         Planner planner = Frameworks.getPlanner(config);
         SqlNode parse = planner.parse(sql);
         SqlNode validate = planner.validate(parse);
@@ -164,6 +169,7 @@ public class TestCompilerUtils {
     }
 
     public static class CalciteState {
+
         final SchemaPlus schema;
         final RelNode tree;
 

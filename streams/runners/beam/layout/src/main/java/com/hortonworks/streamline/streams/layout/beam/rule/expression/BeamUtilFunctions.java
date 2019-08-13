@@ -1,7 +1,7 @@
 package com.hortonworks.streamline.streams.layout.beam.rule.expression;
 
 import com.hortonworks.streamline.streams.StreamlineEvent;
-import com.hortonworks.streamline.streams.common.StreamlineEventImpl;
+import com.hortonworks.streamline.streams.common.FabricEventImpl;
 import com.hortonworks.streamline.streams.layout.beam.rule.expression.aggregation.AggregationFunImpl;
 import com.hortonworks.streamline.streams.layout.beam.rule.expression.aggregation.FunctionEnum;
 import com.hortonworks.streamline.streams.layout.component.rule.expression.FieldExpression;
@@ -65,11 +65,10 @@ public class BeamUtilFunctions implements Serializable {
                             streamlineEvent.get(field.getValue().getName()));
                     }
                 }
-                StreamlineEvent newEvent = StreamlineEventImpl.builder()
+                StreamlineEvent newEvent = FabricEventImpl.builder()
+                    .from(streamlineEvent)
                     .fieldsAndValues(fields)
-                    .auxiliaryFieldsAndValues(streamlineEvent.getAuxiliaryFieldsAndValues())
                     .dataSourceId(beamComponentId)
-                    .header(streamlineEvent.getHeader())
                     .build();
 
                 out.output(newEvent);
@@ -105,8 +104,9 @@ public class BeamUtilFunctions implements Serializable {
                     recordRoutingKey = buffer.array();
                 }
 
-                StreamlineEvent newEvent = StreamlineEventImpl.builder().from(streamlineEvent)
-                    .dataSourceId(sinkId).build();
+                StreamlineEvent newEvent = FabricEventImpl.builder().from(streamlineEvent)
+                    .dataSourceId(sinkId)
+                    .build();
                 KV<byte[], StreamlineEvent> eventKV = KV.of(recordRoutingKey, newEvent);
                 out.output(eventKV);
             }
@@ -121,9 +121,7 @@ public class BeamUtilFunctions implements Serializable {
             public void processElement(@Element KV<Object, StreamlineEvent> kV,
                 OutputReceiver<StreamlineEvent> out) {
                 if (kV.getValue() != null) {
-                    StreamlineEvent newEvent = StreamlineEventImpl.builder().from(kV.getValue())
-                        .dataSourceId(beamSourceId).build();
-                    out.output(newEvent);
+                    out.output(kV.getValue());
                 }
             }
         });

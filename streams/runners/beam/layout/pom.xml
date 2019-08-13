@@ -1,91 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>streamline-runners-beam</artifactId>
-        <groupId>com.hortonworks.streamline</groupId>
-        <version>0.6.0-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>streamline-runners-beam</artifactId>
     <groupId>com.hortonworks.streamline</groupId>
-    <artifactId>streamline-layout-beam</artifactId>
+    <version>0.6.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
 
-    <properties>
-        <beam.version>2.6.0</beam.version>
-    </properties>
+  <groupId>com.hortonworks.streamline</groupId>
+  <artifactId>streamline-layout-beam</artifactId>
 
-    <dependencies>
+  <properties>
+    <beam.version>2.9.0</beam.version>
+  </properties>
 
-        <dependency>
-            <groupId>org.apache.beam</groupId>
-            <artifactId>beam-sdks-java-io-kafka</artifactId>
-            <version>${beam.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.hortonworks.streamline</groupId>
-            <artifactId>streamline-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hortonworks.streamline</groupId>
-            <artifactId>streamline-common-beam</artifactId>
-        </dependency>
+  <dependencies>
+    <dependency>
+      <groupId>com.hortonworks.streamline</groupId>
+      <artifactId>streamline-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.hortonworks.streamline</groupId>
+      <artifactId>streamline-common-beam</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>com.hortonworks.registries</groupId>
-            <artifactId>schema-registry-client</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.hadoop</groupId>
-                    <artifactId>hadoop-client</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.hadoop</groupId>
-                    <artifactId>hadoop-hdfs</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.hadoop</groupId>
-                    <artifactId>hadoop-common</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.hadoop</groupId>
-                    <artifactId>hadoop-auth</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hadoop</groupId>
-            <artifactId>hadoop-common</artifactId>
-            <version>${hadoop.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.hortonworks.registries</groupId>
-            <artifactId>schema-registry-serdes</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>com.hortonworks.registries</groupId>
+      <artifactId>schema-registry-client</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-client</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-hdfs</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-common</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.hadoop</groupId>
+          <artifactId>hadoop-auth</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-common</artifactId>
+      <version>${hadoop.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.hortonworks.registries</groupId>
+      <artifactId>schema-registry-serdes</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>io.druid</groupId>
-            <artifactId>druid-server</artifactId>
-            <version>0.9.1</version>
-            <scope>provided</scope>
-        </dependency>
-      <dependency>
-        <groupId>com.hortonworks.streamline</groupId>
-        <artifactId>streamline-layout</artifactId>
-      </dependency>
+    <dependency>
+      <groupId>io.druid</groupId>
+      <artifactId>druid-server</artifactId>
+      <version>0.9.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.hortonworks.streamline</groupId>
+      <artifactId>streamline-layout</artifactId>
+    </dependency>
 
-    </dependencies>
+
+    <!--Beam dependencies -->
+
+    <dependency>
+      <groupId>org.apache.beam</groupId>
+      <artifactId>beam-sdks-java-io-kafka</artifactId>
+      <version>${beam.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.beam</groupId>
+      <artifactId>beam-sdks-java-extensions-sql</artifactId>
+      <version>${beam.version}</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>fastjson</artifactId>
+          <groupId>com.alibaba</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+
+  </dependencies>
 </project>

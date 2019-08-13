@@ -18,12 +18,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hortonworks.registries.schemaregistry.SchemaMetadata;
 import com.hortonworks.registries.schemaregistry.avro.AvroSchemaProvider;
 import com.hortonworks.streamline.streams.StreamlineEvent;
+import com.hortonworks.streamline.streams.common.Constants;
+import com.hortonworks.streamline.streams.common.FabricEventImpl;
+import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.common.serialization.Serializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FabricEventJsonSerializer implements Serializer<StreamlineEvent> {
+public class FabricEventJsonSerializer implements Serializer<FabricEventImpl> {
 
     protected static final Logger LOG = LoggerFactory.getLogger(FabricEventJsonSerializer.class);
     private static final ObjectMapper mapper = new ObjectMapper();
@@ -38,22 +41,24 @@ public class FabricEventJsonSerializer implements Serializer<StreamlineEvent> {
     }
 
     @Override
-    public byte[] serialize(String topic, StreamlineEvent streamlineEvent) {
+    public byte[] serialize(String topic, FabricEventImpl streamlineEvent) {
         ObjectNode fabricEvent = JsonNodeFactory.instance.objectNode();
-        fabricEvent.put("id", streamlineEvent.getId());
-        fabricEvent.put("metadata", mapper.convertValue(streamlineEvent.getHeader(), JsonNode.class));
-        fabricEvent.put("data", mapper.convertValue(streamlineEvent.getFieldsAndValues(), JsonNode.class));
+        fabricEvent.put(Constants.FABRIC_ID, streamlineEvent.getId());
+
+        Map<String, Object> newHeader = new HashMap<>();
+        newHeader.putAll(streamlineEvent.getHeader());
+        newHeader.put(Constants.FABRIC_METADATA_STREAM, topic);
+
+        fabricEvent.putPOJO(Constants.FABRIC_METADATA, mapper.convertValue(newHeader, JsonNode.class));
+        fabricEvent.putPOJO(Constants.FABRIC_DATA, mapper.convertValue(streamlineEvent.getFieldsAndValues(), JsonNode.class));
+
         try {
             return mapper.writeValueAsString(fabricEvent).getBytes();
         } catch (JsonProcessingException e) {
+            LOG.error("unable to convert event to Fabric Doc: {}", e.getMessage());
             e.printStackTrace();
         }
         return null;
-    }
-
-    private SchemaMetadata getSchemaKey(String topic, boolean isKey) {
-        String name = isKey ? topic + ":k" : topic;
-        return new SchemaMetadata.Builder(name).type(AvroSchemaProvider.TYPE).schemaGroup("kafka").build();
     }
 
     @Override

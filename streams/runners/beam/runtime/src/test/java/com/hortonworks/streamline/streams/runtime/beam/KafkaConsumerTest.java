@@ -5,6 +5,7 @@ import static org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hortonworks.streamline.streams.StreamlineEvent;
+import com.hortonworks.streamline.streams.common.event.sedes.kafka.FabricEventAvroDeserializer;
 import com.hortonworks.streamline.streams.common.event.sedes.kafka.FabricEventJsonDeserializer;
 import com.hortonworks.streamline.streams.common.event.sedes.kafka.FabricEventJsonSerializer;
 import com.hortonworks.streamline.streams.common.event.sedes.kafka.StreamlineEventDeserializer;
@@ -15,6 +16,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 /**
@@ -31,9 +33,9 @@ public class KafkaConsumerTest {
     properties.put(ConsumerConfig.GROUP_ID_CONFIG, "test_consumer_group");
     properties.put(BOOTSTRAP_SERVERS_CONFIG, "C1MNV1CUDTY3.local:9092");
     properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
-        StringDeserializer.class.getCanonicalName());
+        ByteArrayDeserializer.class.getCanonicalName());
     properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-        StreamlineEventDeserializer.class.getCanonicalName());
+        FabricEventAvroDeserializer.class.getCanonicalName());
     properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
 
     properties.put("sasl.mechanism", "PLAIN");

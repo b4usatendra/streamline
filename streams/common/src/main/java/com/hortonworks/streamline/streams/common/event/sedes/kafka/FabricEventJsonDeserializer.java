@@ -15,8 +15,8 @@ package com.hortonworks.streamline.streams.common.event.sedes.kafka;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hortonworks.streamline.streams.StreamlineEvent;
-import com.hortonworks.streamline.streams.common.StreamlineEventImpl;
+import com.hortonworks.streamline.streams.common.Constants;
+import com.hortonworks.streamline.streams.common.FabricEventImpl;
 import com.hortonworks.streamline.streams.exception.ProcessingException;
 import java.io.IOException;
 import java.util.Map;
@@ -24,7 +24,7 @@ import org.apache.kafka.common.serialization.Deserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FabricEventJsonDeserializer implements Deserializer<StreamlineEvent> {
+public class FabricEventJsonDeserializer implements Deserializer<FabricEventImpl> {
 
     protected static final Logger LOG = LoggerFactory.getLogger(FabricEventJsonDeserializer.class);
     private static final ObjectMapper mapper = new ObjectMapper();
@@ -40,19 +40,24 @@ public class FabricEventJsonDeserializer implements Deserializer<StreamlineEvent
     }
 
     @Override
-    public StreamlineEvent deserialize(String topic, byte[] bytes) {
+    public FabricEventImpl deserialize(String topic, byte[] bytes) {
         try {
             JsonNode jsonEvent = mapper.readTree(bytes);
             validateEvent(jsonEvent);
 
-            String id = jsonEvent.get("id").toString();
+            String id = jsonEvent.get(Constants.FABRIC_ID).toString();
             Map<String, Object> metadata = mapper
-                .convertValue(jsonEvent.get("metadata"), Map.class);
-            Map<String, Object> data = mapper.convertValue(jsonEvent.get("data"), Map.class);
-            return StreamlineEventImpl.builder()
+                .convertValue(jsonEvent.get(Constants.FABRIC_METADATA), Map.class);
+            Map<String, Object> data = mapper
+                .convertValue(jsonEvent.get(Constants.FABRIC_DATA), Map.class);
+
+            return FabricEventImpl.builder()
                 .id(id)
+                .dataSourceId((String) metadata.get(Constants.FABRIC_METADATA_SENDER))
+                .sourceStream(topic)
                 .header(metadata)
-                .fieldsAndValues(data).build();
+                .fieldsAndValues(data)
+                .build();
 
         } catch (IOException e) {
             LOG.error("Unable to convert event to JSON: " + e.getMessage());
@@ -63,10 +68,39 @@ public class FabricEventJsonDeserializer implements Deserializer<StreamlineEvent
     }
 
     private void validateEvent(JsonNode jsonEvent) throws ProcessingException {
-        if (jsonEvent.has("id") && jsonEvent.has("metadata") && jsonEvent.has("data")) {
-            return;
+
+        boolean isValid = true;
+        StringBuffer validationExceptions = new StringBuffer();
+        if (!jsonEvent.has(Constants.FABRIC_ID) || !jsonEvent.has(Constants.FABRIC_METADATA)
+            || !jsonEvent.has(Constants.FABRIC_DATA)) {
+            validationExceptions
+                .append("Either 'id', 'metadata' or 'data' section is missing in the Event\n");
+            isValid = false;
         }
-        throw new ProcessingException("Input Event does not comply with Fabric document structure");
+
+        if (jsonEvent.has(Constants.FABRIC_METADATA)) {
+            JsonNode metadataNode = jsonEvent.get(Constants.FABRIC_METADATA);
+
+            if (!metadataNode.has(Constants.FABRIC_METADATA_TIMESTAMP) ||
+                !metadataNode.has(Constants.FABRIC_METADATA_SCHEMA) ||
+                !metadataNode.has(Constants.FABRIC_METADATA_SCHEMA_VERSION) ||
+                !metadataNode.has(Constants.FABRIC_METADATA_TYPE) ||
+                !metadataNode.has(Constants.FABRIC_METADATA_ROUTING_KEY) ||
+                !metadataNode.has(Constants.FABRIC_METADATA_LOOKUP_KEY) ||
+                !metadataNode.has(Constants.FABRIC_METADATA_TENANT) ||
+                !metadataNode.has(Constants.FABRIC_METADATA_STREAM) ||
+                !metadataNode.has(Constants.FABRIC_METADATA_SENDER)) {
+                isValid = false;
+            }
+            validationExceptions
+                .append("Missing fields from METADATA\n");
+
+
+        }
+
+        if (!isValid) {
+            throw new ProcessingException(validationExceptions.toString());
+        }
     }
 
     @Override
